@@ -1,0 +1,37 @@
+{"commands":[
+  {
+    "commandLine":"cd ${current.project.path} && make && ./a.out",
+    "name":"run",
+    "type":"custom",
+    "attributes":{}
+  }],
+  "projects":[],
+  "environments":[
+    {
+      "machineConfigs":[
+        {
+          "source":
+          {
+            "type":"dockerfile",
+            "content":""
+
+          },
+          "servers":[],
+          "envVariables":{},
+          "dev":true,
+          "limits":
+          {
+            "ram":1000
+
+          },
+          "name":"default",
+          "type":"docker",
+          "links":[]
+        }],
+      "name":"default"
+    }],
+  "defaultEnv":"default",
+  "name":"wksp-azgnssss",
+  "links":[],
+  "description":null
+}
