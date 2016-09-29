@@ -13,7 +13,7 @@ module.exports = function(app, config) {
   var env = process.env.NODE_ENV || 'development';
   app.locals.ENV = env;
   app.locals.ENV_DEVELOPMENT = env == 'development';
-  
+
   app.engine('handlebars', exphbs({
     layoutsDir: config.root + '/app/views/layouts/',
     defaultLayout: 'main',
@@ -38,12 +38,25 @@ module.exports = function(app, config) {
     require(controller)(app);
   });
 
+  //Creating a route folder
+  var routes = glob.sync(config.root + '/app/routes/*.js');
+  routes.forEach(function (route) {
+    require(route)(app);
+  });
+
+  //Including javascript libraries
+  var libs = glob.sync(config.root + '/lib/javascript/*.js');
+  libs.forEach(function (lib)
+  {
+    require(lib)(app);
+  });
+
   app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
   });
-  
+
   if(app.get('env') === 'development'){
     app.use(function (err, req, res, next) {
       res.status(err.status || 500);

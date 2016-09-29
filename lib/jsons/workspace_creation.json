@@ -22,7 +22,6 @@
           "limits":
           {
             "ram":1000
-
           },
           "name":"default",
           "type":"docker",
@@ -31,7 +30,7 @@
       "name":"default"
     }],
   "defaultEnv":"default",
-  "name":"wksp-azgnssss",
+  "name":"Test",
   "links":[],
   "description":null
 }

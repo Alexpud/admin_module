@@ -1,4 +1,4 @@
-var workspace_creation = require('../jsons/workspace_creation.json');
+var workspace_creation = require('../../lib/jsons/workspace_creation.json');
 
 var http = require('http');
 var express = require('express'),
