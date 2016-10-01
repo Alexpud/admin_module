@@ -1,5 +1,6 @@
-{"commands":[
-  {
+{
+  "commands":
+  [{
     "commandLine":"cd ${current.project.path} && make && ./a.out",
     "name":"run",
     "type":"custom",

@@ -1,0 +1,127 @@
+{
+  "attributes":
+  {
+    "created":"1475290676620",
+    "stackId":"cpp-default"
+  },
+  "namespace":"che",
+  "temporary":false,
+  "id":"workspace6qfn5vs7vovhnqhf",
+  "status":"STOPPED",
+  "config":
+  {
+    "environments":
+    [{
+      "name":"default",
+      "machineConfigs":
+      [{
+        "limits":
+        {
+          "ram":1000
+        },
+        "name":"default",
+        "type":"docker",
+        "source":
+        {
+          "type":"dockerfile",
+          "content":"FROM codenvy/cpp_gcc"
+        },
+        "dev":true,
+        "servers":[],
+        "envVariables":{},
+        "links":
+        [{
+          "href":"ws://192.168.25.10:8098/wsmaster/api/ws/workspace6qfn5vs7vovhnqhf",
+          "parameters":
+          [{
+            "required":true,
+            "name":"channel",
+            "valid":[],
+            "defaultValue":"workspace6qfn5vs7vovhnqhf:default:default"
+          }],
+          "rel":"get machine logs channel",
+          "method":"GET"
+        },
+          {
+            "href":"ws://192.168.25.10:8098/wsmaster/api/ws/workspace6qfn5vs7vovhnqhf",
+            "parameters":
+            [{
+              "required":true,
+              "name":"channel",
+              "valid":[],
+              "defaultValue":"machine:status:workspace6qfn5vs7vovhnqhf:default"
+            }],
+            "rel":"get machine status channel",
+            "method":"GET"
+          }
+        ]}
+      ]}
+    ],
+    "defaultEnv":"default",
+    "projects":[],
+    "name":"asdaada",
+    "commands":
+    [{
+      "commandLine": "cd ${current.project.path} && make && ./a.out",
+      "name":"run",
+      "attributes":{},
+      "type":"custom"
+    }],
+    "links":[]
+  },
+  "links":
+  [{
+    "href":"http://192.168.25.10:8098/wsmaster/api/workspace/workspace6qfn5vs7vovhnqhf",
+    "parameters":[],
+    "rel":"self link",
+    "method":"GET"
+  },
+    {
+      "href":"http://192.168.25.10:8098/wsmaster/api/workspace/workspace6qfn5vs7vovhnqhf/runtime",
+      "parameters":[],
+      "rel":"start workspace",
+      "method":"POST",
+      "produces":"application/json"
+    },
+    {
+      "href":"http://192.168.25.10:8098/wsmaster/api/workspace/workspace6qfn5vs7vovhnqhf",
+      "parameters":[],
+      "rel":"remove workspace",
+      "method":"DELETE",
+      "produces":"application/json"
+    },
+    {
+      "href":"http://192.168.25.10:8098/wsmaster/api/workspace",
+      "parameters":[],
+      "rel":"get all user workspaces",
+      "method":"GET",
+      "produces":"application/json"
+    },
+    {
+      "href":"http://192.168.25.10:8098/wsmaster/api/workspace/workspace6qfn5vs7vovhnqhf/snapshot",
+      "parameters":[],
+      "rel":"get workspace snapshot",
+      "method":"GET",
+      "produces":"application/json"
+    },
+    {
+      "href":"http://192.168.25.10:8098/che/asdaada",
+      "parameters":[],
+      "rel":"ide url",
+      "method":"GET",
+      "produces":"text/html"
+    },
+    {
+      "href":"ws://192.168.25.10:8098/wsmaster/api/ws/workspace6qfn5vs7vovhnqhf",
+      "parameters":
+      [{
+        "required":true,
+        "name":"channel",
+        "valid":[],
+        "defaultValue":"workspace:workspace6qfn5vs7vovhnqhf"
+      }],
+      "rel":"get workspace events channel",
+      "method":"GET"
+    }
+  ]
+}

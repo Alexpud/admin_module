@@ -9,12 +9,7 @@ module.exports = function (app) {
 };
 
 router.get('/', function (req, res, next) {
-  db.Article.findAll().then(function (articles) {
-    res.render('index', {
-      title: 'Generator-Express MVC',
-      articles: articles
-    });
-  });
+  res.render('index');
 });
 
 router.get('/redirect', function(req, res, next)
