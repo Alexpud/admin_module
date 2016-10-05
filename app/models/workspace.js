@@ -7,7 +7,8 @@ module.exports = function (sequelize, DataTypes) {
   var Workspace = sequelize.define('Workspace', {
     registration_ID: { type: DataTypes.STRING, allowNull: false, primaryKey: true },
     workspace_name: { type: DataTypes.STRING},
-    workspace_id: { type: DataTypes.STRING}
+    workspace_id: { type: DataTypes.STRING},
+    container_port: { type: DataTypes.INTEGER}
   }, {
     classMethods: {
       associate: function (models) {

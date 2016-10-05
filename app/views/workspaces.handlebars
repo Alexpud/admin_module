@@ -1,11 +1,37 @@
 <h1>Workspace creation </h1>
-<form method="post">
-    <input type = "text" name = "registration_id">
-    <input type = "text" name = "workspace_name">
-    <br>
+<form class = "form-inline" action = "/create" method="post">
+    <table>
+      <tr>
+          <td>
+              <h3>Registration id</h3>
+          </td>
+          <td>
+              <input type = "text" name = "registration_id">
+          </td>
+      </tr>
+      <tr>
+          <td>
+              <h3>Workspace name</h3>
+          </td>
+          <td>
+              <input type = "text" name = "workspace_name">
+          </td>
+      </tr>
+      <tr>
+          <td>
+          <input type="radio" name = "stacks" value = "cpp-default"> C<br>
+          <input type="radio" name = "stacks" value = "Rails"> Rails <br>
+          </td>
+      </tr>
+      <tr>
+          <td><input type="submit"></td>
+      </tr>
 
-        <input type="radio" name = "stacks" value = "cpp-default"> C<br>
-        <input type="radio" name = "stacks" value = "Rails"> Rails <br>
+    </table>
+</form>
+<br>
 
-    <input type="submit">
+<h1>Starting workspace</h1>
+<form action = "/start" method = "post">
+    <input type = "submit">
 </form>

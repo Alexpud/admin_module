@@ -13,7 +13,7 @@ router.get('/workspaces', function (req, res, next) {
 });
 
 //Creates a workspace
-router.post('/workspaces', function(req, res, next)
+router.post('/create', function(req, res, next)
 {
   //According to the documentation, it tries to find the element in the database, if the database is not found,
   //it creates and saves the element.
@@ -78,68 +78,65 @@ router.post('/workspaces', function(req, res, next)
         else
         {
           console.log("workspace already exists");
-          res.end();
+          res.render("workspaces",{});
         }
       });
   res.end();
 });
-
-router.post('/workspacess',function(req, res, next)
+/*
+  It receives a workspace_id, since i don't have access to authentication at the moment, i used a default value.
+  Then, it sends a request with this workspace name to the che instance.
+  Again, the port of the che instance is defaulted to 8098 because of tests.
+ */
+router.post('/start', function( req, res, next)
 {
-  var options = {
-    host: '192.168.25.10',
-    port: 8098,
-    path: '/api/workspace?account=&attribute=stackId:cpp-default',
-    method: 'POST',
-    headers:
+  db.Workspace.findOne(
     {
-      'Content-Type': 'application/json'
+      where:
+      {
+        //It is a sample works
+        workspace_id: "workspaceomy4prvny0gism71"
+      }
     }
-  };
+  ).then( function (workspace)
+  {
+    console.log(workspace.registration_ID);
+    var options = {
+      host: '192.168.25.10',
+      port: 8098,
+      path: '/api/workspace/'+workspace.workspace_id+'/runtime?environment=default',
+      method: 'POST',
+      headers:
+      {
+        'Content-Type': 'application/json'
+      }
+    };
 
-  var req = http.request(options, function(res) {
-    console.log('STATUS: ' + res.statusCode);
-    console.log('HEADERS: ' + JSON.stringify(res.headers));
-    res.setEncoding('utf8');
-    res.on('data', function (chunk) {
-      var test = chunk;
-      //console.log('BODY: ' + chunk);
-      console.log(chunk.id);
+    var req = http.request(options, function(res) {
+      console.log('STATUS: ' + res.statusCode);
+      console.log('HEADERS: ' + JSON.stringify(res.headers));
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+        console.log('BODY: ' + chunk);
+      });
     });
+    req.write("");
+    req.end();
+    res.end();
   });
 
-  var workspace = new workspace_creation();
-  workspace.setWorkspaceName('cpp_test');
-  workspace.setWorkspaceStack('FROM codenvy/cpp_gcc');
-  req.write(JSON.stringify(workspace.model));
-  req.end();
-});
-
-router.post('/test', function( req, res, next)
-{
-  db.Workspace
-    .findOrCreate(
-      {
-        where: {
-          registration_ID: '2011100053s',
-          workspace_name: 'tests'
-        }
-      })
-    .spread(function(workspace,created)
-    {
-      console.log(workspace.get(
-        {
-          plain:true
-        }))
-      console.log("created");
-    });
 });
 
 router.delete('/workspaces',function(req, res, next)
 {
 });
 
-
+/*
+  It first creates teh workspace in the database, then it sends a request to a specific port where nginx
+  will be listening, and when it receives a request it tries to start a container with the name on the uri
+  passed. With the name passed on the uri, nginx will try to find on the workspace database a tuple with the
+  same name and from that tuple, extract the port where the container will run.
+ */
 
 function create_workspace(registration_id, workspace_name, workspace_id)
 {
@@ -151,5 +148,26 @@ function create_workspace(registration_id, workspace_name, workspace_id)
           workspace_name: workspace_name,
           workspace_id: workspace_id
         }
+      }).then(function()
+  {
+
+    var options = {
+      host: '192.168.25.10',
+      port: 8082,
+      path: '/'+registration_id,
+      method: 'GET'
+    };
+
+    var req = http.request(options, function(res) {
+      console.log('STATUS: ' + res.statusCode);
+      console.log('HEADERS: ' + JSON.stringify(res.headers));
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+        console.log('BODY: ' + chunk);
       });
+    });
+    req.write("");
+    req.end();
+  });
+
 }
