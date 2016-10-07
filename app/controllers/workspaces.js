@@ -11,6 +11,14 @@ router.get('/workspaces', function (req, res, next) {
   res.render('workspaces');
 });
 
+router.get('/list_worksapces', function (req, res, next)
+{
+  db.Workspace.findall({raw:true}).then( function (workspace_list)
+  {
+    res.send(workspace_list);
+  });
+});
+
 //Creates a workspace
 router.post('/create', function(req, res, next)
 {

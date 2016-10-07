@@ -7,9 +7,19 @@ module.exports = function (app) {
   app.use('/', router);
 };
 
-router.get('/container', function( req, res, next)
+router.get('/container',function ( req, res, next)
 {
-  res.render('containers');
+  res.render('container');
+});
+
+router.get('/list_container', function( req, res, next)
+{
+  db.Container.findAll({raw:true}).then( function(container_list)
+  {
+    //var _containers = container_list.get({plain: true});
+    console.log(container_list);
+    res.send(container_list);
+  });
 });
 
 router.post('/container_test', function( req, res, next)
