@@ -1,4 +1,4 @@
-var workspace_creation = require('../../lib/javascript/workspace_helper');
+var workspace_creation = require('../../public/js/workspace_helper');
 var http = require('http');
 var express = require('express'),
   router = express.Router(),
@@ -9,7 +9,6 @@ module.exports = function (app) {
 
 router.get('/workspaces', function (req, res, next) {
   res.render('workspaces');
-
 });
 
 //Creates a workspace
@@ -138,36 +137,3 @@ router.delete('/workspaces',function(req, res, next)
   same name and from that tuple, extract the port where the container will run.
  */
 
-function create_workspace(registration_id, workspace_name, workspace_id)
-{
-  db.Workspace
-    .findOrCreate(
-      {
-        where: {
-          registration_ID: registration_id,
-          workspace_name: workspace_name,
-          workspace_id: workspace_id
-        }
-      }).then(function()
-  {
-
-    var options = {
-      host: '192.168.25.10',
-      port: 8082,
-      path: '/'+registration_id,
-      method: 'GET'
-    };
-
-    var req = http.request(options, function(res) {
-      console.log('STATUS: ' + res.statusCode);
-      console.log('HEADERS: ' + JSON.stringify(res.headers));
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-        console.log('BODY: ' + chunk);
-      });
-    });
-    req.write("");
-    req.end();
-  });
-
-}
