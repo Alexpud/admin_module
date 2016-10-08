@@ -7,13 +7,11 @@ module.exports = function (app) {
   app.use('/', router);
 };
 
-router.get('/workspaces', function (req, res, next) {
-  res.render('workspaces');
-});
 
-router.get('/list_worksapces', function (req, res, next)
+//Returns an array of jsons containing the tuples of workspace table
+router.get('/list_workspaces', function (req, res, next)
 {
-  db.Workspace.findall({raw:true}).then( function (workspace_list)
+  db.Workspace.findAll( {raw:true} ).then( function (workspace_list)
   {
     res.send(workspace_list);
   });

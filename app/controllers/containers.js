@@ -12,7 +12,7 @@ router.get('/container',function ( req, res, next)
   res.render('container');
 });
 
-router.get('/list_container', function( req, res, next)
+router.get('/list_containers', function( req, res, next)
 {
   db.Container.findAll({raw:true}).then( function(container_list)
   {

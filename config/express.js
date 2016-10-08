@@ -44,6 +44,10 @@ module.exports = function(app, config) {
     require(route)(app);
   });
 
+  app.get('*', function(req, res) {
+    res.sendfile('./public/js/angular/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+  });
+
   //Including javascript libraries
   var libs = glob.sync(config.root + '/lib/javascript/*.js');
   libs.forEach(function (lib)

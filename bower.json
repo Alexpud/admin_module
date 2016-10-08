@@ -5,5 +5,11 @@
     "**/.*",
     "node_modules",
     "components"
-  ]
+  ],
+  "dependencies": {
+    "angular": "^1.5.8",
+    "bootstrap": "^3.3.7",
+    "angular-route": "^1.5.8",
+    "angular-mocks": "^1.5.8"
+  }
 }
