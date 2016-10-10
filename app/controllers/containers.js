@@ -22,6 +22,64 @@ router.get('/list_containers', function( req, res, next)
   });
 });
 
+router.get('/container_status/:container', function( req, resi, next)
+{
+  var container = req.params.container;
+  var data = "";
+  var options = {
+    host: '192.168.25.10',
+    port: 8083,
+    path: '/'+container,
+    method: 'GET'
+  };
+
+  var req = http.request(options, function (res)
+  {
+    console.log('STATUS: ' + res.statusCode);
+    console.log('HEADERS: ' + JSON.stringify(res.headers));
+    res.setEncoding('utf8');
+    res.on('data', function (chunk) {
+      console.log('BODY: ' + chunk);
+      console.log(chunk);
+      data = chunk;
+    });
+    res.on('end',function()
+    {
+      console.log("Over");
+      resi.send(data);
+    });
+  }).end();
+
+});
+
+function getContainersStatus(container_list)
+{
+  var data ="";
+  for(var container in container_list) {
+    var options = {
+      host: '192.168.25.10',
+      port: 8083,
+      path: '/' + container.registration_ID,
+      method: 'GET'
+    };
+
+    var req = http.request(options, function (res) {
+      console.log('STATUS: ' + res.statusCode);
+      console.log('HEADERS: ' + JSON.stringify(res.headers));
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+        console.log('BODY: ' + chunk);
+        data = chunk;
+        return data;
+      });
+    });
+    req.write("");
+    req.end();
+  }
+  return data;
+};
+
+
 router.post('/container_test', function( req, res, next)
 {
   console.log(req.body);
