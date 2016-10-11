@@ -7,14 +7,15 @@ module.exports = function (sequelize, DataTypes) {
 
   var Container = sequelize.define('Container', {
     registration_ID: { type: DataTypes.STRING, allowNull: false, primaryKey: true },
-    name: { type: DataTypes.STRING},
-    port: { type: DataTypes.INTEGER, primaryKey: true}
+    port: { type: DataTypes.INTEGER,primaryKey: true},
+    name: { type: DataTypes.STRING}
+
   }, {
     classMethods: {
       associate: function (models) {
         // example on how to add relations
         // Article.hasMany(models.Comments);
-        Container.hasMany(models.Workspace, { as: 'workspaces', foreignKey: 'registration_ID'});
+
       }
     }
   });

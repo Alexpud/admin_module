@@ -2,36 +2,34 @@
 <div>
   {{$ctrl.resulting_array}}
 </div>
-<div class="panel panel-default">
-  <!-- Default panel contents -->
-  <div class="panel-heading">Panel heading</div>
-
-  <!-- Table -->
-  <table class="table">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Registration ID</th>
-        <th>Name</th>
-        <th>Port</th>
-        <th>Created at</th>
-      </tr>
-    </thead>
-    <tbody>
-      <div >
-        {{container}}
-        <tr ng-repeat="container in $ctrl.resulting_array">
-          <td>#</td>
-          <td>{{container.registration_ID}}</td>
-          <td>{{container.name}}</td>
-          <td>{{container.port}}</td>
-          <td>{{container.createdAt }}</td>
-          <td>asd</td>
+<div id = "table_list_container">
+  <div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Panel heading</div>
+    <!-- Table -->
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Registration ID</th>
+          <th>Name</th>
+          <th>Port</th>
+          <th>Created at</th>
         </tr>
-      </div>
-    </tbody>
-  </table>
-</div>
-
-
+      </thead>
+      <tbody>
+        <div >
+          {{container}}
+          <tr ng-repeat="container in $ctrl.resulting_array">
+            <td>#</td>
+            <td>{{container.registration_ID}}</td>
+            <td>{{container.name}}</td>
+            <td>{{container.port}}</td>
+            <td>{{container.createdAt }}</td>
+            <td>asd</td>
+          </tr>
+        </div>
+      </tbody>
+    </table>
+  </div>
 </div>

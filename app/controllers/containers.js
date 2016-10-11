@@ -30,12 +30,13 @@ router.get('/list_containers', function(req,res,next)
 
     for( var i = 0; i< container_list.length; i++)
     {
+      console.log(container_list[i]);
       promises.push( new Promise(function( resolve,reject)
       {
         var options = {
           host: 'localhost',
           port: 8083,
-          path: '/'+container_list[i].registration_ID,
+          path: '/status/container/'+container_list[i].registration_ID,
           method: 'GET'
         };
 
@@ -68,47 +69,29 @@ router.get('/list_containers', function(req,res,next)
   });
 });
 
-router.get('/container_status/:container', function( req, resi, next)
+router.get('/test/listing', function (req, res, next)
 {
-  var container = req.params.container;
-  var data = "";
-  var options = {
-    host: '192.168.25.10',
-    port: 8083,
-    path: '/'+container,
-    method: 'GET'
-  };
-
-  var req = http.request(options, function (res)
+  db.Container.findAll( { limit: 10, order: [['port','DESC']]}).then
+  (function(container)
   {
-    console.log('STATUS: ' + res.statusCode);
-    console.log('HEADERS: ' + JSON.stringify(res.headers));
-    res.setEncoding('utf8');
-    res.on('data', function (chunk) {
-      console.log('BODY: ' + chunk);
-      console.log(chunk);
-      data = chunk;
-    });
-    res.on('end',function()
-    {
-      console.log("Over");
-      resi.send(data);
-    });
-  }).end();
-
+    console.log(container);
+    res.send(container);
+  });
 });
 
 /*
   It creates a container, both in the database and a container named after the user registration_ID.
   The creation of the registration_ID is left to nginx server block that is listening on port 8082.
  */
-router.post('/container', function (req, res, next)
+router.post('/create/container', function (req, res, next)
 {
+
   db.Container.findOrCreate
   ({
     where:
     {
-      registration_ID: req.body.reg_id,
+      port: 8090,
+      registration_ID: req.body.registration_id,
       name: req.body.name
     }
   }).then(function()
@@ -117,74 +100,54 @@ router.post('/container', function (req, res, next)
     ({
       where:
       {
-        registration_ID: req.body.reg_id
+        registration_ID: req.body.registration_id
       }
     }).then(function(container)
     {
       var options = {
-        host: '192.168.25.10',
-        port: 8082,
-        path: '/'+container.registration_ID,
+        host: 'localhost',
+        port: 8083,
+        path: '/start/container/'+container.registration_ID,
         method: 'GET'
       };
 
-      var req = http.request(options, function(res) {
-        console.log('STATUS: ' + res.statusCode);
-        console.log('HEADERS: ' + JSON.stringify(res.headers));
-        res.setEncoding('utf8');
-        res.on('data', function (chunk) {
+      var nginx_req = http.request(options, function(nginx_res) {
+        nginx_res.setEncoding('utf8');
+        nginx_res.on('data', function (chunk) {
           console.log('BODY: ' + chunk);
         });
       });
-      req.write("");
-      req.end();
+
+      nginx_req.end();
     });
   });
   res.end();
 });
 
-function getContainersStatus(container_list)
+router.post('/stop/container', function (req, res, next)
 {
-
-  var new_container_list = container_list;
-  var promises = [];
-
-  for( var i = 0; i< container_list.length; i++)
-  {
-    promises.push( new Promise(function( resolve,reject)
+  db.Container.findOne(
     {
+      where:
+      {
+        registration_ID: req.body.registration_id
+      }
+    }).then( function( container) {
       var options = {
         host: 'localhost',
         port: 8083,
-        path: '/'+container_list[i].registration_id,
+        path: '/stop/container/'+container.registration_ID,
         method: 'GET'
       };
 
-      var req = http.request(options, function (res)
-      {
-        console.log('STATUS: ' + res.statusCode);
-        console.log('HEADERS: ' + JSON.stringify(res.headers));
-        res.setEncoding('utf8');
-        res.on('data', function (chunk) {
-          console.log('BODY: ' + chunk);
-          console.log(chunk);
-          resolve
-          ({
-            data:chunk
-          });
+      var nginx_req = http.request(options, function(nginx_res) {
+        nginx_res.setEncoding('utf8');
+        nginx_res.on('data', function (chunk) {
+          console.log('Bodys: '+chunk);
         });
       });
+      nginx_req.end();
+    });
+  res.end();
+});
 
-      req.end();
-    }));
-  }
-  Promise.all(promises).then(function(allData)
-  {
-    console.log(allData);
-    for( var i = 0; i < container_list; i ++)
-    {
-      new_container_list[i].status = allData[i].data;
-      console.log("lol");
-    }
-  });
-};

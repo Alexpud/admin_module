@@ -11,7 +11,6 @@ angular.
         }).
         when('/containers', {
           template: '<container-list></container-list>'
-        }).
-      otherwise('/');
+        });
     }
   ]);

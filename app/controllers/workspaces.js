@@ -17,11 +17,29 @@ router.get('/list_workspaces', function (req, res, next)
   });
 });
 
+router.post('/create/workspace2', function( req, res, next)
+{
+  db.Workspace.findOrCreate
+  ({
+    where:
+    {
+      owner_ID: req.body.owner_id,
+      workspace_name: req.body.workspace_name,
+      workspace_id: req.body.workspace_id
+    }
+  }).then(function(container)
+  {
+    console.log("lol");
+  });
+  res.end();
+});
+
 //Creates a workspace
-router.post('/create', function(req, res, next)
+router.post('/create/workspace', function(req, res, next)
 {
   //According to the documentation, it tries to find the element in the database, if the database is not found,
   //it creates and saves the element.
+  var owner_id = req.body.owner_id;
   var workspace_name = req.body.workspace_name;
   var registration_id = req.body.registration_id;
   var workspace_stack = req.body.stacks;
