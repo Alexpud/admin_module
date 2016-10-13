@@ -17,7 +17,7 @@ router.get('/test', function( req, res, next)
   {
     db.Container.findAll(
       {
-        include:[{model:Workspace, as: 'asda'}]
+        include:[{model:db.Workspace}]
       }).then(function(list)
     {
       console.log(JSON.stringify(list));
@@ -140,7 +140,7 @@ router.post('/stop/container', function (req, res, next)
       }
   }).then( function( container)
     {
-      request_helper.make_request('GET',8083,'/stop/container',container.registration_ID);
+      request_helper.make_request('GET','localhost',8083,'/stop/container',container.registration_ID);
     });
   res.end();
 });

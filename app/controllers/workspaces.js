@@ -1,5 +1,5 @@
 var workspace_creation = require('../../public/js/workspace_helper');
-var workspace_helper= new workspace_creation();
+
 var http = require('http');
 var express = require('express'),
   router = express.Router(),
@@ -17,21 +17,16 @@ router.get('/list_workspaces', function (req, res, next)
   });
 });
 
-router.post('/create/workspace2', function( req, res, next)
+router.get('/create/workspace2', function( req, res, next)
 {
-  db.Workspace.findOrCreate
+  db.Workspace.findAll
   ({
-    where:
-    {
-      owner_ID: req.body.owner_id,
-      workspace_name: req.body.workspace_name,
-      workspace_id: req.body.workspace_id
-    }
-  }).then(function(container)
+    include: [{model: db.Container }]
+  }).then(function(result)
   {
-    console.log("lol");
+    console.log(result);
+    res.send(result);
   });
-  res.end();
 });
 
 //Creates a workspace
@@ -39,7 +34,7 @@ router.post('/create/workspace', function(req, res, next)
 {
   //According to the documentation, it tries to find the element in the database, if the database is not found,
   //it creates and saves the element.
-  var owner_id = req.body.owner_id;
+  /*var owner_id = req.body.owner_id;
   var workspace_name = req.body.workspace_name;
   var registration_id = req.body.registration_id;
   var workspace_stack = req.body.stacks;
@@ -52,8 +47,8 @@ router.post('/create/workspace', function(req, res, next)
       {
         where:
         {
-          registration_ID: registration_id,
-          workspace_name: workspace_name
+          owner_ID: "201110005300",
+          workspace_name: "teste"
         }
       })
     .then(function(workspace)
@@ -66,9 +61,9 @@ router.post('/create/workspace', function(req, res, next)
         if (workspace == null)
         {
           var options = {
-            host: '192.168.25.10',
-            port: 8098,
-            path: '/api/workspace?account=&attribute=stackId:'+workspace_stack,
+            host: '10.1.1.10',
+            port: 8090,
+            path: '/api/workspace?account=&attribute=stackId:cpp-default',
             method: 'POST',
             headers:
             {
@@ -85,12 +80,13 @@ router.post('/create/workspace', function(req, res, next)
               console.log('BODY: ' + chunk);
               var temp = JSON.parse(chunk);
               var workspace_id = temp.id;
-              create_workspace(registration_id,workspace_name,workspace_id,workspace_stack)
+              create_workspace("201110005300","teste","adasd","cpp-default")
             });
           });
-          workspace_helper.setWorkspaceName(workspace_name);
+          var workspace_helper= new workspace_creation();
+          workspace_helper.setWorkspaceName("teste");
           workspace_helper.setWorkspaceStack('FROM codenvy/cpp_gcc');
-          req.write(JSON.stringify(workspace.model));
+          req.write(JSON.stringify(workspace_helper.model));
           req.end();
           res.end();
         }
@@ -165,13 +161,14 @@ function create_workspace(registration_id,workspace_name,workspace_id,workspace_
     {
       where:
       {
-        registration_id: registration_id,
+        owner_ID: registration_id,
         workspace_name: workspace_name,
         workspace_id: workspace_id,
-        workspace_stac: workspace_stack
+        stack: workspace_stack,
+        ContainerRegistrationID: "201110005300"
       }
     }
-  ).success(function()
+  ).then(function()
     {
       console.log("sucess");
     }

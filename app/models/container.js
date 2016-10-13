@@ -18,7 +18,7 @@ module.exports = function (sequelize, DataTypes) {
         Container.hasMany(models.Workspace);
       }
     }
-  }).sync();
+  });
 
   return Container;
 };
