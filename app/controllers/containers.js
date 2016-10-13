@@ -1,4 +1,5 @@
-var workspace_creation = require('../../public/js/workspace_helper');
+var request = require('../../public/js/request_helper');
+var request_helper = new request();
 var http = require('http');
 var express = require('express'),
   router = express.Router(),
@@ -11,6 +12,18 @@ router.get('/container',function ( req, res, next)
 {
   res.render('container');
 });
+
+router.get('/test', function( req, res, next)
+  {
+    db.Container.findAll(
+      {
+        include:[{model:Workspace, as: 'asda'}]
+      }).then(function(list)
+    {
+      console.log(JSON.stringify(list));
+    });
+  }
+);
 
 /*
   First, it retrieves the containers list from the database then, it uses promises package to make
@@ -30,7 +43,6 @@ router.get('/list_containers', function(req,res,next)
 
     for( var i = 0; i< container_list.length; i++)
     {
-      console.log(container_list[i]);
       promises.push( new Promise(function( resolve,reject)
       {
         var options = {
@@ -43,8 +55,8 @@ router.get('/list_containers', function(req,res,next)
         var req = http.request(options, function (res)
         {
           res.setEncoding('utf8');
-          res.on('data', function (chunk) {
-            console.log(chunk);
+          res.on('data', function (chunk)
+          {
             resolve
             ({
               data:chunk
@@ -56,12 +68,13 @@ router.get('/list_containers', function(req,res,next)
     }
     Promise.all(promises).then(function(allData)
     {
-      for(var i = 0; i < container_list.length;i++)
+
+      for(var i = 0; i < container_list.length; i++)
       {
         new_container_list[i].status = allData[i].data;
       }
-
       return new_container_list;
+
     }).then(function(new_container_list)
     {
       res.send(new_container_list);
@@ -69,84 +82,65 @@ router.get('/list_containers', function(req,res,next)
   });
 });
 
-router.get('/test/listing', function (req, res, next)
+router.post('/create/container', function (req, res, next)
 {
-  db.Container.findAll( { limit: 10, order: [['port','DESC']]}).then
-  (function(container)
+  var new_container_port_value = 0;
+  /*
+    Returns a list ordered by the container port in descending order.
+   */
+  db.Container.findAll( { limit: 1, order: [['port','DESC']]}).then(function(container_list)
   {
-    console.log(container);
-    res.send(container);
+    if( container_list.length == 0)
+    {
+      new_container_port_value = 8090;
+    }
+    else //Grabs the biggest value, increase it by one
+    {
+      new_container_port_value = container_list[0].port + 1;
+    }
+  }).then(function()
+  {
+    db.Container.findOrCreate
+    ({
+      where:
+      {
+        port: new_container_port_value,
+        registration_ID: req.body.registration_id,
+        name: req.body.name
+      }
+    }).then(function ()
+    {
+      db.Container.findOne
+      ({
+        where:
+        {
+          registration_ID: req.body.registration_id
+        }
+      }).then(function (container)
+      {
+        request_helper.make_request('GET','localhost',8083,'/start/container',container.registration_ID);
+      });
+    });
   });
+  res.end();
 });
 
 /*
   It creates a container, both in the database and a container named after the user registration_ID.
   The creation of the registration_ID is left to nginx server block that is listening on port 8082.
  */
-router.post('/create/container', function (req, res, next)
-{
-
-  db.Container.findOrCreate
-  ({
-    where:
-    {
-      port: 8090,
-      registration_ID: req.body.registration_id,
-      name: req.body.name
-    }
-  }).then(function()
-  {
-    db.Container.findOne
-    ({
-      where:
-      {
-        registration_ID: req.body.registration_id
-      }
-    }).then(function(container)
-    {
-      var options = {
-        host: 'localhost',
-        port: 8083,
-        path: '/start/container/'+container.registration_ID,
-        method: 'GET'
-      };
-
-      var nginx_req = http.request(options, function(nginx_res) {
-        nginx_res.setEncoding('utf8');
-        nginx_res.on('data', function (chunk) {
-          console.log('BODY: ' + chunk);
-        });
-      });
-
-      nginx_req.end();
-    });
-  });
-  res.end();
-});
 
 router.post('/stop/container', function (req, res, next)
 {
-  db.Container.findOne(
-    {
+  db.Container.findOne
+  ({
       where:
       {
         registration_ID: req.body.registration_id
       }
-    }).then( function( container) {
-      var options = {
-        host: 'localhost',
-        port: 8083,
-        path: '/stop/container/'+container.registration_ID,
-        method: 'GET'
-      };
-
-      var nginx_req = http.request(options, function(nginx_res) {
-        nginx_res.setEncoding('utf8');
-        nginx_res.on('data', function (chunk) {
-          console.log('Bodys: '+chunk);
-        });
-      });
-      nginx_req.end();
+  }).then( function( container)
+    {
+      request_helper.make_request('GET',8083,'/stop/container',container.registration_ID);
     });
   res.end();
 });

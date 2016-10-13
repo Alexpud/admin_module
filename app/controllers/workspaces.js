@@ -1,4 +1,5 @@
 var workspace_creation = require('../../public/js/workspace_helper');
+var workspace_helper= new workspace_creation();
 var http = require('http');
 var express = require('express'),
   router = express.Router(),
@@ -6,7 +7,6 @@ var express = require('express'),
 module.exports = function (app) {
   app.use('/', router);
 };
-
 
 //Returns an array of jsons containing the tuples of workspace table
 router.get('/list_workspaces', function (req, res, next)
@@ -85,13 +85,11 @@ router.post('/create/workspace', function(req, res, next)
               console.log('BODY: ' + chunk);
               var temp = JSON.parse(chunk);
               var workspace_id = temp.id;
-              create_workspace(registration_id,workspace_name,workspace_id)
+              create_workspace(registration_id,workspace_name,workspace_id,workspace_stack)
             });
           });
-
-          var workspace = new workspace_creation();
-          workspace.setWorkspaceName(workspace_name);
-          workspace.setWorkspaceStack('FROM codenvy/cpp_gcc');
+          workspace_helper.setWorkspaceName(workspace_name);
+          workspace_helper.setWorkspaceStack('FROM codenvy/cpp_gcc');
           req.write(JSON.stringify(workspace.model));
           req.end();
           res.end();
@@ -160,4 +158,23 @@ router.delete('/workspaces',function(req, res, next)
   passed. With the name passed on the uri, nginx will try to find on the workspace database a tuple with the
   same name and from that tuple, extract the port where the container will run.
  */
+
+function create_workspace(registration_id,workspace_name,workspace_id,workspace_stack)
+{
+  db.Workspace.findOrCreate(
+    {
+      where:
+      {
+        registration_id: registration_id,
+        workspace_name: workspace_name,
+        workspace_id: workspace_id,
+        workspace_stac: workspace_stack
+      }
+    }
+  ).success(function()
+    {
+      console.log("sucess");
+    }
+  );
+}
 
