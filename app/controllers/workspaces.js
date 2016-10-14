@@ -17,16 +17,68 @@ router.get('/list_workspaces', function (req, res, next)
   });
 });
 
-router.get('/create/workspace2', function( req, res, next)
+router.get('/list/workspaces&containers', function ( req, res, next)
 {
+
   db.Workspace.findAll
   ({
-    include: [{model: db.Container }]
+    include: [{model: db.Container, where:
+    {
+      registration_ID: "201110005300"
+    }}]
   }).then(function(result)
   {
     console.log(result);
     res.send(result);
   });
+});
+
+router.post('/create/workspace2', function( req, res, next)
+{
+  var workspace_name = req.body.workspace_name;
+  var workspace_stack = req.body.workspace_stack;
+  var workspace_image = req.body.workspace_image;
+  var owner_id = req.body.owner_id;
+  var workspace_id = "";
+
+  db.Container.findOne({
+    where:
+    {
+      registration_ID: owner_id
+    }
+  }).then(function (container)
+  {
+    var port = container.port;
+    var options =
+    {
+        host: 'localhost',
+        port: port,
+        path: '/api/workspace?account=&attribute=stackId:'+workspace_stack,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      };
+
+      // Creates the request
+      var req = http.request(options, function(res)
+      {
+        console.log('STATUS: ' + res.statusCode);
+        console.log('HEADERS: ' + JSON.stringify(res.headers));
+        res.on('data', function (chunk) {
+          console.log('BODY: ' + chunk);
+          var temp = JSON.parse(chunk);
+          var workspace_id = temp.id;
+          create_workspace(owner_id,workspace_name,workspace_id,"cpp-default")
+        });
+      });
+      var workspace_helper= new workspace_creation();
+      workspace_helper.setWorkspaceName(workspace_name);
+      workspace_helper.setWorkspaceImage('cpp_gcc');
+      req.write(JSON.stringify(workspace_helper.model));
+      req.end();
+      res.end();
+
+  });
+  res.end();
 });
 
 //Creates a workspace
@@ -165,7 +217,7 @@ function create_workspace(registration_id,workspace_name,workspace_id,workspace_
         workspace_name: workspace_name,
         workspace_id: workspace_id,
         stack: workspace_stack,
-        ContainerRegistrationID: "201110005300"
+        ContainerRegistrationID: registration_id
       }
     }
   ).then(function()

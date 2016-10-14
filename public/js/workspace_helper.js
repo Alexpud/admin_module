@@ -19,7 +19,7 @@ var workspace = function ()
             "source":
             {
               "type":"dockerfile",
-              "content":""
+              "content":"FROM codenvy/"
 
             },
             "servers":[],
@@ -27,7 +27,7 @@ var workspace = function ()
             "dev":true,
             "limits":
             {
-              "ram":1000
+              "ram":512
             },
             "name":"default",
             "type":"docker",
@@ -41,14 +41,15 @@ var workspace = function ()
     "description":null
   };
 
+
   this.setWorkspaceName = function(name)
   {
     this.model.name = name;
   };
 
-  this.setWorkspaceStack = function(stack)
+  this.setWorkspaceImage = function(image)
   {
-    this.model.environments[0].machineConfigs[0].source.content = stack;
+    this.model.environments[0].machineConfigs[0].source.content = image;
   };
 };
 

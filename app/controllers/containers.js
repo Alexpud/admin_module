@@ -8,11 +8,6 @@ module.exports = function (app) {
   app.use('/', router);
 };
 
-router.get('/container',function ( req, res, next)
-{
-  res.render('container');
-});
-
 router.get('/test', function( req, res, next)
   {
     db.Container.findAll(
@@ -145,3 +140,19 @@ router.post('/stop/container', function (req, res, next)
   res.end();
 });
 
+router.delete('/delete/container', function(req,res,next)
+{
+  db.Container.findOne({
+    where:
+    {
+      registration_ID: req.body.registration_ID
+    }
+  }).then(function(container)
+  {
+    container.destroy({force: true}).on('success',function(msg)
+    {
+      console.log(msg);
+    })
+  });
+  res.end();
+});
