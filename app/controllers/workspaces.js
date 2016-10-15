@@ -1,15 +1,17 @@
 var workspace_creation = require('../../public/js/workspace_helper');
+var request = require('../../public/js/request_helper');
+var request_helper = new request();
 
 var http = require('http');
 var express = require('express'),
   router = express.Router(),
   db = require('../models');
 module.exports = function (app) {
-  app.use('/', router);
+  app.use('/api', router);
 };
 
 //Returns an array of jsons containing the tuples of workspace table
-router.get('/list_workspaces', function (req, res, next)
+router.get('/workspace/list', function (req, res, next)
 {
   db.Workspace.findAll( {raw:true} ).then( function (workspace_list)
   {
@@ -17,23 +19,24 @@ router.get('/list_workspaces', function (req, res, next)
   });
 });
 
-router.get('/list/workspaces&containers', function ( req, res, next)
+router.get('/list/workspaces&containers/:id', function ( req, res, next)
 {
-
   db.Workspace.findAll
   ({
-    include: [{model: db.Container, where:
-    {
-      registration_ID: "201110005300"
-    }}]
+
+    include: [{
+      model: db.Container,
+      where: { registration_ID: req.params.id }
+    }]
+
   }).then(function(result)
   {
-    console.log(result);
     res.send(result);
   });
 });
 
-router.post('/create/workspace2', function( req, res, next)
+
+router.post('/workspace/create', function( req, res, next)
 {
   var workspace_name = req.body.workspace_name;
   var workspace_stack = req.body.workspace_stack;
@@ -42,10 +45,7 @@ router.post('/create/workspace2', function( req, res, next)
   var workspace_id = "";
 
   db.Container.findOne({
-    where:
-    {
-      registration_ID: owner_id
-    }
+    where: { registration_ID: owner_id }
   }).then(function (container)
   {
     var port = container.port;
@@ -61,8 +61,6 @@ router.post('/create/workspace2', function( req, res, next)
       // Creates the request
       var req = http.request(options, function(res)
       {
-        console.log('STATUS: ' + res.statusCode);
-        console.log('HEADERS: ' + JSON.stringify(res.headers));
         res.on('data', function (chunk) {
           console.log('BODY: ' + chunk);
           var temp = JSON.parse(chunk);
@@ -76,128 +74,125 @@ router.post('/create/workspace2', function( req, res, next)
       req.write(JSON.stringify(workspace_helper.model));
       req.end();
       res.end();
-
   });
   res.end();
 });
 
-//Creates a workspace
-router.post('/create/workspace', function(req, res, next)
-{
-  //According to the documentation, it tries to find the element in the database, if the database is not found,
-  //it creates and saves the element.
-  /*var owner_id = req.body.owner_id;
-  var workspace_name = req.body.workspace_name;
-  var registration_id = req.body.registration_id;
-  var workspace_stack = req.body.stacks;
-  /*
-    It searches for an already existing entry in the database for the workspace belonging to the user, which
-    is identified by it's registration_id.
-  */
-  db.Workspace
-    .findOne(
-      {
-        where:
-        {
-          owner_ID: "201110005300",
-          workspace_name: "teste"
-        }
-      })
-    .then(function(workspace)
-      {
-        /* There is no workspace for the user, so we can create an entry for the user in the database and
-            create a workspace for him. We will only add the entry after we create the container, because
-            the response to the creation of the container, JSON, contains the id of the user container which
-            will be useful for further operations.
-        */
-        if (workspace == null)
-        {
-          var options = {
-            host: '10.1.1.10',
-            port: 8090,
-            path: '/api/workspace?account=&attribute=stackId:cpp-default',
-            method: 'POST',
-            headers:
-            {
-              'Content-Type': 'application/json'
-            }
-          };
-
-          // Creates the request
-          var req = http.request(options, function(res)
-          {
-            console.log('STATUS: ' + res.statusCode);
-            console.log('HEADERS: ' + JSON.stringify(res.headers));
-            res.on('data', function (chunk) {
-              console.log('BODY: ' + chunk);
-              var temp = JSON.parse(chunk);
-              var workspace_id = temp.id;
-              create_workspace("201110005300","teste","adasd","cpp-default")
-            });
-          });
-          var workspace_helper= new workspace_creation();
-          workspace_helper.setWorkspaceName("teste");
-          workspace_helper.setWorkspaceStack('FROM codenvy/cpp_gcc');
-          req.write(JSON.stringify(workspace_helper.model));
-          req.end();
-          res.end();
-        }
-
-        //User already have a workspace
-        else
-        {
-          console.log("workspace already exists");
-          res.render("workspaces",{});
-        }
-      });
-  res.end();
-});
 /*
   It receives a workspace_id, since i don't have access to authentication at the moment, i used a default value.
   Then, it sends a request with this workspace name to the che instance.
   Again, the port of the che instance is defaulted to 8098 because of tests.
  */
-router.post('/start', function( req, res, next)
+
+
+router.post('/workspace/start', function( req, res, next)
 {
-  db.Workspace.findOne(
+  db.Workspace.findOne({
+    where:
+    {
+      workspace_id: req.body.workspace_id,
+      include: [{ model: db.Container,
+        where: { registration_ID: req.body.owner_id }
+      }]
+    }
+  }).then( function (workspace)
+  {
+    var promises = [];
+    promises.push(new Promise(function(resolve,reject)
+    {
+      console.log(workspace.registration_ID);
+      var options = {
+        host: 'localhost',
+        port: workspace.Container.port,
+        path: '/api/workspace/' + workspace.workspace_id + '/runtime?environment=default',
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+      };
+
+      var req = http.request(options, function (res) {
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+          resolve({data:chunk});
+        });
+      });
+      req.write("");
+    }));
+    Promise.all(promises).then(function(result)
+    {
+      res.send(result);
+    });
+  });
+  res.end();
+});
+
+router.delete('/workspace/delete',function(req, res, next)
+{
+  var promises = [];
+  var result = "";
+  promises.push(new Promise(function(resolve,reject)
+  {
+    var options =
+    {
+      host: "localhost",
+      port: 3000,
+      path: "/api/container/status/"+req.body.owner_id,
+      method: 'GET'
+    };
+
+    var reqs = http.request(options, function (res) {
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+        resolve({status: chunk});
+      });
+    });
+    reqs.end();
+  }));
+
+  Promise.all(promises).then(function (allData)
+  {
+    console.log(allData);
+    if(allData.data == "Running")
+    {
+      db.Workspace.findOne({
+        where:
+        {
+          owner_ID: req.body.owner_id
+        },
+        include: [{ model: db.Container,
+          where: { registration_ID: req.body.owner_id }
+        }]
+      }).then(function(workspace)
+      {
+        var container_port = workspace.Container.port;
+        request_helper.make_request("delete","localhost",container_port,"/api/workspace/",workspace.workspace_id);
+        workspace.destroy({force: true}).on('success',function(msg)
+        {
+          console.log(msg);
+        })
+      });
+    }
+    else
+    {
+      res.send({"error":allData[0]});
+    }
+  });
+
+  /*db.Workspace.findOne(
     {
       where:
       {
-        //It is a sample works
-        workspace_id: "workspaceomy4prvny0gism71"
-      }
-    }
-  ).then( function (workspace)
-  {
-    console.log(workspace.registration_ID);
-    var options = {
-      host: '192.168.25.10',
-      port: 8098,
-      path: '/api/workspace/'+workspace.workspace_id+'/runtime?environment=default',
-      method: 'POST',
-      headers:
+        owner_ID: req.body.owner_id,
+      },
+      include: [{model: db.Container, where:
       {
-        'Content-Type': 'application/json'
-      }
-    };
+        registration_ID: req.body.owner_id
+      }}]
+    }).then(function(workspace)
+    {
+      var container_port = workspace.Container.port;
+      request_helper.make_request("delete","localhost",container_port,"/api/workspace/",workspace.workspace_id);
 
-    var req = http.request(options, function(res) {
-      console.log('STATUS: ' + res.statusCode);
-      console.log('HEADERS: ' + JSON.stringify(res.headers));
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-        console.log('BODY: ' + chunk);
-      });
-    });
-    req.write("");
-    req.end();
-    res.end();
-  });
-
-});
-
-router.delete('/workspaces',function(req, res, next)
-{
+    });*/
 });
 
 /*

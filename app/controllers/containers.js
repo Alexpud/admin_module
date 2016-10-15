@@ -5,7 +5,7 @@ var express = require('express'),
   router = express.Router(),
   db = require('../models');
 module.exports = function (app) {
-  app.use('/', router);
+  app.use('/api', router);
 };
 
 router.get('/test', function( req, res, next)
@@ -29,7 +29,7 @@ router.get('/test', function( req, res, next)
   I am using promises because it allows me to wait for all the requests inside the list promises to finish,
   then it executes an action on Promises.all.
  */
-router.get('/list_containers', function(req,res,next)
+router.get('/container/list', function(req,res,next)
 {
   db.Container.findAll({raw:true}).then( function(container_list)
   {
@@ -43,7 +43,7 @@ router.get('/list_containers', function(req,res,next)
         var options = {
           host: 'localhost',
           port: 8083,
-          path: '/status/container/'+container_list[i].registration_ID,
+          path: '/container/status/'+container_list[i].registration_ID,
           method: 'GET'
         };
 
@@ -52,10 +52,7 @@ router.get('/list_containers', function(req,res,next)
           res.setEncoding('utf8');
           res.on('data', function (chunk)
           {
-            resolve
-            ({
-              data:chunk
-            });
+            resolve({ data:chunk });
           });
         });
         req.end();
@@ -77,7 +74,7 @@ router.get('/list_containers', function(req,res,next)
   });
 });
 
-router.post('/create/container', function (req, res, next)
+router.post('/container/create', function (req, res, next)
 {
   var new_container_port_value = 0;
   /*
@@ -125,7 +122,7 @@ router.post('/create/container', function (req, res, next)
   The creation of the registration_ID is left to nginx server block that is listening on port 8082.
  */
 
-router.post('/stop/container', function (req, res, next)
+router.post('/container/stop', function (req, res, next)
 {
   db.Container.findOne
   ({
@@ -140,7 +137,35 @@ router.post('/stop/container', function (req, res, next)
   res.end();
 });
 
-router.delete('/delete/container', function(req,res,next)
+router.get('/container/status/:id',function(req,res,next)
+{
+  promises = [];
+  promises.push(new Promise(function(resolve,reject)
+  {
+    var options =
+    {
+      host: "localhost",
+      port: 8083,
+      path: "/container/status/"+req.params.id,
+      method: 'GET'
+    };
+
+    var reqs = http.request(options, function (res) {
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+        resolve({status: chunk});
+      });
+    });
+    reqs.end();
+  }));
+  Promise.all(promises).then(function(data)
+  {
+    res.send(data[0]);
+  });
+});
+
+
+router.delete('/container/delete', function(req,res,next)
 {
   db.Container.findOne({
     where:

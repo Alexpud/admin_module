@@ -6,8 +6,8 @@ var workspace = require('./workspace');
 module.exports = function (sequelize, DataTypes) {
 
   var Container = sequelize.define('Container', {
-    registration_ID: { type: DataTypes.STRING, allowNull: false, primaryKey: true },
-    port: { type: DataTypes.INTEGER,primaryKey: true},
+    registration_ID: { type: DataTypes.STRING, allowNull: false, primaryKey: true, unique:true },
+    port: { type: DataTypes.INTEGER, primaryKey: true, unique: true},
     name: { type: DataTypes.STRING}
 
   }, {
@@ -15,7 +15,7 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         // example on how to add relations
         // Article.hasMany(models.Comments);
-        Container.hasMany(models.Workspace,{onDelete: 'CASCADE',hooks:true});
+        Container.hasMany(models.Workspace,{onDelete: 'CASCADE', hooks:true});
       }
     }
   });
