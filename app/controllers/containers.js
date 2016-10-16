@@ -1,3 +1,4 @@
+const exec = require('child_process').exec;
 var request = require('../../public/js/request_helper');
 var request_helper = new request();
 var http = require('http');
@@ -8,68 +9,67 @@ module.exports = function (app) {
   app.use('/api', router);
 };
 
-router.get('/test', function( req, res, next)
-  {
-    db.Container.findAll(
-      {
-        include:[{model:db.Workspace}]
-      }).then(function(list)
-    {
-      console.log(JSON.stringify(list));
-    });
-  }
-);
-
 /*
-  First, it retrieves the containers list from the database then, it uses promises package to make
-  http requests to nginx for every container registration_ID, and creating a new JSON array with the
-  previous container list but with a new value, the status of the  container which is obtained as
-  a response from nginx.
+ First, it retrieves the containers list from the database then, it uses promises to execute the bash script
+ responsible for OS operations with docker, actions like: start, stop, status and create.
 
-  I am using promises because it allows me to wait for all the requests inside the list promises to finish,
-  then it executes an action on Promises.all.
+ I am using promises because it allows me to wait for all the requests inside the list promises to finish,
+ then it executes an action on Promises.all.
  */
 router.get('/container/list', function(req,res,next)
 {
-  db.Container.findAll({raw:true}).then( function(container_list)
+  db.Container.all({raw:true}).then( function(container_list)
   {
     var new_container_list = container_list;
     var promises = [];
 
-    for( var i = 0; i< container_list.length; i++)
-    {
-      promises.push( new Promise(function( resolve,reject)
+    for (var i = 0; i < container_list.length; i++) {
+      promises.push(new Promise(function (resolve, reject)
       {
-        var options = {
-          host: 'localhost',
-          port: 8083,
-          path: '/container/status/'+container_list[i].registration_ID,
-          method: 'GET'
-        };
-
-        var req = http.request(options, function (res)
-        {
-          res.setEncoding('utf8');
-          res.on('data', function (chunk)
+        exec("./public/bash/che_helper_functions.sh status " + container_list[i].registration_ID,
+          function(err,stdout,stderr)
           {
-            resolve({ data:chunk });
+            resolve({status:stdout});
           });
-        });
-        req.end();
       }));
     }
-    Promise.all(promises).then(function(allData)
+    Promise.all(promises).then(function (allData)
     {
-
-      for(var i = 0; i < container_list.length; i++)
+      var temp = "";
+      for(var i = 0; i < container_list.length;i++)
       {
-        new_container_list[i].status = allData[i].data;
+        var temp = allData[i].status.replace('\n', "");
+        container_list[i].status = temp;
       }
-      return new_container_list;
-
-    }).then(function(new_container_list)
+      return container_list;
+    }).then(function(container_list)
     {
-      res.send(new_container_list);
+      res.send(container_list);
+    });
+  });
+});
+
+router.post('/container/start', function(req, res, next)
+{
+  db.Container.findOne({
+    where:
+    {
+      registration_ID: req.body.registration_id
+    }
+  }).then(function(container)
+  {
+    var promise = new Promise(function(resolve,reject)
+    {
+      exec("./public/bash/che_helper_functions.sh start " + container.registration_ID,
+        function(err,stdout,stderr)
+        {
+          resolve({response:stdout});
+        });
+    }).then(function(data)
+    {
+      console.log(data);
+      var temp = data.response.replace('\n', "");
+      res.send({response:temp});
     });
   });
 });
@@ -104,13 +104,22 @@ router.post('/container/create', function (req, res, next)
     {
       db.Container.findOne
       ({
-        where:
-        {
-          registration_ID: req.body.registration_id
-        }
+        where: { registration_ID: req.body.registration_id }
       }).then(function (container)
       {
-        request_helper.make_request('GET','localhost',8083,'/start/container',container.registration_ID);
+        var promise = new Promise(function(resolve,reject)
+        {
+          exec("./public/bash/che_helper_functions.sh create " + container.registration_ID + " " + container.port,
+            function(err,stdout,stderr)
+            {
+              console.log(stdout);
+              resolve({status:stdout});
+            });
+        }).then(function(data)
+        {
+          var temp = data.response.replace('\n', "");
+          res.send({response:temp});
+        });
       });
     });
   });
@@ -126,41 +135,46 @@ router.post('/container/stop', function (req, res, next)
 {
   db.Container.findOne
   ({
-      where:
-      {
-        registration_ID: req.body.registration_id
-      }
+    where: { registration_ID: req.body.registration_id }
   }).then( function( container)
     {
-      request_helper.make_request('GET','localhost',8083,'/stop/container',container.registration_ID);
+      var promise = new Promise(function(resolve,reject)
+      {
+        exec("./public/bash/che_helper_functions.sh stop " + container.registration_ID,
+          function(err,stdout,stderr)
+          {
+            resolve({response:stdout});
+          });
+      }).then(function(data)
+      {
+        console.log(data);
+        var temp = data.response.replace('\n', "");
+        res.send({response:temp});
+      });
     });
-  res.end();
 });
 
 router.get('/container/status/:id',function(req,res,next)
 {
-  promises = [];
-  promises.push(new Promise(function(resolve,reject)
-  {
-    var options =
+  db.Container.findOne({
+    where:
     {
-      host: "localhost",
-      port: 8083,
-      path: "/container/status/"+req.params.id,
-      method: 'GET'
-    };
-
-    var reqs = http.request(options, function (res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-        resolve({status: chunk});
-      });
-    });
-    reqs.end();
-  }));
-  Promise.all(promises).then(function(data)
+      registration_ID: req.params.id
+    }
+  }).then(function(container)
   {
-    res.send(data[0]);
+    var promise = new Promise(function (resolve, reject)
+    {
+      exec("./public/bash/che_helper_functions.sh status " + container.registration_ID,
+        function(err,stdout,stderr)
+        {
+          resolve({status:stdout});
+        });
+    }).then(function(data)
+    {
+      var temp = data.status.replace('\n', "");
+      res.send({status:temp});
+    });
   });
 });
 
@@ -176,8 +190,18 @@ router.delete('/container/delete', function(req,res,next)
   {
     container.destroy({force: true}).on('success',function(msg)
     {
-      console.log(msg);
+      var promise = new Promise(function (resolve, reject)
+      {
+        exec("./public/bash/che_helper_functions.sh delete " + container.registration_ID,
+          function(err,stdout,stderr)
+          {
+            resolve({response:stdout});
+          });
+      }).then(function(data)
+      {
+        var temp = data.response.replace('\n', "");
+        res.send({status:temp});
+      });
     })
   });
-  res.end();
 });
