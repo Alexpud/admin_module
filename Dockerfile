@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu
 MAINTAINER Alexandre Maciel <alexandre.maciele@gmail.com>
 
 RUN apt-get update && \

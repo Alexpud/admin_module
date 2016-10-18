@@ -1,0 +1,32 @@
+{
+  "defaultEnv":"default",
+  "environments":
+  [{
+    "machineConfigs":
+    [{
+      "source":
+      {
+        "type":"dockerfile",
+        "content":"FROM codenvy/cpp_gcc"
+      },
+      "servers":[],
+      "envVariables":{},
+      "limits":{"ram":800},
+      "dev":true,
+      "name":"default",
+      "type":"docker",
+      "links":[]
+    }],
+    "name":"default"
+  }],
+  "commands":
+  [{
+    "commandLine":"cd ${current.project.path} && make && ./a.out",
+    "name":"run",
+    "type":"custom",
+    "attributes":{}
+  }],
+  "projects":[],
+  "name":"default",
+  "links":[],
+  "description":null}

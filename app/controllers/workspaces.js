@@ -1,4 +1,5 @@
 var workspace_creation = require('../../public/js/workspace_helper');
+const exec = require('child_process').exec;
 var request = require('../../public/js/request_helper');
 var request_helper = new request();
 
@@ -23,7 +24,10 @@ router.get('/list/workspaces&containers/:id', function ( req, res, next)
 {
   db.Workspace.findAll
   ({
-
+    where:
+    {
+      "owner_id":"201110005300"
+    },
     include: [{
       model: db.Container,
       where: { registration_ID: req.params.id }
@@ -51,7 +55,7 @@ router.post('/workspace/create', function( req, res, next)
     var port = container.port;
     var options =
     {
-        host: 'localhost',
+        host: "192.168.25.10",
         port: port,
         path: '/api/workspace?account=&attribute=stackId:'+workspace_stack,
         method: 'POST',
@@ -62,18 +66,15 @@ router.post('/workspace/create', function( req, res, next)
       var req = http.request(options, function(res)
       {
         res.on('data', function (chunk) {
-          console.log('BODY: ' + chunk);
           var temp = JSON.parse(chunk);
           var workspace_id = temp.id;
-          create_workspace(owner_id,workspace_name,workspace_id,"cpp-default")
+          create_workspace(owner_id,workspace_name,workspace_id,workspace_stack);
         });
       });
-      var workspace_helper= new workspace_creation();
+      var workspace_helper= new workspace_creation(workspace_stack);
       workspace_helper.setWorkspaceName(workspace_name);
-      workspace_helper.setWorkspaceImage('cpp_gcc');
       req.write(JSON.stringify(workspace_helper.model));
       req.end();
-      res.end();
   });
   res.end();
 });
@@ -90,85 +91,110 @@ router.post('/workspace/start', function( req, res, next)
   db.Workspace.findOne({
     where:
     {
-      workspace_id: req.body.workspace_id,
-      include: [{ model: db.Container,
-        where: { registration_ID: req.body.owner_id }
-      }]
-    }
+      workspace_name: req.body.workspace_name
+    },
+    include: [{ model: db.Container,
+      where: { registration_ID: req.body.owner_id }
+    }]
   }).then( function (workspace)
   {
-    var promises = [];
-    promises.push(new Promise(function(resolve,reject)
-    {
-      console.log(workspace.registration_ID);
-      var options = {
-        host: 'localhost',
-        port: workspace.Container.port,
-        path: '/api/workspace/' + workspace.workspace_id + '/runtime?environment=default',
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'}
-      };
-
-      var req = http.request(options, function (res) {
-        res.setEncoding('utf8');
-        res.on('data', function (chunk) {
-          resolve({data:chunk});
+    var container_port = workspace.Container.port;
+    var promise = new Promise(function (resolve, reject) {
+      exec('curl -H "Content-Type: application/json" --data "" -X "POST"  http://localhost:' + container_port + '/api/workspace/'+workspace.workspace_id+'/runtime?environment=default',
+        function (err, stdout, stderr) {
+          resolve({response: stdout});
         });
-      });
-      req.write("");
-    }));
-    Promise.all(promises).then(function(result)
+    }).then(function(data)
     {
-      res.send(result);
+      if(data.response.length == 0)
+      {
+        res.send({result:"Workspace was successfully started"});
+      }
+      else
+      {
+        res.send({result: data.response});
+      }
     });
   });
-  res.end();
 });
+
+router.delete('/workspace/stop', function(req,res,next)
+{
+  db.Workspace.findOne({
+    where:
+    { workspace_name: req.body.workspace_name },
+    include: [{ model: db.Container,
+      where: { registration_ID: req.body.owner_id }
+    }]
+  }).then(function(workspace)
+  {
+    var promise = new Promise(function (resolve, reject)
+    {
+      var container_port = workspace.Container.port;
+      exec('curl -H "Content-Type: application/json" -X "DELETE" http://localhost:'+container_port+'/api/workspace/'+workspace.workspace_id+'/runtime',
+        function(err,stdout,stderr)
+        {
+          resolve({response:stdout});
+        });
+    }).then(function (data)
+    {
+      if(data.response.length == 0)
+      {
+        res.send({result:"Workspace was successfully stopped"});
+      }
+      else
+      {
+        res.send({result: data.response});
+      }
+    });
+    //request_helper.make_request("DELETE","localhost",workspace.Container.port,"/api/workspace/"+workspace.workspace_id+"/runtime","");
+  });
+
+});
+
 
 router.delete('/workspace/delete',function(req, res, next)
 {
-  var promises = [];
-  var result = "";
-  promises.push(new Promise(function(resolve,reject)
+  var promise = new Promise(function (resolve, reject)
   {
-    var options =
-    {
-      host: "localhost",
-      port: 3000,
-      path: "/api/container/status/"+req.body.owner_id,
-      method: 'GET'
-    };
-
-    var reqs = http.request(options, function (res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-        resolve({status: chunk});
+    exec("./public/bash/che_helper_functions.sh status " + req.body.owner_id,
+      function(err,stdout,stderr)
+      {
+        resolve({status:stdout});
       });
-    });
-    reqs.end();
-  }));
-
-  Promise.all(promises).then(function (allData)
+  }).then(function(data)
   {
-    console.log(allData);
-    if(allData.data == "Running")
+    var status = data.status.replace('\n', "");
+    if(status  == "Running")
     {
       db.Workspace.findOne({
         where:
-        {
-          owner_ID: req.body.owner_id
-        },
+        { workspace_name: req.body.workspace_name },
         include: [{ model: db.Container,
           where: { registration_ID: req.body.owner_id }
         }]
       }).then(function(workspace)
       {
-        var container_port = workspace.Container.port;
-        request_helper.make_request("delete","localhost",container_port,"/api/workspace/",workspace.workspace_id);
-        workspace.destroy({force: true}).on('success',function(msg)
+        var promise = new Promise(function (resolve, reject)
         {
-          console.log(msg);
-        })
+          var container_port = workspace.Container.port;
+          exec('curl -H "Content-Type: application/json" -X "DELETE" http://localhost:'+container_port+'/api/workspace/'+workspace.workspace_id,
+            function(err,stdout,stderr)
+            {
+              resolve({response:stdout});
+            });
+        }).then(function (data)
+        {
+          if(data.response.length == 0)
+          {
+            res.send({result:"Workspace was successfully deleted"});
+            workspace.destroy();
+          }
+          else
+          {
+            res.send({result:data.response});
+          }
+        });
       });
     }
     else
@@ -176,23 +202,6 @@ router.delete('/workspace/delete',function(req, res, next)
       res.send({"error":allData[0]});
     }
   });
-
-  /*db.Workspace.findOne(
-    {
-      where:
-      {
-        owner_ID: req.body.owner_id,
-      },
-      include: [{model: db.Container, where:
-      {
-        registration_ID: req.body.owner_id
-      }}]
-    }).then(function(workspace)
-    {
-      var container_port = workspace.Container.port;
-      request_helper.make_request("delete","localhost",container_port,"/api/workspace/",workspace.workspace_id);
-
-    });*/
 });
 
 /*

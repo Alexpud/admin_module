@@ -1,47 +1,10 @@
 /**
  * Created by boss on 28/09/16.
  */
-var model = require('../jsons/workspace_creation.json');
-var workspace = function ()
+
+var workspace = function (stack)
 {
-  this.model = {"commands":[
-    {
-      "commandLine":"cd ${current.project.path} && make && ./a.out",
-      "name":"run",
-      "type":"custom",
-      "attributes":{}
-    }],
-    "projects":[],
-    "environments":[
-      {
-        "machineConfigs":[
-          {
-            "source":
-            {
-              "type":"dockerfile",
-              "content":"FROM codenvy/"
-
-            },
-            "servers":[],
-            "envVariables":{},
-            "dev":true,
-            "limits":
-            {
-              "ram":512
-            },
-            "name":"default",
-            "type":"docker",
-            "links":[]
-          }],
-        "name":"default"
-      }],
-    "defaultEnv":"default",
-    "name":"Test",
-    "links":[],
-    "description":null
-  };
-
-
+  this.model = require("../jsons/"+stack+"_workspace_creation.json");
   this.setWorkspaceName = function(name)
   {
     this.model.name = name;

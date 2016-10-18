@@ -202,6 +202,6 @@ router.delete('/container/delete', function(req,res,next)
         var temp = data.response.replace('\n', "");
         res.send({status:temp});
       });
-    })
+    });
   });
 });

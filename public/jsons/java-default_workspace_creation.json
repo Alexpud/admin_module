@@ -1,0 +1,33 @@
+{
+  "defaultEnv":"default",
+  "environments":
+  [{
+    "machineConfigs":
+    [{
+      "source":
+      {
+        "type":"dockerfile",
+        "content":"FROM codenvy/ubuntu_jdk8"
+      },
+      "servers":[],
+      "envVariables":{},
+      "limits":{"ram":1000},
+      "dev":true,
+      "name": "default",
+      "type":"docker",
+      "links":[]
+    }],
+    "name":"default"
+  }],
+  "commands":
+  [{
+    "commandLine":"mvn clean install -f ${current.project.path}",
+    "name":"build",
+    "type":"mvn",
+    "attributes":{}
+  }],
+  "projects":[],
+  "name":"wksp-vbtl",
+  "links":[],
+  "description":null
+}
