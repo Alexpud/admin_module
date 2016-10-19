@@ -30,43 +30,67 @@ router.post('/workspaces', function( req, res, next)
     where: { registration_ID: owner_id }
   }).then(function (container)
   {
-    if ( container != null ) {
-      var promise = new Promise(function (resolve, reject) {
-        var port = container.port;
-        var options =
-        {
-          host: "localhost",
-          port: port,
-          path: '/api/workspace?account=&attribute=stackId:' + workspace_stack,
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'}
-        };
-
-        // Creates the request
-        var req = http.request(options, function (res) {
-          res.on('data', function (chunk) {
-            resolve({response: chunk});
-            var temp = JSON.parse(chunk);
-            workspace_id = temp.id;
+    if ( container != null )
+    {
+      //Makes a get request to the API to check if the container is running
+      var promise = new Promise(function(resolve,reject)
+      {
+        exec('curl -sb -H "Accept: application/json" -X GET http://localhost:3000/api/containers/'+container.registration_ID,
+          function (err, stdout, stderr) {
+            resolve({response: stdout});
           });
-        });
-        var workspace_helper = new workspace_creation(workspace_stack);
-        workspace_helper.setWorkspaceName(workspace_name);
-        req.write(JSON.stringify(workspace_helper.model));
-        req.end();
-      }).then(function (data) {
-        x = data;
-        db.Workspace.create({
-          owner_ID: owner_id,
-          workspace_name: workspace_name,
-          workspace_id: workspace_id,
-          stack: workspace_stack,
-          ContainerRegistrationID: owner_id
-        }).then(function () {
-          res.send({response: "Workspace was successfully created"});
-        }).catch(function (error) {
-          res.send({response: {error: error.errors}});
-        });
+      }).then(function(data)
+      {
+        //It returns a container JSON with it's workspaces.
+        var response = (JSON.parse(data.response));
+        if (response.status == "Running")
+        {
+          var promise = new Promise(function (resolve, reject) {
+            var port = container.port;
+            var options =
+            {
+              host: "localhost",
+              port: port,
+              path: '/api/workspace?account=&attribute=stackId:' + workspace_stack,
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'}
+            };
+
+            // Creates the request
+            var req = http.request(options, function (res) {
+              res.on('data', function (chunk) {
+                resolve({response: chunk});
+                var temp = JSON.parse(chunk);
+                workspace_id = temp.id;
+              });
+            });
+            var workspace_helper = new workspace_creation(workspace_stack);
+            workspace_helper.setWorkspaceName(workspace_name);
+            req.write(JSON.stringify(workspace_helper.model));
+            req.end();
+          }).then(function (data)
+          {
+            db.Workspace.create
+            ({
+              owner_ID: owner_id,
+              workspace_name: workspace_name,
+              workspace_id: workspace_id,
+              stack: workspace_stack,
+              ContainerRegistrationID: owner_id
+            }).then(function () {
+              res.status(201);
+              res.send({response: "Workspace was successfully created"});
+            }).catch(function (error) {
+              res.status(409);
+              res.send({response: {error: error.errors}});
+            });
+          });
+        }
+        else
+        {
+          res.status(500);
+          res.send({Error: "Container must be running"});
+        }
       });
     }
     else

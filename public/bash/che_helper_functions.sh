@@ -57,11 +57,21 @@ function check_docker_container
 function create
 {
 	#echo "Attempting to create the container $1"
-	status=$(check_docker_container $1)
-	CREATION_RESULT=$( docker run -v /var/run/docker.sock:/var/run/docker.sock -e CHE_HOST_IP=$MACHINE_IP -e CHE_DATA_FOLDER=/home/user/$1 -e CHE_PORT=$2 codenvy/che-launcher start)
-	RENAME_RESULT=$(docker rename che-server $1)
-	echo $CREATION_RESULT
-	exit 1
+	STATUS=$( check_docker_container $1)
+	if [ $STATUS == "Non existent" ]; then
+    CREATION_RESULT=$( docker run -v /var/run/docker.sock:/var/run/docker.sock -e CHE_HOST_IP=$MACHINE_IP -e CHE_DATA_FOLDER=/home/user/$1 -e CHE_PORT=$2 codenvy/che-launcher start )
+    CHECK=$(echo $CREATION_RESULT | grep -c ERROR)  #Counts the occurrences of the pattern, ERROR
+    if [ $CHECK -eq 0 ]; then #If there was an error, CHECK should not be equal to 0
+      RENAME_RESULT=$( docker rename che-server $1 )
+      echo $RENAME_RESULT
+    else
+      echo "Container exists"
+      exit 1
+    fi
+  else
+    echo "Container exists"
+    exit 1
+  fi
 }
 #---------------------------------------------------------------------------------------------------------#
 #----------------------------------Starts the user che container -----------------------------------------#
@@ -72,6 +82,7 @@ function start
     echo "Container $1 successfully started"
   else
     echo "Error $START_RESULT"
+    exit 1
   fi
 }
 
@@ -84,18 +95,26 @@ function delete
     echo "Container $1 was successfully deleted"
   else
     echo $DELETE_RESULT
+    exit 1
   fi
 }
 #---------------------------------------------------------------------------------------------------------#
 #----------------------------------Stops the user che container-------------------------------------------#
 function stop
 {
-	STOP_RESULT=$( docker exec $1 /bin/bash ./home/user/che/bin/che.sh stop --skip:uid)
-  if [ $STOP_RESULT == "Stopping Che server running on localhost:8080" ]; then
-	  echo "Success"
-	else
-	  echo "Failed to stop the container"
-	fi
+  STATUS=$( check_docker_container $1 )
+  if [ $STATUS == "Running" ]; then
+    STOP_RESULT=$( docker exec $1 /bin/bash ./home/user/che/bin/che.sh stop --skip:uid)
+    CHECK=$( echo $STOP_RESULT | grep -c Stopping)
+
+    if [ $CHECK -eq 1 ]; then
+      echo "Success"
+    else
+      exit 1
+    fi
+  else
+    echo "Success"
+  fi
 }
 
 #----------------------------------------------------------------------------------------------------------#
