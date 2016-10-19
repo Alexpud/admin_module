@@ -56,10 +56,12 @@ function check_docker_container
 
 function create
 {
-	echo "Attempting to create the container $1"
+	#echo "Attempting to create the container $1"
+	status=$(check_docker_container $1)
 	CREATION_RESULT=$( docker run -v /var/run/docker.sock:/var/run/docker.sock -e CHE_HOST_IP=$MACHINE_IP -e CHE_DATA_FOLDER=/home/user/$1 -e CHE_PORT=$2 codenvy/che-launcher start)
 	RENAME_RESULT=$(docker rename che-server $1)
-	echo "Container successfully created"
+	echo $CREATION_RESULT
+	exit 1
 }
 #---------------------------------------------------------------------------------------------------------#
 #----------------------------------Starts the user che container -----------------------------------------#
@@ -88,11 +90,11 @@ function delete
 #----------------------------------Stops the user che container-------------------------------------------#
 function stop
 {
-	STOP_RESULT=$(docker exec $1 /bin/bash ./home/user/che/bin/che.sh stop --skip:uid || echo 'lol')
-	if [ $STOP_RESULT -eq $1 ]; then
-	  echo "Container $1 successfully stopped"
+	STOP_RESULT=$( docker exec $1 /bin/bash ./home/user/che/bin/che.sh stop --skip:uid)
+  if [ $STOP_RESULT == "Stopping Che server running on localhost:8080" ]; then
+	  echo "Success"
 	else
-	  echo $STOP_RESULT
+	  echo "Failed to stop the container"
 	fi
 }
 

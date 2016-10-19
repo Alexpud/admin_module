@@ -1,6 +1,4 @@
 const exec = require('child_process').exec;
-var request = require('../../public/js/request_helper');
-var request_helper = new request();
 var http = require('http');
 var express = require('express'),
   router = express.Router(),
@@ -16,20 +14,20 @@ module.exports = function (app) {
  I am using promises because it allows me to wait for all the requests inside the list promises to finish,
  then it executes an action on Promises.all.
  */
-router.get('/container/list', function(req,res,next)
+router.get('/containers', function(req,res,next)
 {
-  db.Container.all({raw:true}).then( function(container_list)
+  db.Container.all({ raw: true }).then( function(container_list)
   {
     var new_container_list = container_list;
     var promises = [];
-
-    for (var i = 0; i < container_list.length; i++) {
+    for (var i = 0; i < container_list.length; i++)
+    {
       promises.push(new Promise(function (resolve, reject)
       {
         exec("./public/bash/che_helper_functions.sh status " + container_list[i].registration_ID,
-          function(err,stdout,stderr)
+          function(err, stdout, stderr)
           {
-            resolve({status:stdout});
+            resolve({ status: stdout });
           });
       }));
     }
@@ -49,32 +47,69 @@ router.get('/container/list', function(req,res,next)
   });
 });
 
-router.post('/container/start', function(req, res, next)
+//Gets all the workspaces belonging to a container
+router.get("/containers/:id/workspaces", function (req, res, next)
 {
-  db.Container.findOne({
-    where:
-    {
-      registration_ID: req.body.registration_id
-    }
-  }).then(function(container)
+  db.Container.findOne
+  ({
+    include: [{
+      model: db.Workspace,
+      where: { owner_id: req.params.id }
+    }]
+  }).then( function(container_workspaces_list)
   {
-    var promise = new Promise(function(resolve,reject)
+    var temp_container_workspaces_list = container_workspaces_list;
+    var promise = (new Promise(function (resolve, reject)
     {
-      exec("./public/bash/che_helper_functions.sh start " + container.registration_ID,
-        function(err,stdout,stderr)
+      exec("./public/bash/che_helper_functions.sh status " + temp_container_workspaces_list .registration_ID,
+        function(err, stdout, stderr)
         {
-          resolve({response:stdout});
+          resolve({ status: stdout });
         });
-    }).then(function(data)
+    })).then( function(data)
     {
-      console.log(data);
-      var temp = data.response.replace('\n', "");
-      res.send({response:temp});
+      temp_container_workspaces_list = temp_container_workspaces_list;
+      container_workspaces_list.port = data.status;
+    }).then(function()
+    {
+      res.send(container_workspaces_list);
     });
   });
 });
 
-router.post('/container/create', function (req, res, next)
+
+router.post('/containers/:registration_id/start', function(req, res, next)
+{
+  db.Container.findOne({
+    where: { registration_ID: req.params.registration_id}
+  }).then(function(container)
+  {
+    if ( container != null ) // No container with the description passed on the request exists
+    {
+      var promise = new Promise(function (resolve, reject)
+      {
+        exec("./public/bash/che_helper_functions.sh start " + container.registration_ID,
+          function (err, stdout, stderr) {
+            resolve({response: stdout});
+          });
+      }).then(function (data) {
+        var temp_response = data.response.replace('\n', "");
+        res.send({ response: temp_response });
+      });
+    }
+    else
+    {
+      res.send({error: "The container doesn't exist"});
+    }
+  }).catch(function(error)
+  {
+    res.send({ error: error.errors });
+  });
+});
+
+
+//Creates a container
+router.post('/containers', function (req, res, next)
 {
   var new_container_port_value = 0;
   /*
@@ -92,38 +127,34 @@ router.post('/container/create', function (req, res, next)
     }
   }).then(function()
   {
-    db.Container.findOrCreate
+    db.Container.create
     ({
-      where:
-      {
-        port: new_container_port_value,
-        registration_ID: req.body.registration_id,
-        name: req.body.name
-      }
+      port: new_container_port_value,
+      registration_ID: req.body.registration_id,
+      name: req.body.name
     }).then(function ()
     {
-      db.Container.findOne
-      ({
-        where: { registration_ID: req.body.registration_id }
-      }).then(function (container)
+      var promise = new Promise(function(resolve,reject)
       {
-        var promise = new Promise(function(resolve,reject)
-        {
-          exec("./public/bash/che_helper_functions.sh create " + container.registration_ID + " " + container.port,
-            function(err,stdout,stderr)
-            {
-              console.log(stdout);
-              resolve({status:stdout});
-            });
-        }).then(function(data)
-        {
-          var temp = data.response.replace('\n', "");
-          res.send({response:temp});
-        });
+        exec("./public/bash/che_helper_functions.sh create " + req.body.registration_id + " " + new_container_port_value,
+          function(err,stdout,stderr)
+          {
+            console.log(stdout);
+            resolve({ status: stdout });
+          });
+      }).then(function(data)
+      {
+        console.log(data);
+        res.status(201);
+        res.send({ response: data});
       });
     });
+  }).catch( function(err)
+  {
+    res.status(400);
+    res.send({ error: err.errors });
+    res.end();
   });
-  res.end();
 });
 
 /*
@@ -131,62 +162,43 @@ router.post('/container/create', function (req, res, next)
   The creation of the registration_ID is left to nginx server block that is listening on port 8082.
  */
 
-router.post('/container/stop', function (req, res, next)
+router.delete('/containers/:registration_id/stop', function (req, res, next)
 {
   db.Container.findOne
   ({
-    where: { registration_ID: req.body.registration_id }
-  }).then( function( container)
-    {
-      var promise = new Promise(function(resolve,reject)
-      {
-        exec("./public/bash/che_helper_functions.sh stop " + container.registration_ID,
-          function(err,stdout,stderr)
-          {
-            resolve({response:stdout});
-          });
-      }).then(function(data)
-      {
-        console.log(data);
-        var temp = data.response.replace('\n', "");
-        res.send({response:temp});
-      });
-    });
-});
-
-router.get('/container/status/:id',function(req,res,next)
-{
-  db.Container.findOne({
-    where:
-    {
-      registration_ID: req.params.id
-    }
-  }).then(function(container)
+    where: { registration_ID: req.params.registration_id }
+  }).then( function(container)
   {
-    var promise = new Promise(function (resolve, reject)
+    var promise = new Promise(function(resolve,reject)
     {
-      exec("./public/bash/che_helper_functions.sh status " + container.registration_ID,
+      exec("./public/bash/che_helper_functions.sh stop " + container.registration_ID,
         function(err,stdout,stderr)
         {
-          resolve({status:stdout});
+          resolve({response:stdout});
         });
-    }).then(function(data)
+    }).then( function(data)
     {
-      var temp = data.status.replace('\n', "");
-      res.send({status:temp});
+      var temp = data.response.replace('\n', "");
+      if( temp == "Success") {
+        res.status(204);
+        res.send();
+      }
+      else
+      {
+        res.status(500);
+        console.log(data.response);
+        res.send({error: temp });
+      }
     });
   });
 });
 
-
-router.delete('/container/delete', function(req,res,next)
+router.delete('/containers/:registration_id/delete', function(req,res,next)
 {
-  db.Container.findOne({
-    where:
-    {
-      registration_ID: req.body.registration_ID
-    }
-  }).then(function(container)
+  db.Container.findOne
+  ({
+    where: { registration_ID: req.params.registration_id }
+  }).then( function(container)
   {
     container.destroy({force: true}).on('success',function(msg)
     {
@@ -195,12 +207,12 @@ router.delete('/container/delete', function(req,res,next)
         exec("./public/bash/che_helper_functions.sh delete " + container.registration_ID,
           function(err,stdout,stderr)
           {
-            resolve({response:stdout});
+            resolve({ response: stdout });
           });
       }).then(function(data)
       {
         var temp = data.response.replace('\n', "");
-        res.send({status:temp});
+        res.send({ result: temp });
       });
     });
   });
