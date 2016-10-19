@@ -18,7 +18,7 @@ router.get('/workspaces', function (req, res, next)
   });
 });
 
-router.post('/workspaces/create', function( req, res, next)
+router.post('/workspaces', function( req, res, next)
 {
   var workspace_name = req.body.workspace_name;
   var workspace_stack = req.body.workspace_stack;
@@ -79,16 +79,13 @@ router.post('/workspaces/create', function( req, res, next)
 
 
 /*
-  It receives a workspace_id, since i don't have access to authentication at the moment, i used a default value.
-  Then, it sends a request with this workspace name to the che instance.
-  Again, the port of the che instance is defaulted to 8098 because of tests.
+  It receives a workspace_name, it will search for it in the database. If it is found, it will attempt
+  to start the workspace
  */
-
-
-router.post('/workspaces/start', function( req, res, next)
+router.post('/workspaces/:workspace_name', function( req, res, next)
 {
   db.Workspace.findOne({
-    where: { workspace_name: req.body.workspace_name },
+    where: { workspace_name: req.params.workspace_name},
     include: [{ model: db.Container,
       where: { registration_ID: req.body.owner_id }
     }]
@@ -105,7 +102,7 @@ router.post('/workspaces/start', function( req, res, next)
       }).then(function (data) {
         //When the operation is successful, CHE api returns a message with an empty body.
         if (data.response.length == 0) {
-          res.send({response: "Workspace was successfully started"});
+          res.status(204);
         }
         //When it fails, the message body contains the error message.
         else {
@@ -121,7 +118,15 @@ router.post('/workspaces/start', function( req, res, next)
   });
 });
 
-router.delete('/workspace/stop', function(req,res,next)
+router.get('/test', function (req,res,next)
+{
+  db.Container.findOne({where:{registration_ID: "201110005302"}}).then(function(workspace)
+  {
+    res.send(workspace.getWorkspaces());
+  })
+});
+
+router.delete('/workspaces/stop', function(req,res,next)
 {
   db.Workspace.findOne({
     where: { workspace_name: req.body.workspace_name },
@@ -153,8 +158,12 @@ router.delete('/workspace/stop', function(req,res,next)
   });
 });
 
+/*
+  It searches in the database for the the workspace, checks if the container that hosts the workspace
+   is on, if it is it will send a request do deleete the workspace. If it isn't, it will do nothing.
+ */
 
-router.delete('/workspace/delete',function(req, res, next)
+router.delete('/workspaces/delete',function(req, res, next)
 {
   var promise = new Promise(function (resolve, reject)
   {
@@ -191,25 +200,27 @@ router.delete('/workspace/delete',function(req, res, next)
               workspace.destroy();
             }
             else {
-              res.send({result: {error: data.response}});
+              res.send({result: { error: data.response }});
             }
           });
         }
         else
         {
-          res.status(400);
-          res.send({error: "Workspace not found"});
+          res.status(404);
+          res.send({ error: "Workspace not found" });
         }
+         //Error when searching
       }).catch(function(error)
       {
         res.send(500);
-        res.send({ result: { error:error }});
+        res.send({ result: { error: error }});
       });
     }
+    //Container is not running
     else
     {
-      res.send(404);
-      res.send({result:allData[0]});
+      res.send(500);
+      res.send({ result: allData[0] });
     }
   });
 });

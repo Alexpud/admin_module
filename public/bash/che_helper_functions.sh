@@ -71,7 +71,7 @@ function start
   if [ $START_RESULT -eq $1 ]; then
     echo "Container $1 successfully started"
   else
-    echo $START_RESULT
+    echo "Error $START_RESULT"
   fi
 }
 

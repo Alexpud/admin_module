@@ -16,7 +16,7 @@ module.exports = function (app) {
  */
 router.get('/containers', function(req,res,next)
 {
-  db.Container.all({ raw: true }).then( function(container_list)
+  db.Container.all().then( function(container_list)
   {
     var new_container_list = container_list;
     var promises = [];
@@ -37,11 +37,12 @@ router.get('/containers', function(req,res,next)
       for(var i = 0; i < container_list.length;i++)
       {
         var temp = allData[i].status.replace('\n', "");
-        container_list[i].status = temp;
+        container_list[i].setDataValue("status",temp);
       }
       return container_list;
     }).then(function(container_list)
     {
+      res.status(200);
       res.send(container_list);
     });
   });
@@ -58,22 +59,30 @@ router.get("/containers/:id/workspaces", function (req, res, next)
     }]
   }).then( function(container_workspaces_list)
   {
-    var temp_container_workspaces_list = container_workspaces_list;
-    var promise = (new Promise(function (resolve, reject)
+    if ( container_workspaces_list != null )
     {
-      exec("./public/bash/che_helper_functions.sh status " + temp_container_workspaces_list .registration_ID,
-        function(err, stdout, stderr)
-        {
-          resolve({ status: stdout });
-        });
-    })).then( function(data)
+      var promise = (new Promise(function (resolve, reject) {
+        exec("./public/bash/che_helper_functions.sh status " + container_workspaces_list.registration_ID,
+          function (err, stdout, stderr) {
+            resolve({status: stdout});
+          });
+      })).then(function (data)
+      {
+        console.log(data);
+        container_workspaces_list.setDataValue("status", data.status);//.status = data.status;
+        res.status(200);
+        res.send((container_workspaces_list));
+      });
+    }
+    else
     {
-      temp_container_workspaces_list = temp_container_workspaces_list;
-      container_workspaces_list.port = data.status;
-    }).then(function()
-    {
-      res.send(container_workspaces_list);
-    });
+      res.status(404);
+      res.end({ Error: "The container doesn't have any workspace" });
+    }
+  }).catch(function (error)
+  {
+    res.status(404);
+    res.send({ Error: "The container doesn't exist" });
   });
 });
 
@@ -92,17 +101,30 @@ router.post('/containers/:registration_id/start', function(req, res, next)
           function (err, stdout, stderr) {
             resolve({response: stdout});
           });
-      }).then(function (data) {
-        var temp_response = data.response.replace('\n', "");
-        res.send({ response: temp_response });
+      }).then(function (data)
+      {
+        //If it is an error message, docker error message will begin with Error, so the first letter is E
+        if(data.response.charAt(0) == 'E')
+        {
+          var temp_response = data.response.replace('\n', "");
+          res.status(404);
+          res.send({ response: temp_response });
+        }
+        else {
+          var temp_response = data.response.replace('\n', "");
+          res.status(204);
+          res.send();
+        }
       });
     }
     else
     {
-      res.send({error: "The container doesn't exist"});
+      res.status(404);
+      res.send({ error: "The container doesn't exist" });
     }
   }).catch(function(error)
   {
+    res.status(404);
     res.send({ error: error.errors });
   });
 });
@@ -127,27 +149,30 @@ router.post('/containers', function (req, res, next)
     }
   }).then(function()
   {
-    db.Container.create
+    db.Container.findOrCreate
     ({
       port: new_container_port_value,
       registration_ID: req.body.registration_id,
       name: req.body.name
-    }).then(function ()
+    }).then(function (container)
     {
-      var promise = new Promise(function(resolve,reject)
+      if(container != null)
       {
-        exec("./public/bash/che_helper_functions.sh create " + req.body.registration_id + " " + new_container_port_value,
-          function(err,stdout,stderr)
-          {
-            console.log(stdout);
-            resolve({ status: stdout });
-          });
-      }).then(function(data)
+        res.status(409);
+        res.send({Error: "Container already exists" });
+      }
+      else
       {
-        console.log(data);
-        res.status(201);
-        res.send({ response: data});
-      });
+        var promise = new Promise(function (resolve, reject) {
+          exec("./public/bash/che_helper_functions.sh create " + req.body.registration_id + " " + new_container_port_value,
+            function (err, stdout, stderr) {
+              resolve({status: stdout});
+            });
+        }).then(function (data) {
+          res.status(201);
+          res.send({response: data});
+        });
+      }
     });
   }).catch( function(err)
   {

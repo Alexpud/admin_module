@@ -14,7 +14,6 @@ db.sequelize
     app.listen(config.port, function () {
       console.log('Express server listening on port ' + config.port);
     });
-    app.timeout = 400;
   }).catch(function (e) {
     throw new Error(e);
   });

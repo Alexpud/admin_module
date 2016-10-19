@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6d5da41a-0eb7-4774-9d53-2980480549fb" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/containers.js" afterPath="$PROJECT_DIR$/app/controllers/containers.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/workspaces.js" afterPath="$PROJECT_DIR$/app/controllers/workspaces.js" />
@@ -29,31 +28,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="workspaces.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="workspaces.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/workspaces.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
+            <state relative-caret-position="237">
+              <caret line="126" column="3" selection-start-line="126" selection-start-column="3" selection-end-line="126" selection-end-column="3" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="containers.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/containers.js">
+      <file leaf-file-name="container.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/container.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="148" column="33" selection-start-line="148" selection-start-column="33" selection-end-line="148" selection-end-column="33" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="16" column="21" selection-start-line="16" selection-start-column="21" selection-end-line="16" selection-end-column="21" />
+            <state relative-caret-position="306">
+              <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -62,18 +51,18 @@
       <file leaf-file-name="express.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/express.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="615">
-              <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+            <state relative-caret-position="-411">
+              <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="che_helper_functions.sh" pinned="false" current-in-tab="true">
+      <file leaf-file-name="che_helper_functions.sh" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/bash/che_helper_functions.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="89">
-              <caret line="60" column="179" selection-start-line="60" selection-start-column="179" selection-end-line="60" selection-end-column="179" />
+            <state relative-caret-position="323">
+              <caret line="73" column="30" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -166,10 +155,10 @@
         <option value="$PROJECT_DIR$/public/js/workspace_helper.js" />
         <option value="$PROJECT_DIR$/public/jsons/cpp-default_workspace_creation.json" />
         <option value="$PROJECT_DIR$/public/jsons/java-default_workspace_creation.json" />
-        <option value="$PROJECT_DIR$/app/controllers/workspaces.js" />
+        <option value="$PROJECT_DIR$/public/bash/che_helper_functions.sh" />
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/app/controllers/containers.js" />
-        <option value="$PROJECT_DIR$/public/bash/che_helper_functions.sh" />
+        <option value="$PROJECT_DIR$/app/controllers/workspaces.js" />
       </list>
     </option>
   </component>
@@ -515,12 +504,12 @@
       <workItem from="1476622243706" duration="32969000" />
       <workItem from="1476705636153" duration="16211000" />
       <workItem from="1476816161819" duration="7446000" />
-      <workItem from="1476825415267" duration="17850000" />
+      <workItem from="1476825415267" duration="22517000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="292104000" />
+    <option name="totallyTimeSpent" value="296771000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -807,22 +796,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/container.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/workspace.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="9" column="59" selection-start-line="9" selection-start-column="59" selection-end-line="9" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/js/workspace_helper.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
@@ -847,42 +820,58 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/workspaces.js">
+    <entry file="file://$PROJECT_DIR$/public/bash/che_helper_functions.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
+        <state relative-caret-position="323">
+          <caret line="73" column="30" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config/express.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+        <state relative-caret-position="-411">
+          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="21" selection-start-line="16" selection-start-column="21" selection-end-line="16" selection-end-column="21" />
+        <state relative-caret-position="270">
+          <caret line="15" column="7" selection-start-line="13" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/container.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/workspace.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="9" column="59" selection-start-line="9" selection-start-column="54" selection-end-line="9" selection-end-column="59" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/containers.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="148" column="33" selection-start-line="148" selection-start-column="33" selection-end-line="148" selection-end-column="33" />
+        <state relative-caret-position="413">
+          <caret line="97" column="11" selection-start-line="97" selection-start-column="11" selection-end-line="97" selection-end-column="11" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/bash/che_helper_functions.sh">
+    <entry file="file://$PROJECT_DIR$/app/controllers/workspaces.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="89">
-          <caret line="60" column="179" selection-start-line="60" selection-start-column="179" selection-end-line="60" selection-end-column="179" />
+        <state relative-caret-position="237">
+          <caret line="126" column="3" selection-start-line="126" selection-start-column="3" selection-end-line="126" selection-end-column="3" />
           <folding />
         </state>
       </provider>
