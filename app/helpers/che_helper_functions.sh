@@ -58,18 +58,19 @@ function create
 {
 	#echo "Attempting to create the container $1"
 	STATUS=$( check_docker_container $1)
-	if [ $STATUS == "Non existent" ]; then
+	if [ "$STATUS" == "Non existent" ]; then
     CREATION_RESULT=$( docker run -v /var/run/docker.sock:/var/run/docker.sock -e CHE_HOST_IP=$MACHINE_IP -e CHE_DATA_FOLDER=/home/user/$1 -e CHE_PORT=$2 codenvy/che-launcher start )
     CHECK=$(echo $CREATION_RESULT | grep -c ERROR)  #Counts the occurrences of the pattern, ERROR
     if [ $CHECK -eq 0 ]; then #If there was an error, CHECK should not be equal to 0
       RENAME_RESULT=$( docker rename che-server $1 )
+      stop $1
       echo $RENAME_RESULT
     else
       echo "Container exists"
       exit 1
     fi
   else
-    echo "Container exists"
+    echo "Container existsssss"
     exit 1
   fi
 }

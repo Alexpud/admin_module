@@ -4,7 +4,9 @@
 
 var workspace = function (stack)
 {
-  this.model = require("../jsons/"+stack+"_workspace_creation.json");
+  console.log("Workspace helper");
+  this.model = require("./jsons/"+stack+"_workspace_creation.json");
+  console.log(this.model);
   this.setWorkspaceName = function(name)
   {
     this.model.name = name;

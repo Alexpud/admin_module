@@ -2,11 +2,10 @@
  This model on the database contains a container_port collumn which is auto_incremented. The
  reason why the collumn is not present on the model is because of  the problem in using it.
  */
-var workspace = require('./workspace');
 module.exports = function (sequelize, DataTypes) {
 
   var Container = sequelize.define('Container', {
-    registration_ID: { type: DataTypes.STRING, allowNull: false, primaryKey: true, unique:true },
+    registration_ID: { type: DataTypes.STRING, primaryKey: true},
     port: { type: DataTypes.INTEGER, primaryKey: true, unique: true},
     name: { type: DataTypes.STRING}
 
@@ -15,7 +14,9 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         // example on how to add relations
         // Article.hasMany(models.Comments);
-        Container.hasMany(models.Workspace,{onDelete: 'CASCADE', hooks:true});
+        Container.hasMany(models.Workspace,{onDelete: 'CASCADE', hooks:true, foreignKey: 'owner_ID' });
+        // Maybe this line causes error
+
       }
     }
   });

@@ -1,5 +1,5 @@
 const exec = require('child_process').exec;
-var workspace_creation = require('../../public/js/workspace_helper');
+var workspace_creation = require('../helpers/workspace_helper');
 var http = require('http');
 var express = require('express'),
   router = express.Router(),
@@ -45,7 +45,8 @@ router.post('/workspaces', function( req, res, next)
         var response = (JSON.parse(data.response));
         if (response.status == "Running")
         {
-          var promise = new Promise(function (resolve, reject) {
+          var promise = new Promise(function (resolve, reject)
+          {
             var port = container.port;
             var options =
             {
@@ -75,14 +76,13 @@ router.post('/workspaces', function( req, res, next)
               owner_ID: owner_id,
               workspace_name: workspace_name,
               workspace_id: workspace_id,
-              stack: workspace_stack,
-              ContainerRegistrationID: owner_id
+              stack: workspace_stack
             }).then(function () {
-              res.status(201);
-              res.send({response: "Workspace was successfully created"});
+              res.status(204);
+              res.send();
             }).catch(function (error) {
               res.status(409);
-              res.send({response: {error: error.errors}});
+              res.send({response: {error: error}});
             });
           });
         }
@@ -159,6 +159,7 @@ router.delete('/workspaces/stop', function(req,res,next)
     }]
   }).then(function(workspace)
   {
+    console.log(workspace);
     var promise = new Promise(function (resolve, reject)
     {
       var container_port = workspace.Container.port;
@@ -171,11 +172,12 @@ router.delete('/workspaces/stop', function(req,res,next)
     {
       if(data.response.length == 0)
       {
+        res.status(200);
         res.send({ result: "Workspace was successfully stopped" });
       }
       else
       {
-        res.send(500);
+        res.status(500);
         res.send({result: { error: data.response } });
       }
     });
@@ -191,7 +193,7 @@ router.delete('/workspaces/delete',function(req, res, next)
 {
   var promise = new Promise(function (resolve, reject)
   {
-    exec("./public/bash/che_helper_functions.sh status " + req.body.owner_id,
+    exec("./app/helpers/che_helper_functions.sh status " + req.body.owner_id,
       function(err,stdout,stderr)
       {
         resolve({status:stdout});
@@ -209,6 +211,7 @@ router.delete('/workspaces/delete',function(req, res, next)
         }]
       }).then(function(workspace)
       {
+        // If a workspace with the data passed was found.
         if(workspace != null )
         {
           var promise = new Promise(function (resolve, reject) {
@@ -217,13 +220,15 @@ router.delete('/workspaces/delete',function(req, res, next)
               function (err, stdout, stderr) {
                 resolve({response: stdout});
               });
-          }).then(function (data) {
+          }).then(function (data)
+          {
             //If the response length is zero, it means the DELETE action was successful
             if (data.response.length == 0) {
-              res.send({result: "Workspace was successfully deleted"});
+              res.status(204);
               workspace.destroy();
             }
             else {
+              res.status(500);
               res.send({result: { error: data.response }});
             }
           });
@@ -244,7 +249,7 @@ router.delete('/workspaces/delete',function(req, res, next)
     else
     {
       res.send(500);
-      res.send({ result: allData[0] });
+      res.send({ error: data.status });
     }
   });
 });

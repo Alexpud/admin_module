@@ -34,15 +34,16 @@ router.get('/test', function(req, res, next)
  */
 router.get('/containers', function(req,res,next)
 {
-  db.Container.all().then( function(container_list)
+  db.Container.all().then( function(container_list,error)
   {
+    if(error) console.log(error);
     var new_container_list = container_list;
     var promises = [];
     for (var i = 0; i < container_list.length; i++)
     {
       promises.push(new Promise(function (resolve, reject)
       {
-        exec("./public/bash/che_helper_functions.sh status " + container_list[i].registration_ID,
+        exec("./app/helpers/che_helper_functions.sh status " + container_list[i].registration_ID,
           function(err, stdout, stderr)
           {
             resolve({ status: stdout });
@@ -71,24 +72,23 @@ router.get("/containers/:id", function (req, res, next)
 {
   db.Container.findOne
   ({
-    include: [{
-      model: db.Workspace,
-      where: { owner_id: req.params.id }
-    }]
-  }).then( function(container_workspaces_list)
+    registration_ID: req.params.id
+  }).then( function(container)
   {
-    if ( container_workspaces_list != null )
+    if ( container != null )
     {
+      console.log("lol");
       var promise = (new Promise(function (resolve, reject) {
-        exec("./public/bash/che_helper_functions.sh status " + container_workspaces_list.registration_ID,
+        exec("./app/helpers/che_helper_functions.sh status " + container.registration_ID,
           function (err, stdout, stderr) {
             resolve({status: stdout});
           });
       })).then(function (data)
       {
-        container_workspaces_list.setDataValue("status", data.status);//.status = data.status;
+        var temp = data.status.replace('\n', "");
+        container.setDataValue("status", temp);//.status = data.status;
         res.status(200);
-        res.send((container_workspaces_list));
+        res.send(container);
       });
     }
     else
@@ -122,11 +122,14 @@ router.post('/containers', function (req, res, next)
     }
   }).then(function ()
   {
+    console.log(new_container_port_value);
+    console.log(req.body.registration_id);
     var promise = new Promise(function (resolve, reject)
     {
-      exec("./public/bash/che_helper_functions.sh create " + req.body.registration_id + " " + new_container_port_value,
+      exec("./app/helpers/che_helper_functions.sh create " + req.body.registration_id + " " + new_container_port_value,
         function (err, stdout, stderr)
         {
+          console.log(stdout);
           resolve({ response: stdout });
         });
     }).then(function (data)
@@ -174,7 +177,7 @@ router.post('/containers/:registration_id/start', function(req, res, next)
     {
       var promise = new Promise(function (resolve, reject)
       {
-        exec("./public/bash/che_helper_functions.sh start " + container.registration_ID,
+        exec("./app/helpers/che_helper_functions.sh start " + container.registration_ID,
           function (err, stdout, stderr) {
             resolve({response: stdout});
           });
@@ -215,7 +218,7 @@ router.delete('/containers/:registration_id/stop', function (req, res, next)
   {
     if (container != null) {
       var promise = new Promise(function (resolve, reject) {
-        exec("./public/bash/che_helper_functions.sh stop " + container.registration_ID,
+        exec("./app/helpers/che_helper_functions.sh stop " + container.registration_ID,
           function (err, stdout, stderr) {
             resolve({response: stdout});
           });
@@ -251,7 +254,7 @@ router.delete('/containers/:registration_id/delete', function(req,res,next)
     {
       var promise = new Promise(function (resolve, reject)
       {
-        exec("./public/bash/che_helper_functions.sh delete " + container.registration_ID,
+        exec("./app/helpers/che_helper_functions.sh delete " + container.registration_ID,
           function(err,stdout,stderr)
           {
             resolve({ response: stdout });
