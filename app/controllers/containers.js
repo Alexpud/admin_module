@@ -9,19 +9,15 @@ module.exports = function (app) {
 
 router.get('/test', function(req, res, next)
 {
-  db.Container.findOne({where: { registration_ID: "201110005302" }}).then(function(container)
+  db.Container.findOne
+  ({
+      where: { name: "201110005300" }
+  }).then(function(container)
   {
-   var promise = new Promise(function(resolve,reject)
-   {
-      exec('curl -sb -H "Accept: application/json" -X GET http://localhost:3000/api/containers/'+container.registration_ID,
-        function (err, stdout, stderr) {
-          resolve({response: stdout});
-        });
-    }).then(function(data)
-   {
-     var response = (JSON.parse(data.response));
-     res.send(response.status);
-   });
+    container.getUser().then(function(user)
+    {
+      res.send(user);
+    });
   });
 });
 
@@ -34,16 +30,15 @@ router.get('/test', function(req, res, next)
  */
 router.get('/containers', function(req,res,next)
 {
-  db.Container.all().then( function(container_list,error)
+  var new_container_list = [];
+  var promises = [];
+  db.Container.all().then( function(container_list)
   {
-    if(error) console.log(error);
-    var new_container_list = container_list;
-    var promises = [];
     for (var i = 0; i < container_list.length; i++)
     {
       promises.push(new Promise(function (resolve, reject)
       {
-        exec("./app/helpers/che_helper_functions.sh status " + container_list[i].registration_ID,
+        exec("./app/helpers/che_helper_functions.sh status " + container_list[i].name,
           function(err, stdout, stderr)
           {
             resolve({ status: stdout });
@@ -68,18 +63,18 @@ router.get('/containers', function(req,res,next)
 });
 
 //Gets all the workspaces belonging to a container
-router.get("/containers/:id", function (req, res, next)
+router.get("/containers/:name/", function (req, res, next)
 {
   db.Container.findOne
   ({
-    registration_ID: req.params.id
+    name: req.params.name
   }).then( function(container)
   {
+    console.log("Lol");
     if ( container != null )
     {
-      console.log("lol");
       var promise = (new Promise(function (resolve, reject) {
-        exec("./app/helpers/che_helper_functions.sh status " + container.registration_ID,
+        exec("./app/helpers/che_helper_functions.sh status " + container.name,
           function (err, stdout, stderr) {
             resolve({status: stdout});
           });
@@ -108,12 +103,15 @@ router.get("/containers/:id", function (req, res, next)
  The creation of the container on the system is made using a bash script placed on public.
  */
 
-router.post('/containers', function (req, res, next)
+router.post('/containers/:name', function (req, res, next)
 {
   var new_container_port_value = 0;
   // Returns a list ordered by the container port in descending order.
-  db.Container.findAll({limit: 1, order: [['port', 'DESC']]}).then(function (container_list) {
+  db.Container.findAll({limit: 1, order: [['port', 'DESC']]}).then(function (container_list)
+  {
+    console.log(container_list.length);
     if (container_list.length == 0) {
+      console.log("here");
       new_container_port_value = 8090;
     }
     else //Grabs the biggest value, increase it by one
@@ -122,14 +120,11 @@ router.post('/containers', function (req, res, next)
     }
   }).then(function ()
   {
-    console.log(new_container_port_value);
-    console.log(req.body.registration_id);
     var promise = new Promise(function (resolve, reject)
     {
-      exec("./app/helpers/che_helper_functions.sh create " + req.body.registration_id + " " + new_container_port_value,
+      exec("./app/helpers/che_helper_functions.sh create " + req.params.name + " " + new_container_port_value,
         function (err, stdout, stderr)
         {
-          console.log(stdout);
           resolve({ response: stdout });
         });
     }).then(function (data)
@@ -148,8 +143,8 @@ router.post('/containers', function (req, res, next)
         db.Container.create
         ({
           port: new_container_port_value,
-          registration_ID: req.body.registration_id,
-          name: req.body.name
+          name: req.params.name,
+          UserLogin: req.params.name
         }).then(function () { // Container created
           res.status(201);
           res.send();
@@ -167,17 +162,17 @@ router.post('/containers', function (req, res, next)
 
 });
 
-router.post('/containers/:registration_id/start', function(req, res, next)
+router.post('/containers/:name/start', function(req, res, next)
 {
   db.Container.findOne({
-    where: { registration_ID: req.params.registration_id}
+    where: { name: req.params.name}
   }).then(function(container)
   {
     if ( container != null ) // No container with the description passed on the request exists
     {
       var promise = new Promise(function (resolve, reject)
       {
-        exec("./app/helpers/che_helper_functions.sh start " + container.registration_ID,
+        exec("./app/helpers/che_helper_functions.sh start " + container.name,
           function (err, stdout, stderr) {
             resolve({response: stdout});
           });
@@ -209,16 +204,16 @@ router.post('/containers/:registration_id/start', function(req, res, next)
   });
 });
 
-router.delete('/containers/:registration_id/stop', function (req, res, next)
+router.delete('/containers/:name/stop', function (req, res, next)
 {
   db.Container.findOne
   ({
-    where: { registration_ID: req.params.registration_id }
+    where: { name: req.params.name }
   }).then( function(container)
   {
     if (container != null) {
       var promise = new Promise(function (resolve, reject) {
-        exec("./app/helpers/che_helper_functions.sh stop " + container.registration_ID,
+        exec("./app/helpers/che_helper_functions.sh stop " + container.name,
           function (err, stdout, stderr) {
             resolve({response: stdout});
           });
@@ -231,7 +226,7 @@ router.delete('/containers/:registration_id/stop', function (req, res, next)
         else {
           res.status(500);
           console.log(data.response);
-          res.send({error: temp});
+          res.send({ error: temp });
         }
       });
     }
@@ -243,18 +238,18 @@ router.delete('/containers/:registration_id/stop', function (req, res, next)
   });
 });
 
-router.delete('/containers/:registration_id/delete', function(req,res,next)
+router.delete('/containers/:name/delete', function(req,res,next)
 {
   db.Container.findOne
   ({
-    where: { registration_ID: req.params.registration_id }
+    where: { name: req.params.name }
   }).then( function(container)
   {
-    container.destroy({force: true}).on('success',function(msg)
+    container.destroy({ force: true }).on('success', function(msg)
     {
       var promise = new Promise(function (resolve, reject)
       {
-        exec("./app/helpers/che_helper_functions.sh delete " + container.registration_ID,
+        exec("./app/helpers/che_helper_functions.sh delete " + container.name,
           function(err,stdout,stderr)
           {
             resolve({ response: stdout });

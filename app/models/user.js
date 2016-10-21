@@ -6,7 +6,7 @@
 module.exports = function (sequelize, DataTypes) {
 
   var User = sequelize.define('User', {
-    login: { type: DataTypes.STRING, allowNull: false, primaryKey: true},
+    login: { type: DataTypes.STRING,len: [12,12], allowNull: false, primaryKey: true},
     password: { type: DataTypes.STRING},
     admin: { type: DataTypes.BOOLEAN}
   }, {
@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         // example on how to add relations
         // Article.hasMany(models.Comments);
-        User.hasMany(models.Container, {onDelete: 'cascade', hooks: true ,foreignKey: 'registration_ID'})
+        User.hasMany(models.Container, { foreignKey: 'name', onDelete: 'cascade', constraints: true})
       }
     }
   });
