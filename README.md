@@ -4,7 +4,9 @@ This module is created to serve as an interface for management of eclipse che se
 ##How it works
 
 Using a MySQL database, it stores the users, using their logins as primary keys. And through that, it uses to associate containers to each user, and each container may or may not have workspaces associated with it.
+
 All is controlled by using a REST API which serves as a interface for using che REST API.
+
 The reason for that is so we can hide the che from the user, for now we only thought of hiding che pages from the user, but that won't stop the user from using the REST API to issue commands to each container.
 
 ## Future implemenetation
