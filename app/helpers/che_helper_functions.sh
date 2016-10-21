@@ -7,14 +7,11 @@ SCRIPTS_PATH=$(pwd)
 
 #-----------------------------------------------------------------------------------------------------------#
 
-#----------------------------------------------------------------------------------------------------------#
-
-
 #------------------------------------Obtains the IPV4 address----------------------------------------------#
 function getIP
 {
 	MACHINE_IP=$(ip route get 1 | awk '{print $NF;exit}')
-	echo "http://$MACHINE_IP"
+	echo $MACHINE_IP
 }
 #----------------------------------------------------------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
@@ -107,7 +104,6 @@ function stop
   if [ $STATUS == "Running" ]; then
     STOP_RESULT=$( docker exec $1 /bin/bash ./home/user/che/bin/che.sh stop --skip:uid)
     CHECK=$( echo $STOP_RESULT | grep -c Stopping)
-
     if [ $CHECK -eq 1 ]; then
       echo "Success"
     else
@@ -154,6 +150,5 @@ else
 				check_docker_container $USER_NAME
 				;;
 		esac
-
 	fi
 fi

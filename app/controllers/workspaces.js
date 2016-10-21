@@ -11,7 +11,12 @@ module.exports = function (app) {
 //Returns an array of jsons containing the tuples of workspace table
 router.get('/workspaces', function (req, res, next)
 {
-  db.Workspace.findAll( {raw:true} ).then( function (workspace_list)
+  db.Workspace.findAll
+  ({
+      raw: true,
+      include: [{ model: db.Container }]
+    }
+  ).then( function (workspace_list)
   {
     res.status(200);
     res.send(workspace_list);
@@ -24,9 +29,9 @@ router.post('/workspaces/:workspace_name', function( req, res, next)
   var workspace_stack = req.body.workspace_stack;
   var container_name = req.body.container_name;
   var workspace_id = "";
-  var x = "";
 
-  db.Container.findOne({
+  db.Container.findOne
+  ({
     where: { name: container_name }
   }).then(function (container)
   {
@@ -41,14 +46,10 @@ router.post('/workspaces/:workspace_name', function( req, res, next)
           });
       }).then(function(data)
       {
-
         //It returns a container JSON with it's workspaces.
         var response = (JSON.parse(data.response));
-        console.log(data);
-        console.log(response);
         if (response.status == "Running")
         {
-          console.log("here");
           var promise = new Promise(function (resolve, reject)
           {
             var port = container.port;
@@ -62,7 +63,8 @@ router.post('/workspaces/:workspace_name', function( req, res, next)
             };
 
             // Creates the request
-            var req = http.request(options, function (res) {
+            var req = http.request(options, function (res)
+            {
               res.on('data', function (chunk) {
                 resolve({response: chunk});
                 var temp = JSON.parse(chunk);
@@ -81,11 +83,12 @@ router.post('/workspaces/:workspace_name', function( req, res, next)
               workspace_name: workspace_name,
               workspace_id: workspace_id,
               stack: workspace_stack
-
-            }).then(function () {
+            }).then(function ()
+            {
               res.status(204);
               res.send();
-            }).catch(function (error) {
+            }).catch(function (error)
+            {
               res.status(409);
               res.send({ response: { error: error }});
             });
@@ -113,7 +116,8 @@ router.post('/workspaces/:workspace_name', function( req, res, next)
  */
 router.post('/workspaces/:workspace_name/start', function( req, res, next)
 {
-  db.Workspace.findOne({
+  db.Workspace.findOne
+  ({
     where: { workspace_name: req.params.workspace_name},
     include: [{ model: db.Container,
       where: { name: req.body.container_name }
@@ -153,7 +157,8 @@ router.delete('/workspaces/:workspace_name/stop', function(req,res,next)
   db.Workspace.findOne
   ({
     where: { workspace_name: req.params.workspace_name },
-    include: [{ model: db.Container,
+    include: [{
+      model: db.Container,
       where: { name: req.body.container_name }
     }]
   }).then(function(workspace)
@@ -202,52 +207,64 @@ router.delete('/workspaces/:workspace_name/delete',function(req, res, next)
     }]
   }).then(function(workspace)
   {
-    var promise = new Promise(function (resolve, reject)
+    if( workspace != null)
     {
-      exec("./app/helpers/che_helper_functions.sh status " + workspace.Container.container_name,
-        function (err, stdout, stderr) {
-          resolve({status: stdout});
-        });
-    }).then(function (data)
-    {
-      //The message retrieved from the bash script comes with \n in the the message, the operation bellow removes it
-      var status = data.status.replace('\n', "");
-      if (status == "Running")
-      {
-        // If a workspace with the data passed was found.
-        if (workspace != null) {
-          var promise = new Promise(function (resolve, reject) {
-            var container_port = workspace.Container.port;
-            exec('curl -H "Content-Type: application/json" -X "DELETE" http://localhost:' + container_port + '/api/workspace/' + workspace.workspace_id,
-              function (err, stdout, stderr) {
-                resolve({response: stdout});
-              });
-          }).then(function (data) {
-            //If the response length is zero, it means the DELETE action was successful
-            if (data.response.length == 0) {
-              res.status(204);
-              workspace.destroy();
-            }
-            else {
-              res.status(500);
-              res.send({result: {error: data.response}});
-            }
+      var promise = new Promise(function (resolve, reject) {
+        exec("./app/helpers/che_helper_functions.sh status " + workspace.Container.name,
+          function (err, stdout, stderr) {
+            resolve({status: stdout});
           });
+      }).then(function (data)
+      {
+        //The message retrieved from the bash script comes with \n in the the message, the operation bellow removes it
+        var status = data.status.replace('\n', "");
+
+        if (status == "Running")
+        {
+          // If a workspace with the data passed was found.
+          if (workspace != null)
+          {
+            var promise = new Promise(function (resolve, reject) {
+              var container_port = workspace.Container.port;
+              exec('curl -H "Content-Type: application/json" -X "DELETE" http://localhost:' + container_port + '/api/workspace/' + workspace.workspace_id,
+                function (err, stdout, stderr) {
+                  resolve({response: stdout});
+                });
+            }).then(function (data)
+            {
+              //If the response length is zero, it means the DELETE action was successful
+              if (data.response.length == 0)
+              {
+                res.status(204);
+                workspace.destroy();
+                res.send();
+              }
+              else
+              {
+                res.status(500);
+                res.send({result: {error: data.response}});
+              }
+            });
+          }
+          else {
+            res.status(404);
+            res.send({error: "Workspace not found"});
+          }
+          //Error when searching
         }
+        //Container is not running
         else {
-          res.status(404);
-          res.send({error: "Workspace not found"});
+          res.status(500);
+          res.send({error: data.status});
         }
-        //Error when searching
-      }
-      //Container is not running
-      else {
-        res.send(500);
-        res.send({error: data.status});
-      }
-    });
+      });
+    }else
+    {
+      res.status(404);
+      res.send({Error:"Workspace not found"});
+    }
   }).catch(function (error) {
-    res.send(500);
+    res.status(500);
     res.send({result: {error: error}});
   });
 });

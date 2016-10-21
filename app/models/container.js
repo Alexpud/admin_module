@@ -5,7 +5,7 @@
 module.exports = function (sequelize, DataTypes) {
 
   var Container = sequelize.define('Container', {
-    port: { type: DataTypes.INTEGER, primaryKey: true, unique: true},
+    port: { type: DataTypes.INTEGER,unique: true},
     name: { type: DataTypes.STRING, primaryKey: true, allowNull: false, unique: true }
 
   }, {

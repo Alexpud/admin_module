@@ -9,12 +9,12 @@ module.exports = function (app) {
 
 router.get('/test', function(req, res, next)
 {
-  db.Container.findOne
+  db.Workspace.findOne
   ({
-      where: { name: "201110005300" }
+    where: { workspace_name: "cpp" }
   }).then(function(container)
   {
-    container.getUser().then(function(user)
+    container.getContainer().then(function(user)
     {
       res.send(user);
     });
@@ -70,10 +70,10 @@ router.get("/containers/:name/", function (req, res, next)
     name: req.params.name
   }).then( function(container)
   {
-    console.log("Lol");
     if ( container != null )
     {
-      var promise = (new Promise(function (resolve, reject) {
+      var promise = (new Promise(function (resolve, reject)
+      {
         exec("./app/helpers/che_helper_functions.sh status " + container.name,
           function (err, stdout, stderr) {
             resolve({status: stdout});
@@ -109,9 +109,8 @@ router.post('/containers/:name', function (req, res, next)
   // Returns a list ordered by the container port in descending order.
   db.Container.findAll({limit: 1, order: [['port', 'DESC']]}).then(function (container_list)
   {
-    console.log(container_list.length);
-    if (container_list.length == 0) {
-      console.log("here");
+    if (container_list.length == 0)
+    {
       new_container_port_value = 8090;
     }
     else //Grabs the biggest value, increase it by one
@@ -139,7 +138,8 @@ router.post('/containers/:name', function (req, res, next)
         res.status(409);
         res.send({ error: "Container already exists" });
       }
-      else {
+      else
+      {
         db.Container.create
         ({
           port: new_container_port_value,
@@ -148,7 +148,8 @@ router.post('/containers/:name', function (req, res, next)
         }).then(function () { // Container created
           res.status(201);
           res.send();
-        }).catch(function (err) { // Failed to create the container, failed on some restraint
+        }).catch(function (err)  // Failed to create the container, failed on some restraint
+        {
           res.status(409);
           res.send({error: err.errors});
         });
@@ -164,7 +165,8 @@ router.post('/containers/:name', function (req, res, next)
 
 router.post('/containers/:name/start', function(req, res, next)
 {
-  db.Container.findOne({
+  db.Container.findOne
+  ({
     where: { name: req.params.name}
   }).then(function(container)
   {
@@ -185,7 +187,8 @@ router.post('/containers/:name/start', function(req, res, next)
           res.status(404);
           res.send({ response: temp_response });
         }
-        else {
+        else
+        {
           var temp_response = data.response.replace('\n', "");
           res.status(204);
           res.send();
@@ -211,21 +214,25 @@ router.delete('/containers/:name/stop', function (req, res, next)
     where: { name: req.params.name }
   }).then( function(container)
   {
-    if (container != null) {
-      var promise = new Promise(function (resolve, reject) {
+    if (container != null)
+    {
+      var promise = new Promise(function (resolve, reject)
+      {
         exec("./app/helpers/che_helper_functions.sh stop " + container.name,
           function (err, stdout, stderr) {
             resolve({response: stdout});
           });
-      }).then(function (data) {
+      }).then(function (data)
+      {
         var temp = data.response.replace('\n', "");
-        if (temp == "Success") {
+        if (temp == "Success")
+        {
           res.status(204);
           res.send();
         }
-        else {
+        else
+        {
           res.status(500);
-          console.log(data.response);
           res.send({ error: temp });
         }
       });
