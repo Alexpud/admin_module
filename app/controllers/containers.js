@@ -2,6 +2,7 @@ const exec = require('child_process').exec;
 var http = require('http');
 var express = require('express'),
   router = express.Router(),
+  jwt = require('jsonwebtoken'),
   db = require('../models');
 module.exports = function (app) {
   app.use('/api', router);
@@ -9,16 +10,17 @@ module.exports = function (app) {
 
 router.get('/test', function(req, res, next)
 {
-  db.Workspace.findOne
-  ({
-    where: { workspace_name: "cpp" }
-  }).then(function(container)
-  {
-    container.getContainer().then(function(user)
-    {
-      res.send(user);
-    });
+  var token = jwt.sign({user:"ada"}, "ilovescotchyscotch", {
+    expiresIn : "5m" // expires in 24 hours
   });
+
+  // return the information including token as JSON
+  res.json({
+    success: true,
+    message: 'Enjoy your token!',
+    token: token
+  });
+  res.send();
 });
 
 /*
