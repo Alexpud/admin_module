@@ -11,6 +11,10 @@ angular.
         }).
         when('/containers', {
           template: '<container-list></container-list>'
+        }).
+        when('/login',{
+          template: '<login-form></login-form>'
         });
+
     }
   ]);
