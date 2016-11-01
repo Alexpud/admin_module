@@ -8,7 +8,7 @@ angular.module('workspaceList').
         {
           var self = this;
 
-          $http.get('list_workspaces').then(function (response)
+          $http.get('api/workspaces').then(function (response)
           {
             self.resulting_array = response.data;
           });

@@ -2,24 +2,22 @@ const exec = require('child_process').exec;
 var http = require('http');
 var express = require('express'),
   router = express.Router(),
-  db = require('../models');
+  db = require('../models'),
+  passport = require('passport');
 module.exports = function (app) {
   app.use('/api', router);
 };
 
-router.get('/test', function(req, res, next)
+router.get('/test', function(req,res)
 {
-  db.Workspace.findOne
-  ({
-    where: { workspace_name: "cpp" }
-  }).then(function(container)
+  passport.authenticate('local',{ session:false },function(err,info)
   {
-    container.getContainer().then(function(user)
-    {
-      res.send(user);
-    });
+    res.send('lol');
+    console.log("Lol");
   });
+
 });
+
 
 /*
  First, it retrieves the containers list from the database then, it uses promises to execute the bash script

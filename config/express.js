@@ -1,3 +1,4 @@
+require ('passport');
 var express = require('express');
 var glob = require('glob');
 
@@ -8,6 +9,7 @@ var bodyParser = require('body-parser');
 var compress = require('compression');
 var methodOverride = require('method-override');
 var exphbs  = require('express-handlebars');
+var passport = require('passport');
 
 module.exports = function(app, config) {
   var env = process.env.NODE_ENV || 'development';
@@ -32,6 +34,7 @@ module.exports = function(app, config) {
   app.use(compress());
   app.use(express.static(config.root + '/public'));
   app.use(methodOverride());
+  app.use(passport.initialize());
 
   var controllers = glob.sync(config.root + '/app/controllers/*.js');
   controllers.forEach(function (controller) {

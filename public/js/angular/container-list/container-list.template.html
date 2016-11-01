@@ -11,22 +11,20 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Registration ID</th>
           <th>Name</th>
           <th>Port</th>
           <th>Created at</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody>
         <div >
-          {{container}}
           <tr ng-repeat="container in $ctrl.resulting_array">
             <td>#</td>
-            <td>{{container.registration_ID}}</td>
             <td>{{container.name}}</td>
             <td>{{container.port}}</td>
             <td>{{container.createdAt }}</td>
-            <td>asd</td>
+            <td>{{container.status}}</td>
           </tr>
         </div>
       </tbody>

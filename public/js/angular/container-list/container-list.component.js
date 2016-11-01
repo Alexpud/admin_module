@@ -9,9 +9,9 @@ angular.module('containerList').
             var self = this;
 
             self.getContainers = function() {
-              $http.get('list_containers').then(function (response) {
+              $http.get('api/containers').then(function (response) {
                 self.resulting_array = response.data;
-                self.resulting_array[0].test = "test";
+                console.log(response.data);
               });
             };
 
