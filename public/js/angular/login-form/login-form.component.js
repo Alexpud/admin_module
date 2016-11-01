@@ -4,7 +4,7 @@ angular.module('loginForm').
       templateUrl: "/js/angular/login-form/login-form.template.html",
       controller:
         ['$http', '$routeParams',
-          function ContainerListController($http)
+          function LoginFormController($http)
           {
             var self = this;
 
