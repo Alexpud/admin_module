@@ -1,6 +1,18 @@
 # admin_module
 This module is created to serve as an interface for management of eclipse che service. It creates a web interface through which the administrator will be able to manage the container and workspace creation.
 
+##How to run 
+
+On the project folder execute the following commands:
+
+```
+  npm install
+```
+
+```
+  bower install
+```
+
 ##How it works
 
 Using a MySQL database, it stores the users, using their logins as primary keys. And through that, it uses to associate containers to each user, and each container may or may not have workspaces associated with it.
