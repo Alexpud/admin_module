@@ -11,7 +11,10 @@ angular.module('containerList').
             self.getContainers = function() {
               $http.get('api/containers').then(function (response) {
                 self.resulting_array = response.data;
+<<<<<<< HEAD
                 console.log(response.data);
+=======
+>>>>>>> bash-script
               });
             };
 
