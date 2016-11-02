@@ -2,27 +2,16 @@ const exec = require('child_process').exec;
 var http = require('http');
 var express = require('express'),
   router = express.Router(),
-<<<<<<< HEAD
   db = require('../models'),
-  passport = require('passport');
-=======
+  passport = require('passport'),
   jwt = require('jsonwebtoken'),
   db = require('../models');
->>>>>>> bash-script
 module.exports = function (app) {
   app.use('/api', router);
 };
 
 router.get('/test', function(req,res)
 {
-<<<<<<< HEAD
-  passport.authenticate('local',{ session:false },function(err,info)
-  {
-    res.send('lol');
-    console.log("Lol");
-  });
-
-=======
   var token = jwt.sign({user:"ada"}, "ilovescotchyscotch", {
     expiresIn : "5m" // expires in 24 hours
   });
@@ -34,7 +23,6 @@ router.get('/test', function(req,res)
     token: token
   });
   res.send();
->>>>>>> bash-script
 });
 
 
