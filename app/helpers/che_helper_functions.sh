@@ -47,19 +47,17 @@ function create
 	STATUS=$( check_docker_container $1 )
 	if [ "$STATUS" == "Non existent" ]; then
 	  MACHINE_IP=$( getIP )
-	  echo $MACHINE_IP
 	  CREATION_RESULT=$( docker run -v /var/run/docker.sock:/var/run/docker.sock -e CHE_HOST_IP=$MACHINE_IP -e CHE_DATA_FOLDER=/home/user/$1 -e CHE_PORT=$2 eclipse/che start 2>&1)
     RESULT_CHECK=$( echo $CREATION_RESULT | grep -c ERROR )
     if [ $RESULT_CHECK -eq 0 ]; then #If there was an error, RESULT_CHECK should not be equal to 0
       RENAME_RESULT=$( docker rename che-server $1 )
       stop $1
-      echo "Success"
     else
-      echo "Error: container exists"
+      echo $CREATION_RESULT
       exit 1
     fi
   else
-    echo "Error: $CREATION_RESULT"
+    echo "Error: Container already exists"
     exit 1
   fi
 }
@@ -69,7 +67,7 @@ function start
 {
   START_RESULT=$( docker start  $1 2>&1)
   RESULT_CHECK=$( echo $START_RESULT | grep -c Error )
-  if [ "$RESULT_CHECK" -eq 0 ]; then
+  if [ $RESULT_CHECK -eq 0 ]; then
     echo "Success"
   else
     echo $START_RESULT

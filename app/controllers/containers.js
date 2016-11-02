@@ -17,7 +17,8 @@ router.get('/test', function(req,res)
   });
 
   // return the information including token as JSON
-  res.json({
+  res.json
+  ({
     success: true,
     message: 'Enjoy your token!',
     token: token
@@ -55,7 +56,7 @@ router.get('/containers', function(req,res,next)
       var temp = "";
       for(var i = 0; i < container_list.length;i++)
       {
-        var temp = allData[i].status.replace('\n', "");
+        temp = allData[i].status.replace('\n', "");
         container_list[i].setDataValue("status",temp);
       }
       return container_list;
@@ -80,13 +81,14 @@ router.get("/containers/:name/", function (req, res, next)
       var promise = (new Promise(function (resolve, reject)
       {
         exec("./app/helpers/che_helper_functions.sh status " + container.name,
-          function (err, stdout, stderr) {
+          function (err, stdout, stderr)
+          {
             resolve({status: stdout});
           });
       })).then(function (data)
       {
-        var temp = data.status.replace('\n', "");
-        container.setDataValue("status", temp);//.status = data.status;
+        var response = data.status.replace('\n', "");
+        container.setDataValue("status", response);//.status = data.status;
         res.status(200);
         res.send(container);
       });
@@ -94,12 +96,12 @@ router.get("/containers/:name/", function (req, res, next)
     else
     {
       res.status(404);
-      res.end({ Error: "The container doesn't have any workspace" });
+      res.end({ error: "The container doesn't have any workspace" });
     }
   }).catch(function (error)
   {
     res.status(404);
-    res.send({ Error: "The container doesn't exist" });
+    res.send({ error: "The container doesn't exist" });
   });
 });
 
@@ -133,36 +135,38 @@ router.post('/containers/:name', function (req, res, next)
         });
     }).then(function (data)
     {
-      if( data.error != null)
-      {
-        res.status(500);
-        res.send({Error: data.response});
-      }
-      if( data.response == "Container exists")
-      {
-        res.status(409);
-        res.send({ error: "Container already exists" });
-      }
-      else
+      var response = data.response.replace('\n', "");
+      if(response == "Success")
       {
         db.Container.create
         ({
           port: new_container_port_value,
           name: req.params.name,
           UserLogin: req.params.name
-        }).then(function () { // Container created
+        }).then(function () // Container created
+        {
           res.status(201);
           res.send();
         }).catch(function (err)  // Failed to create the container, failed on some restraint
         {
           res.status(409);
-          res.send({error: err.errors});
+          res.send({ error: err.errors });
         });
+      }
+      else if( response == "Error: Container already exists")
+      {
+        res.status(409);
+        res.send({ error: "Container already exists" });
+      }
+      else
+      {
+        res.status(500);
+        res.send({ error: response });
       }
     }).catch(function (error)
     {
       res.status(500);
-      res.send({error: error});
+      res.send({ error: error });
     });
   });
 
@@ -172,7 +176,7 @@ router.post('/containers/:name/start', function(req, res, next)
 {
   db.Container.findOne
   ({
-    where: { name: req.params.name}
+    where: { name: req.params.name }
   }).then(function(container)
   {
     if ( container != null ) // No container with the description passed on the request exists
@@ -185,24 +189,22 @@ router.post('/containers/:name/start', function(req, res, next)
           });
       }).then(function (data)
       {
-        console.log(data.response);
-        var temp_response = data.response.replace('\n', "");
+        var response = data.response.replace('\n', "");
         //If it is an error message, docker error message will begin with Error, so the first letter is E
-        if(data.response == "Success")
+        if(response == "Success")
         {
-
-          var temp_response = data.response.replace('\n', "");
           res.status(204);
           res.send();
         }
         else
         {
           res.status(404);
-          res.send({ response: temp_response });
+          res.send({ error: response });
         }
       }).catch(function(error)
       {
-        res.send(error);
+        res.status(500);
+        res.send({ error: error });
       });
     }
     else
@@ -234,9 +236,8 @@ router.delete('/containers/:name/stop', function (req, res, next)
           });
       }).then(function (data)
       {
-        console.log(data.response);
-        var temp = data.response.replace('\n', "");
-        if (temp == "Success")
+        var response = data.response.replace('\n', "");
+        if ( response == "Success" )
         {
           res.status(204);
           res.send();
@@ -244,14 +245,14 @@ router.delete('/containers/:name/stop', function (req, res, next)
         else
         {
           res.status(500);
-          res.send({ error: temp });
+          res.send({ error: response });
         }
       });
     }
     else
     {
       res.status(404);
-      res.send({ Error: "Container does not exist" });
+      res.send({ error: "Container does not exist" });
     }
   });
 });
@@ -274,8 +275,17 @@ router.delete('/containers/:name/delete', function(req,res,next)
           });
       }).then(function(data)
       {
-        var temp = data.response.replace('\n', "");
-        res.send({ result: temp });
+        var response = data.response.replace('\n', "");
+        if(response == "Success")
+        {
+          res.status(204);
+          res.send({ result: temp });
+        }
+        else
+        {
+          res.status(500);
+          res.send({ error: response });
+        }
       });
     });
   });
