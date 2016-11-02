@@ -182,19 +182,24 @@ router.post('/containers/:name/start', function(req, res, next)
           });
       }).then(function (data)
       {
+        console.log(data.response);
+        var temp_response = data.response.replace('\n', "");
         //If it is an error message, docker error message will begin with Error, so the first letter is E
-        if(data.response.charAt(0) == 'E')
+        if(data.response == "Success")
         {
-          var temp_response = data.response.replace('\n', "");
-          res.status(404);
-          res.send({ response: temp_response });
-        }
-        else
-        {
+
           var temp_response = data.response.replace('\n', "");
           res.status(204);
           res.send();
         }
+        else
+        {
+          res.status(404);
+          res.send({ response: temp_response });
+        }
+      }).catch(function(error)
+      {
+        res.send(error);
       });
     }
     else
@@ -226,6 +231,7 @@ router.delete('/containers/:name/stop', function (req, res, next)
           });
       }).then(function (data)
       {
+        console.log(data.response);
         var temp = data.response.replace('\n', "");
         if (temp == "Success")
         {
