@@ -64,10 +64,12 @@ router.post('/authenticate',function(req,res){
   	}else
   	{ //retrieve token user
   		res.json({'token_retornado': user.token})
+  		res.status(204);
+  		re.send();
   	}
 	
-//	console.log(user.get({plain: true }))
-//	console.log(created)
+	console.log(user.get({plain: true }));
+	console.log(created);
 
 	
 	    
