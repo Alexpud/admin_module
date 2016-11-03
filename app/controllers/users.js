@@ -35,36 +35,41 @@ router.post('/authenticate',function(req,res){
   	// new user created, so insert your token.
   	if(created)
   	{
-	  	var token = jwt.sign({user:req.body.login}, "ilovescotchyscotch", {
+	  	var tokenUser = jwt.sign({user:req.body.login}, "ilovescotchyscotch", {
 	    expiresIn : "5m" // expires in 24 hours
 	  });
 
-	  // return the information including token as JSON
-	  res.json({
-	    success: true,
-	    message: 'Enjoy your token!',
-	    token: token
-	  });
-
 	  	//insert token on data base.
-  		/*db.User.update(
-  			{ login: 'teste2',}, //change login to field token on the table
+  		db.User.update(
+  			{ token: tokenUser,}, //change login to field token on the table
 			{
   				where: 
   				{
+    				login: req.body.login,
     				password: req.body.password
   				}
-			});*/
-			
-  	}else{ //retrieve token user
+			}).then(function(){
+				res.json({'token': tokenUser });
+				res.status(204);
+				res.send();				
+			}).catch(function (err)
+        {
+          res.status(409);
+          res.send({error: err.errors});
+        });
 
+  		// return the information including token as JSON
+
+			
+  	}else
+  	{ //retrieve token user
+  		res.json({'token_retornado': user.token})
   	}
 	
-	console.log(user.get({plain: true }))
-	console.log(created)
+//	console.log(user.get({plain: true }))
+//	console.log(created)
 
-	res.status(204);
-	res.send();
+	
 	    
   })
 });
