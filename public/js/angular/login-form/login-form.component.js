@@ -7,15 +7,12 @@ angular.module('loginForm').
           function LoginFormController($http)
           {
             var self = this;
+            self.username = "";
+            self.password = "";
 
-            self.getContainers = function() {
-              $http.get('api/test').then(function (response) {
-                self.resulting_array = response.data;
-                console.log(self.resulting_array);
-              });
+            self.login = function(){
+          //    $http.post('api/authenticate')  
             };
-
-            self.getContainers();
           }
         ]
     });

@@ -8,6 +8,7 @@ module.exports = function (sequelize, DataTypes) {
   var User = sequelize.define('User', {
     login: { type: DataTypes.STRING,len: [12,12], allowNull: false, primaryKey: true},
     password: { type: DataTypes.STRING},
+    token: { type: DataTypes.STRING},
     admin: { type: DataTypes.BOOLEAN}
   }, {
     classMethods: {
