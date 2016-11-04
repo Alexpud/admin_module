@@ -23,22 +23,23 @@ router.post("/users/:name",function(req,res)
 	});
 });
 
-router.post('/users/:name/authenticate',function(req,res)
+router.post('/users/:login/authenticate',function(req,res)
 {
   db.User.findOrCreate
   ({
     where:
     {
-      login: req.params.name,
+      login: req.params.login,
       password: req.body.password
     }
-  }).then(function(user)
+  }).spread(function(user, created)
   {
+    console.log(created)
   	// new user created, so insert your token.
-  	if( user != null)
+  	if(created && user !== null)
   	{
 	  	var tokenUser = jwt.sign({ user:req.body.login }, "ilovescotchyscotch", {
-	      expiresIn : "5m" // expires in 24 hours
+	     // expiresIn : "5m" // expires in 24 hours
 	  });
 	  	//insert token on data base.
   		db.User.update({ token: tokenUser }, //change login to field token on the table
@@ -58,10 +59,10 @@ router.post('/users/:name/authenticate',function(req,res)
           res.send({error: err.errors});
         });
   		// return the information including token as JSON
-  	}else
+  	}else if(user !== null)
   	{ //retrieve token user
   		res.status(200);
   		res.send({ "token": user.token });
   	}
-  })
+  });
 });
