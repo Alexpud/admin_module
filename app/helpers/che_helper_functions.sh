@@ -41,6 +41,19 @@ function check_docker_container
   fi
 }
 #--------------------------------------------------------------------------------------------------------------#
+#---------------------------------Checks if a workspace belonging to a container, is running-------------------#
+function check_workspace_status
+{
+  WORKSPACE=$1
+  RUNNING=$( docker ps 2>&1 )
+  RESULT_CHECK=$( echo $RUNNING | grep -c $WORKSPACE )
+  if [ $RESULT_CHECK -eq 1 ]; then
+    echo "Running"
+  else
+    echo "Not running"
+  fi
+}
+#--------------------------------------------------------------------------------------------------------------#
 #----------------------------------Creates the user che container----------------------------------------------#
 function create
 {
@@ -131,9 +144,12 @@ else
 			delete)
 			  delete $USER_NAME
 			  ;;
-			status)
+			container_status)
 				check_docker_container $USER_NAME
 				;;
+			workspace_status)
+			  check_workspace_status $USER_NAME
+			  ;;
 		esac
 	else
 	  echo "Error: Second parameter is empty"
