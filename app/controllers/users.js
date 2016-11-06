@@ -29,23 +29,33 @@ createUser = function(loginUser,passwordUser,tokenUser,isAdmin,req,res){
       });
 }
 
+//autorize access a route.
+var authorization = function ensureAuthorized(req, res, next) {
+    var bearerToken;
+    var bearerHeader = req.headers["authorization"];
+    if (typeof bearerHeader !== 'undefined') {
+        var bearer = bearerHeader.split(" ");
+        bearerToken = bearer[1];
+        req.token = bearerToken;
+        next();
+    } else {
+        res.send(403);
+    }
+}
 
 module.exports = function (app) {
   app.use('/api', router);
 };
 
-router.post("/users/:name",function(req,res)
+
+
+router.post("/users/:name",authorization,function(req,res)
 {
-	db.User.create
-	({
-		login: req.params.name,
-		password: req.body.password,
-		admin: req.body.admin
-	}).then(function()
-	{
-		res.status(204);
-		res.send();
-	});
+  
+    console.log("oi token seu valor é: "+req.token);
+	
+  res.status(200);
+  res.send();
 });
 
 router.post('/users/:login/authenticate',function(req,res)
@@ -53,7 +63,7 @@ router.post('/users/:login/authenticate',function(req,res)
   db.User.findAll({
     limit: 1,
     where: {
-      login: req.params.login
+      login: req.body.login
     },
     order: [ [ 'createdAt', 'DESC' ]]
   }).then(function(user){
@@ -65,11 +75,12 @@ router.post('/users/:login/authenticate',function(req,res)
         res.status(200);
         console.log(user[0].login);
         res.json({'token': user[0].token})
-        res.send();        
+       // res.send();        
       }else
       {
           res.status(401);
-          res.send("Senha incorreta");
+          res.json({"erro":true, "status":401})
+         // res.send("Senha incorreta");
       }
 
     }
@@ -78,7 +89,7 @@ router.post('/users/:login/authenticate',function(req,res)
       var tokenUser = jwt.sign({ user:req.body.login }, "Oursecretsecret", {
         // expiresIn : "5m" // expires in 24 hours 
       });
-      createUser(req.params.login,req.body.password,tokenUser,req.body.admin,req,res);     
+      createUser(req.body.login,req.body.password,tokenUser,req.body.admin,req,res);     
     }
   }); 
 });
