@@ -23,7 +23,7 @@ router.get('/workspaces', function (req, res, next)
     {
       promises.push(new Promise(function (resolve, reject)
       {
-        exec("./app/helpers/che_helper_functions.sh workspace_status " + workspaceList[i].workspace_id,
+        exec("./app/helpers/che_helper_functions.sh workspace_status " + workspaceList[i].workspaceID,
           function(err, stdout, stderr)
           {
             resolve({ status: stdout });
@@ -100,8 +100,8 @@ router.post('/workspaces/:workspaceName', function( req, res, next)
             });
           }).then(function (response)
           {
-            var workspace_id = response.data;
-            if(workspace_id == "")
+            var workspaceID = response.data;
+            if(workspaceID == "")
             {
               res.status(500);
               res.send({ error: "Was not able to create workspace" });
@@ -112,11 +112,11 @@ router.post('/workspaces/:workspaceName', function( req, res, next)
               ({
                 containerName: containerName,
                 workspaceName: workspaceName,
-                workspace_id: workspace_id,
+                workspaceID: workspaceID,
                 stack: workspaceStack
               }).then(function ()
               {
-                res.status(204);
+                res.status(201);
                 res.send();
               }).catch(function (error)
               {
@@ -161,14 +161,14 @@ router.post('/workspaces/:workspaceName/start', function( req, res, next)
       var containerPort = workspace.Container.port;
       var promise = new Promise(function (resolve, reject)
       {
-        exec('curl -H "Content-Type: application/json" --data "" -X "POST"  http://localhost:' + containerPort + '/api/workspace/' + workspace.workspace_id + '/runtime?environment=default',
+        exec('curl -H "Content-Type: application/json" --data "" -X "POST"  http://localhost:' + containerPort + '/api/workspace/' + workspace.workspaceID + '/runtime?environment=default',
           function (err, stdout, stderr)
           {
             resolve({response: stdout});
           });
       }).then(function (data) {
         //When the operation is successful, CHE api returns a message with an empty body.
-        if (data.response.length == 0) {
+        if (data.response.status != "") {
           res.status(204);
           res.send();
         }
@@ -202,13 +202,14 @@ router.delete('/workspaces/:workspaceName/stop', function(req,res,next)
     var promise = new Promise(function (resolve, reject)
     {
       var containerPort = workspace.Container.port;
-      exec('curl -H "Content-Type: application/json" -X "DELETE" http://localhost:'+containerPort+'/api/workspace/'+workspace.workspace_id+'/runtime',
+      exec('curl -H "Content-Type: application/json" -X "DELETE" http://localhost:'+containerPort+'/api/workspace/'+workspace.workspaceID+'/runtime',
         function(err,stdout,stderr)
         {
           resolve({ response: stdout  });
         });
     }).then(function (data)
     {
+      console.log(data);
       if(data.response.length == 0)
       {
         res.status(200);
@@ -222,7 +223,7 @@ router.delete('/workspaces/:workspaceName/stop', function(req,res,next)
     });
   }).catch(function(error)
   {
-    res.send(500);
+    res.status(500);
     res.send({ error: error });
   });
 });
@@ -263,7 +264,7 @@ router.delete('/workspaces/:workspaceName/delete',function(req, res, next)
             var promise = new Promise(function (resolve, reject)
             {
               var containerPort = workspace.Container.port;
-              exec('curl -H "Content-Type: application/json" -X "DELETE" http://localhost:' + containerPort + '/api/workspace/' + workspace.workspace_id,
+              exec('curl -H "Content-Type: application/json" -X "DELETE" http://localhost:' + containerPort + '/api/workspace/' + workspace.workspaceID,
                 function (err, stdout, stderr) {
                   resolve({ response: stdout });
                 });

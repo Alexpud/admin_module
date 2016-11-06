@@ -53,29 +53,40 @@ router.get('/containers', function(req,res,next)
             resolve({ containerStatus: stdout });
           });
       }));
-      for( var j = 0; j < containerList[i].Workspaces.length; j ++) {
-        promises.push(new Promise(function (resolve, reject) {
-          exec("./app/helpers/che_helper_functions.sh workspace_status " + containerList[i].Workspaces[j].workspace_id,
-            function (err, stdout, stderr) {
-              resolve({workspaceStatus: stdout});
-            });
-        }));
+      console.log(containerList[i].name);
+      if(containerList[i].Workspaces.length > 0)
+      {
+        for( var j = 0; j < containerList[i].Workspaces.length; j ++)  //For each workspace belonging to the container, get it's status
+        {
+          promises.push(new Promise(function (resolve, reject) {
+            exec("./app/helpers/che_helper_functions.sh workspace_status " + containerList[i].Workspaces[j].workspace_id,
+              function (err, stdout, stderr) {
+                resolve({workspaceStatus: stdout});
+              });
+          }));
+        }
       }
     }
     Promise.all(promises).then(function (allData)
     {
+      console.log(allData);
       var containerStatus = "";
       var workspaceStatus = "";
-      var temp = 1;
+      var temp = 0;
       for(var i = 0; i < containerList.length;i++)
       {
-        containerStatus = allData[i].containerStatus.replace('\n', "");
+
+        containerStatus = allData[temp++].containerStatus.replace('\n', "");
         containerList[i].setDataValue("status",containerStatus);
-        for ( var j = 0; j < containerList[i].Workspaces.length; j ++)
-        {
-          workspaceStatus = allData[temp++].workspaceStatus.replace('\n',"");
-          containerList[i].Workspaces[j].setDataValue("status",workspaceStatus);
+        console.log(containerList[i].name);
+        if(containerList[i].Workspaces.length > 0) {
+          for (var j = 0; j < containerList[i].Workspaces.length; j++) //Add the workspace status to all workspaces belonging to each container
+          {
+            workspaceStatus = allData[temp++].workspaceStatus.replace('\n', "");
+            containerList[i].Workspaces[j].setDataValue("status", workspaceStatus);
+          }
         }
+
       }
       return containerList;
     }).then(function(containerList)
@@ -83,6 +94,10 @@ router.get('/containers', function(req,res,next)
       res.status(200);
       res.send(containerList);
     });
+  }).catch(function(error)
+  {
+    res.status(500);
+    res.send({error: error});
   });
 });
 
@@ -297,7 +312,7 @@ router.delete('/containers/:name/delete', function(req,res,next)
         if(response == "Success")
         {
           res.status(204);
-          res.send({ result: temp });
+          res.send();
         }
         else
         {

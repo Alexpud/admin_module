@@ -5,16 +5,17 @@
 module.exports = function (sequelize, DataTypes) {
 
   var Workspace = sequelize.define('Workspace', {
-    container_name: { type: DataTypes.STRING, primaryKey:true},
-    workspace_name: { type: DataTypes.STRING, allowNull: false, primaryKey: true},
-    workspace_id: { type: DataTypes.STRING, primaryKey: true, allowNul: false, unique: true},
-    stack: { type: DataTypes.STRING, allowNull:false}
+    containerName: { type: DataTypes.STRING, primaryKey:true},
+    stack: { type: DataTypes.STRING, allowNull:false},
+    workspaceName: { type: DataTypes.STRING, allowNull: false, primaryKey: true},
+    workspaceID: { type: DataTypes.STRING, primaryKey: true, allowNul: false, unique: true}
+
   }, {
     classMethods: {
       associate: function (models) {
         // example on how to add relations
         // Article.hasMany(models.Comments);
-        Workspace.belongsTo(models.Container, { foreignKey: 'container_name', constraints:true });
+        Workspace.belongsTo(models.Container, { foreignKey: 'containerName', constraints:true });
       }
     }
   });
