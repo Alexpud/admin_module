@@ -36,35 +36,68 @@ router.get('/test', function(req,res)
  */
 router.get('/containers', function(req,res,next)
 {
-  var new_container_list = [];
+  var newContainerList = [];
   var promises = [];
-  db.Container.all().then( function(container_list)
+  db.Container.all
+  ({
+    include: [{ model: db.Workspace }]
+  }).then( function(containerList)
   {
-    for (var i = 0; i < container_list.length; i++)
+    for (var i = 0; i < containerList.length; i++)
     {
       promises.push(new Promise(function (resolve, reject)
       {
-        exec("./app/helpers/che_helper_functions.sh status " + container_list[i].name,
+        exec("./app/helpers/che_helper_functions.sh container_status " + containerList[i].name,
           function(err, stdout, stderr)
           {
-            resolve({ status: stdout });
+            resolve({ containerStatus: stdout });
           });
       }));
+      console.log(containerList[i].name);
+      if(containerList[i].Workspaces.length > 0)
+      {
+        for( var j = 0; j < containerList[i].Workspaces.length; j ++)  //For each workspace belonging to the container, get it's status
+        {
+          promises.push(new Promise(function (resolve, reject) {
+            exec("./app/helpers/che_helper_functions.sh workspace_status " + containerList[i].Workspaces[j].workspace_id,
+              function (err, stdout, stderr) {
+                resolve({workspaceStatus: stdout});
+              });
+          }));
+        }
+      }
     }
     Promise.all(promises).then(function (allData)
     {
-      var temp = "";
-      for(var i = 0; i < container_list.length;i++)
+      console.log(allData);
+      var containerStatus = "";
+      var workspaceStatus = "";
+      var temp = 0;
+      for(var i = 0; i < containerList.length;i++)
       {
-        temp = allData[i].status.replace('\n', "");
-        container_list[i].setDataValue("status",temp);
+
+        containerStatus = allData[temp++].containerStatus.replace('\n', "");
+        containerList[i].setDataValue("status",containerStatus);
+        console.log(containerList[i].name);
+        if(containerList[i].Workspaces.length > 0) {
+          for (var j = 0; j < containerList[i].Workspaces.length; j++) //Add the workspace status to all workspaces belonging to each container
+          {
+            workspaceStatus = allData[temp++].workspaceStatus.replace('\n', "");
+            containerList[i].Workspaces[j].setDataValue("status", workspaceStatus);
+          }
+        }
+
       }
-      return container_list;
-    }).then(function(container_list)
+      return containerList;
+    }).then(function(containerList)
     {
       res.status(200);
-      res.send(container_list);
+      res.send(containerList);
     });
+  }).catch(function(error)
+  {
+    res.status(500);
+    res.send({error: error});
   });
 });
 
@@ -80,7 +113,7 @@ router.get("/containers/:name/", function (req, res, next)
     {
       var promise = (new Promise(function (resolve, reject)
       {
-        exec("./app/helpers/che_helper_functions.sh status " + container.name,
+        exec("./app/helpers/che_helper_functions.sh container_status " + container.name,
           function (err, stdout, stderr)
           {
             resolve({status: stdout});
@@ -114,15 +147,15 @@ router.post('/containers/:name', function (req, res, next)
 {
   var new_container_port_value = 0;
   // Returns a list ordered by the container port in descending order.
-  db.Container.findAll({limit: 1, order: [['port', 'DESC']]}).then(function (container_list)
+  db.Container.findAll({limit: 1, order: [['port', 'DESC']]}).then(function (containerList)
   {
-    if (container_list.length == 0)
+    if (containerList.length == 0)
     {
       new_container_port_value = 8090;
     }
     else //Grabs the biggest value, increase it by one
     {
-      new_container_port_value = container_list[0].port + 1;
+      new_container_port_value = containerList[0].port + 1;
     }
   }).then(function ()
   {
@@ -279,7 +312,7 @@ router.delete('/containers/:name/delete', function(req,res,next)
         if(response == "Success")
         {
           res.status(204);
-          res.send({ result: temp });
+          res.send();
         }
         else
         {

@@ -5,15 +5,14 @@
 module.exports = function (sequelize, DataTypes) {
 
   var Container = sequelize.define('Container', {
-    port: { type: DataTypes.INTEGER,unique: true},
-    name: { type: DataTypes.STRING, primaryKey: true, allowNull: false, unique: true }
-
+    name: { type: DataTypes.STRING, primaryKey: true, allowNull: false, unique: true },
+    port: { type: DataTypes.INTEGER,unique: true}
   }, {
     classMethods: {
       associate: function (models) {
         // example on how to add relations
         // Article.hasMany(models.Comments);
-        Container.hasMany(models.Workspace,{ foreignKey: 'container_name', constraints: true, onDelete: 'cascade', hooks: true});
+        Container.hasMany(models.Workspace,{ foreignKey: 'containerName', constraints: true, onDelete: 'cascade', hooks: true});
         Container.belongsTo(models.User,{constraints: true});
         // Maybe this line causes error
       }

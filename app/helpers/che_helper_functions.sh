@@ -41,16 +41,29 @@ function check_docker_container
   fi
 }
 #--------------------------------------------------------------------------------------------------------------#
+#---------------------------------Checks if a workspace belonging to a container, is running-------------------#
+function check_workspace_status
+{
+  WORKSPACE=$1
+  RUNNING=$( docker ps 2>&1 )
+  RESULT_CHECK=$( echo $RUNNING | grep -c $WORKSPACE )
+  if [ $RESULT_CHECK -eq 1 ]; then
+    echo "Running"
+  else
+    echo "Not running"
+  fi
+}
+#--------------------------------------------------------------------------------------------------------------#
 #----------------------------------Creates the user che container----------------------------------------------#
 function create
 {
 	STATUS=$( check_docker_container $1 )
 	if [ "$STATUS" == "Non existent" ]; then
+
 	  MACHINE_IP=$( getIP )
-	  CREATION_RESULT=$( docker run -v /var/run/docker.sock:/var/run/docker.sock -e CHE_HOST_IP=$MACHINE_IP -e CHE_DATA_FOLDER=/home/user/$1 -e CHE_PORT=$2 eclipse/che start 2>&1)
+	  CREATION_RESULT=$( docker run --net=host --name $1 -v /var/run/docker.sock:/var/run/docker.sock -v /home/user/$1:/home/user/che/workspaces -d spudin/che-ufs -r:$MACHINE_IP -p:$2 run 2>&1)
     RESULT_CHECK=$( echo $CREATION_RESULT | grep -c ERROR )
     if [ $RESULT_CHECK -eq 0 ]; then #If there was an error, RESULT_CHECK should not be equal to 0
-      RENAME_RESULT=$( docker rename che-server $1 )
       stop $1
     else
       echo $CREATION_RESULT
@@ -131,9 +144,12 @@ else
 			delete)
 			  delete $USER_NAME
 			  ;;
-			status)
+			container_status)
 				check_docker_container $USER_NAME
 				;;
+			workspace_status)
+			  check_workspace_status $USER_NAME
+			  ;;
 		esac
 	else
 	  echo "Error: Second parameter is empty"
