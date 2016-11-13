@@ -59,8 +59,9 @@ function create
 {
 	STATUS=$( check_docker_container $1 )
 	if [ "$STATUS" == "Non existent" ]; then
+
 	  MACHINE_IP=$( getIP )
-	  CREATION_RESULT=$( docker run --net=host --name $1 -v /var/run/docker.sock:/var/run/docker.sock -v /home/user/$1:/var/user/che/workspaces -d spudin/che-ufs -r:$MACHINE_IP -p:$2 run 2>&1)
+	  CREATION_RESULT=$( docker run --net=host --name $1 -v /var/run/docker.sock:/var/run/docker.sock -v /home/user/$1:/home/user/che/workspaces -d spudin/che-ufs -r:$MACHINE_IP -p:$2 run 2>&1)
     RESULT_CHECK=$( echo $CREATION_RESULT | grep -c ERROR )
     if [ $RESULT_CHECK -eq 0 ]; then #If there was an error, RESULT_CHECK should not be equal to 0
       stop $1
