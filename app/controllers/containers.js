@@ -38,6 +38,9 @@ router.get('/containers', function(req,res,next)
 {
   var newContainerList = [];
   var promises = [];
+  var containerStatus = "";
+  var workspaceStatus = "";
+  var temp = 0;
   db.Container.all
   ({
     include: [{ model: db.Workspace }]
@@ -53,7 +56,7 @@ router.get('/containers', function(req,res,next)
             resolve({ containerStatus: stdout });
           });
       }));
-      console.log(containerList[i].name);
+
       if(containerList[i].Workspaces.length > 0)
       {
         for( var j = 0; j < containerList[i].Workspaces.length; j ++)  //For each workspace belonging to the container, get it's status
@@ -69,16 +72,11 @@ router.get('/containers', function(req,res,next)
     }
     Promise.all(promises).then(function (allData)
     {
-      console.log(allData);
-      var containerStatus = "";
-      var workspaceStatus = "";
-      var temp = 0;
       for(var i = 0; i < containerList.length;i++)
       {
-
         containerStatus = allData[temp++].containerStatus.replace('\n', "");
         containerList[i].setDataValue("status",containerStatus);
-        console.log(containerList[i].name);
+
         if(containerList[i].Workspaces.length > 0) {
           for (var j = 0; j < containerList[i].Workspaces.length; j++) //Add the workspace status to all workspaces belonging to each container
           {
@@ -86,7 +84,6 @@ router.get('/containers', function(req,res,next)
             containerList[i].Workspaces[j].setDataValue("status", workspaceStatus);
           }
         }
-
       }
       return containerList;
     }).then(function(containerList)
@@ -104,14 +101,17 @@ router.get('/containers', function(req,res,next)
 //Gets all the workspaces belonging to a container
 router.get("/containers/:name/", function (req, res, next)
 {
+  var promises = [];
+  var promise;
   db.Container.findOne
   ({
-    name: req.params.name
+    name: req.params.name,
+    include: [{ model: db.Workspace }]
   }).then( function(container)
   {
     if ( container != null )
     {
-      var promise = (new Promise(function (resolve, reject)
+      promise = (new Promise(function (resolve, reject)
       {
         exec("./app/helpers/che_helper_functions.sh container_status " + container.name,
           function (err, stdout, stderr)
@@ -122,8 +122,35 @@ router.get("/containers/:name/", function (req, res, next)
       {
         var response = data.status.replace('\n', "");
         container.setDataValue("status", response);//.status = data.status;
-        res.status(200);
-        res.send(container);
+
+      }).then(function()
+      {
+
+        for (var i = 0; i < container.Workspaces.length; i++)
+        {
+          promises.push(new Promise(function (resolve, reject)
+          {
+            exec("./app/helpers/che_helper_functions.sh workspace_status " + container.Workspaces[i].workspace_id,
+              function (err, stdout, stderr) {
+                resolve({workspaceStatus: stdout});
+              });
+          }));
+        }
+
+        Promise.all(promises).then(function(allData)
+        {
+          for(var i = 0; i < container.Workspaces.length; i++)
+          {
+            var workspaceStatus = allData[i].workspaceStatus.replace('\n', "");
+            container.Workspaces[i].setDataValue("status", workspaceStatus);
+          }
+          return container;
+        }).then(function(container)
+        {
+          console.log("loa");
+          res.status(200);
+          res.send(container);
+        });
       });
     }
     else
