@@ -22,6 +22,7 @@
     "method-override": "^2.3.0",
     "morgan": "^1.6.1",
     "mysql": "^2.8.0",
+    "node-sass": "^3.11.3",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "promises": "^0.2.5",
