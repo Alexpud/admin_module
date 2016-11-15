@@ -7,28 +7,6 @@ var express = require('express'),
 
 var bcrypt = require('bcrypt-nodejs');
 
-generatePassword= function(password){
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(9));
-}
-
-validatePassword = function(passwordForm,passwordDB){
-  return bcrypt.compareSync(passwordForm,passwordDB);
-}
-
-createUser = function(loginUser,passwordUser,tokenUser,isAdmin,req,res){
-   db.User.create(
-      {
-        login: loginUser,
-        password: generatePassword(passwordUser),
-        token: tokenUser,
-        admin: isAdmin
-      }).then(function(user){
-        res.json({'token':user.token});
-        res.status(200);
-        res.send();
-      });
-}
-
 //autorize access a route.
 var authorization = function ensureAuthorized(req, res, next) {
     var bearerToken;
@@ -41,55 +19,68 @@ var authorization = function ensureAuthorized(req, res, next) {
     } else {
         res.send(403);
     }
-}
+};
 
 module.exports = function (app) {
   app.use('/api', router);
 };
 
-
-
 router.post("/users/:name",authorization,function(req,res)
 {
-  
-    console.log("oi token seu valor é: "+req.token);
-	
+  console.log("oi token seu valor é: "+req.token);
   res.status(200);
   res.send();
 });
 
 router.post('/users/:login/authenticate',function(req,res)
 {
-  db.User.findAll({
-    limit: 1,
-    where: {
-      login: req.body.login
-    },
-    order: [ [ 'createdAt', 'DESC' ]]
-  }).then(function(user){
+  var req_login = req.body.login;
+  var req_password = req.body.password;
+  db.User.findOne
+  ({
+    where: { login: req_login }
+  }).then(function(user)
+  {
+
     // user exist, return your token if password form match password data base
-    if(user[0] != null)
+    if(user != null)
     {
-      if(validatePassword(req.body.password,user[0].password))
+      console.log("lol");
+      console.log(user);
+      if(db.User.validatePassword(req_password, user.password))
       {
         res.status(200);
-        console.log(user[0].login);
-        res.json({'token': user[0].token})
-       // res.send();        
+        res.send({ token: user.token });
       }else
       {
           res.status(401);
-          res.json({"erro":true, "status":401})
-         // res.send("Senha incorreta");
+          res.send({ error: "Password invalid" });
       }
-
     }
     else //create new user and return your token
     {
-      var tokenUser = jwt.sign({ user:req.body.login }, "Oursecretsecret", {
-        // expiresIn : "5m" // expires in 24 hours 
+      var tokenUser = jwt.sign({ user: req_login }, "Oursecretsecret", {
+         expiresIn : "5m" // expires in 24 hours
       });
-      createUser(req.body.login,req.body.password,tokenUser,req.body.admin,req,res);     
+      db.User.create
+      ({
+          login: req_login,
+          password: generatePassword(req_password),
+          token: tokenUser,
+          admin: 0
+      }).then(function(user)
+      {
+        res.status(200);
+        res.send({ token: user.token });
+      }).catch(function(error)
+      {
+        res.status(500);
+        res.send({ error: error });
+      });
     }
-  }); 
+  }).catch(function(error)
+  {
+    res.status(500);
+    res.send({error: error });
+  });
 });

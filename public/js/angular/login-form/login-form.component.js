@@ -7,23 +7,22 @@ angular.module('loginForm').
           function LoginFormController($http,$localStorage)
           {
             var self = this;
-            
-
             self.login = function(user)
             {
-              var data = {
+              var data =
+              {
                   login: user.username,
                   password:user.password
               };
 
               var config = [{'params': user.username}];
 
-         //     console.log(user.username);
+              // console.log(user.username);
               $http.post('http://localhost:3000/api/users/:login/authenticate',data,config).
                 then(function(response)
                 {
-                    console.log(response.data.token);
-                    localStorage.setItem('token',response.data.token);
+                  console.log(response.data.token);
+                  localStorage.setItem('token',response.data.token);
                 },function(argument) {
                   if(argument.data.erro) //redirect ?
                   {
