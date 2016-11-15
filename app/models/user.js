@@ -20,41 +20,15 @@ module.exports = function (sequelize, DataTypes)
         // Article.hasMany(models.Comments);
         User.hasMany(models.Container, { foreignKey: 'name', onDelete: 'cascade', constraints: true})
       },
+      generatePassword: function(password)
+      {return bcrypt.hashSync(password,bcrypt.genSaltSync(10),null);
+      },
       validatePassword: function(passwordA,passwordB)
       {
         return bcrypt.compareSync(passwordA,passwordB);
       }
-    },
-    hooks:
-    {
-      beforeCreate: hashPassword
     }
   });
-
-  var hashPassword = function(user,done)
-  {
-    bcrypt.genSalt(10, function (err, salt)
-    {
-      bcrypt.hash(user.password, salt, null, function (err, encrypted) {
-        console.log('Using beforeCreate to generate encrypted password');
-        if (err) return done(err);
-        user.password = encrypted;
-      });
-    });
-  };
-
-  var updateToken = function(user,done)
-  {
-    bcrypt.genSalt(10, function (err, salt)
-    {
-      bcrypt.hash(user.token, salt, null, function (err, encrypted) {
-        console.log('Using beforeCreate to generate encrypted password');
-        if (err) return done(err);
-        user.token = encrypted;
-      });
-    });
-  };
-
   return User;
 };
 
