@@ -18,7 +18,7 @@ angular.module('loginForm').
               var config = [{'params': user.username}];
 
               // console.log(user.username);
-              $http.post('http://localhost:3000/api/users/:login/authenticate',data,config).
+              $http.post('http://localhost:3000/api/login',data,config).
                 then(function(response)
                 {
                   console.log(response.data.token);

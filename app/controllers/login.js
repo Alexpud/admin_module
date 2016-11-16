@@ -4,17 +4,18 @@ var express = require('express'),
     jwt = require('jsonwebtoken'),
     db = require('../models'),
     passport = require('passport'),
-    authorization = require('../auth/auth'),
+    authorization = require('../auth/auth.js'),
     bcrypt = require('bcrypt-nodejs');
+
+var cfg = require("../config/config.js");
 
 module.exports = function (app) {
     app.use('/api', router);
 };
 
-router.post("/users",authorization,function(req,res)
+router.get("/users",authorization.authenticate(),function(req,res)
 {
-    res.status(200);
-    res.send();
+   res.json(req.user);
 });
 
 router.post("/login", function(req,res)
@@ -31,7 +32,7 @@ router.post("/login", function(req,res)
         {
             if ( db.User.validatePassword(req_password, user.password))
             {
-                var tokenUser = jwt.sign({ user: req_login }, "Oursecretsecret", {
+                var tokenUser = jwt.sign({ user: req_login },cfg.jwtSecret, {
                     //expiresIn : "5m" // expires in 24 hours
                 });
                 console.log("asdas");
@@ -39,7 +40,7 @@ router.post("/login", function(req,res)
                 user.save().then(function()
                 {
                     res.status(200);
-                    res.send({token: user.token});
+                    res.send({token: "JWT " + user.token});
                 }).catch(function(error)
                 {   res.send(error);
                 });
@@ -52,7 +53,7 @@ router.post("/login", function(req,res)
         }
         else
         {
-            var tokenUser = jwt.sign({ user: req_login }, "Oursecretsecret", {
+            var tokenUser = jwt.sign({ user: req_login },cfg.jwtSecret, {
                 //expiresIn : "5m" // expires in 24 hours
             });
             db.User.create
@@ -64,7 +65,7 @@ router.post("/login", function(req,res)
             }).then(function(user)
             {
                 res.status(200);
-                res.send({ token: user.token });
+                res.send({ token:"JWT " + user.token });
             }).catch(function(error)
             {
                 res.status(500);

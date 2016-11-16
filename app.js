@@ -3,7 +3,7 @@
 var express = require('express'),
   config = require('./config/config'),
   db = require('./app/models');
-
+var authorization = require('./app/auth/auth.js');
 var app = express();
 
 require('./config/express')(app, config);
@@ -11,6 +11,7 @@ require('./config/express')(app, config);
 db.sequelize
   .sync()
   .then(function () {
+    app.use(authorization.initialize());
     app.listen(config.port, function () {
       console.log('Express server listening on port ' + config.port);
     });

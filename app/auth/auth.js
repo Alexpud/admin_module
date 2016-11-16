@@ -1,26 +1,45 @@
-//autorize access a route.
-var http = require('http');
-var jwt = require('jsonwebtoken'),
-    db = require('../models'),
-    passport = require('passport'),
-    authorization = require('../auth/auth'),
-    bcrypt = require('bcrypt-nodejs');
+var passport = require("passport");
+var passportJWT = require("passport-jwt");
+var dataBase = require("../models");
+var cfg = require("../config/config.js");
+var ExtractJwt = passportJWT.ExtractJwt;
+var Strategy = passportJWT.Strategy;
 
-var authenticate = function()
+var params = {
+    secretOrKey: cfg.jwtSecret,
+    jwtFromRequest: ExtractJwt.fromAuthHeader()
+};
+
+
+module.exports = function() 
 {
-    this.authorization = function ensureAuthorized(req, res, next) {
-        var bearerToken;
-        var bearerHeader = req.headers["authorization"];
-        if (typeof bearerHeader !== 'undefined')
-        {
-            var bearer = bearerHeader.split(" ");
-            bearerToken = bearer[1];
-            req.token = bearerToken;
-            console.log(bearer);
-        } else {
-            res.send(403);
-        }
-    }
-}
+    var strategy = new Strategy(params, function(payload, done) {
+        var loginUser = payload.login;
+        console.log("Dentro do strategy: "+ loginUser);
 
-module.exports = authenticate;
+        dataBase.User.findOne
+        ({
+            where: { login: loginUser }
+        }).then(function(user){
+            if (user != null) 
+            {
+                return done(null,user);
+            }
+            else
+            {
+                return done(null,false);
+            }
+        });
+    });
+
+    passport.use(strategy);
+    return 
+    {
+        initialize: function() {
+            return passport.initialize();
+        },
+        authenticate: function() {
+            return passport.authenticate("jwt", cfg.jwtSession);
+        }
+    };
+};
