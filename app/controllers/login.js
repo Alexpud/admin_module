@@ -43,7 +43,7 @@ router.post("/login", function(req,res)
                 user.save().then(function()
                 {
                     res.status(200);
-                    res.send({token: "JWT " + user.token});
+                    res.json({token: "JWT " + user.token});
                 }).catch(function(error)
                 {   res.send(error);
                 });

@@ -14,7 +14,7 @@ var params = {
 var authorization = function()
 {
     var strategy = new Strategy(params, function(payload, done) {
-        var loginUser = payload.login;
+        var loginUser = payload.user;
         console.log("Dentro do strategy: "+ loginUser);
 
         dataBase.User.findOne
