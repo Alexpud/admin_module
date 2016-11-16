@@ -11,7 +11,7 @@ var params = {
 };
 
 
-module.exports = function() 
+var authorization = function()
 {
     var strategy = new Strategy(params, function(payload, done) {
         var loginUser = payload.login;
@@ -32,14 +32,16 @@ module.exports = function()
         });
     });
 
-    passport.use(strategy);
-    return 
+    this.initialize = function()
     {
-        initialize: function() {
-            return passport.initialize();
-        },
-        authenticate: function() {
-            return passport.authenticate("jwt", cfg.jwtSession);
-        }
+      return passport.initialize();
     };
+    this.authenticate = function()
+    {
+      return passport.authenticate("jwt", cfg.jwtSession);
+    };
+
+  passport.use(strategy);
 };
+
+module.exports = authorization;

@@ -13,7 +13,10 @@ module.exports = function (app) {
     app.use('/api', router);
 };
 
-router.get("/users",authorization.authenticate(),function(req,res)
+
+var auth = new authorization();
+
+router.get("/users",auth.authenticate(),function(req,res)
 {
    res.json(req.user);
 });
