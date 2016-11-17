@@ -14,6 +14,9 @@ angular.
         }).
         when('/',{
           template: '<login-form></login-form>'
+        }).
+        when('/users',{
+          template: '<login-form></login-form>'
         });
 
     }

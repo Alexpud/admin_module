@@ -18,9 +18,10 @@
 				return config;
 			},
 			
-			reponse:function(response){
-				if(response.status === 403 || response.status === 401){
-					console.log('Proibido');
+			responseError:function(response){
+				console.log("Resposta "+response.status);
+				if(response.status === 400 || response.status === 401 || response.status === 500){
+					console.log('Acesso Proibido!');
 				}
 				return response;
 			}

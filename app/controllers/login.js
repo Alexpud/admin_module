@@ -18,7 +18,7 @@ var auth = new authorization();
 
 router.get("/users",auth.authenticate(),function(req,res)
 {
-   res.json(req.user);
+   res.json({login:req.user.login,isAdmin:req.user.admin});
 });
 
 router.post("/login", function(req,res)
@@ -36,7 +36,7 @@ router.post("/login", function(req,res)
             if ( db.User.validatePassword(req_password, user.password))
             {
                 var tokenUser = jwt.sign({ user: req_login },cfg.jwtSecret, {
-                    //expiresIn : "5m" // expires in 24 hours
+                    expiresIn : "24h" // expires in 24 hours
                 });
                 console.log("asdas");
                 user.token = tokenUser;
@@ -51,13 +51,14 @@ router.post("/login", function(req,res)
             else
             {
                 res.status(400);
+                console.log("Wrong password");
                 res.send({error: "Wrong password"});
             }
         }
         else
         {
             var tokenUser = jwt.sign({ user: req_login },cfg.jwtSecret, {
-                //expiresIn : "5m" // expires in 24 hours
+                expiresIn : "24h" // expires in 24 hours
             });
             db.User.create
             ({

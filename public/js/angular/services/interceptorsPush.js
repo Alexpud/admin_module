@@ -1,3 +1,4 @@
+
 (function(){
 	'use strict';
 	
@@ -11,4 +12,4 @@
 	function interceptorPush($httpProvider){
 		$httpProvider.interceptors.push('authInterceptor');
 	}
-})()
+})();
