@@ -12,18 +12,8 @@ module.exports = function (app) {
 
 router.get('/test', function(req,res)
 {
-  var token = jwt.sign({user:"ada"}, "ilovescotchyscotch", {
-    expiresIn : "5m" // expires in 24 hours
-  });
-
-  // return the information including token as JSON
-  res.json
-  ({
-    success: true,
-    message: 'Enjoy your token!',
-    token: token
-  });
-  res.send();
+  res.status(200);
+  res.send({data:"lol"});
 });
 
 
@@ -103,13 +93,15 @@ router.get("/containers/:name/", function (req, res, next)
 {
   var promises = [];
   var promise;
+  console.log(req.params.name);
   db.Container.findOne
   ({
-    name: req.params.name,
+    where: { name: req.params.name },
     include: [{ model: db.Workspace }]
   }).then( function(container)
   {
-    if ( container != null )
+    console.log(!container);
+    if (container)
     {
       promise = (new Promise(function (resolve, reject)
       {
@@ -155,8 +147,9 @@ router.get("/containers/:name/", function (req, res, next)
     }
     else
     {
+      console.log("asda");
       res.status(404);
-      res.end({ error: "The container doesn't have any workspace" });
+      res.send({ error: "The container doesn't exist" });
     }
   }).catch(function (error)
   {
