@@ -32,10 +32,10 @@ angular.module('loginForm').
                   console.log(response.data.token);
                   localStorage.setItem('token',response.data.token);
                   //Test get, remove later.
-                 $http.get('http://localhost:3000/api/users', [{}]).then(function(success){
-                    console.log("Usuário: "+success.data.login);
-                    console.log("Admin: "+success.data.isAdmin);
-                  }, function(fail){console.log(fail);});
+                 // $http.get('http://localhost:3000/api/users', [{}]).then(function(success){
+                 //    console.log("Usuário: "+success.data.login);
+                 //    console.log("Admin: "+success.data.isAdmin);
+                 //  }, function(fail){console.log(fail);});
 
                 },function(argument) {
                   if(argument.data.error) 
