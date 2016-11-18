@@ -7,11 +7,10 @@ angular.module('loginForm').
           function LoginFormController($http,$localStorage)
           {
             var self = this;
-            
-
             self.login = function(user)
             {
-              var data = {
+              var data =
+              {
                   login: user.username,
                   password:user.password
               };

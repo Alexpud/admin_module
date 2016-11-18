@@ -68,6 +68,24 @@ a, a:hover {
       background-color: #004984;
       color: white; }
 
+#management {
+  width: 70%;
+  height: 70%;
+  background-color: white;
+  margin: 0 auto;
+  margin-top: 30px;
+  overflow: auto; }
+  #management table {
+    border: none;
+    width: 90%;
+    margin: 0 auto; }
+    #management table .borderless td, #management table .borderless tr, #management table .borderless th {
+      border-bottom: 0; }
+
+#hidden {
+  display: none;
+  visibility: hidden; }
+
 .navbar {
   background-color: #004984;
   margin: 0;

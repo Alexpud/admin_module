@@ -6,13 +6,13 @@ angular.
         $locationProvider.hashPrefix('!');
 
         $routeProvider.
-        when('/workspaces', {
-          template: '<workspace-list></workspace-list>'
+        when('/management', {
+          template: '<management-area></management-area>'
         }).
         when('/containers', {
           template: '<container-list></container-list>'
         }).
-        when('/login',{
+        when('/',{
           template: '<login-form></login-form>'
         });
 
