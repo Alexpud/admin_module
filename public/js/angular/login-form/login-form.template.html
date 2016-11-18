@@ -1,16 +1,16 @@
-<div class = "container" id = "login">
+<div id = "login">
   <form name= " form" ng-submit = "$ctrl.login($ctrl.user)" role = "form">
     <i class = "fa fa-key"></i>
     <input type="text" name = "username" id = "username" class = "form-control" placeholder = "Login SIGAA" size = "35" ng-model="$ctrl.user.username" ng-required="true"/>
     <i class="fa fa-lock"></i>
     <input type="password" name="password" id="password" class="form-control" placeholder = "Senha SIGAA" ng-model="$ctrl.user.password"  ng-required="true" />
     <input type="submit" value = "Enviar" id = "login_btn" ng-disabled="form.$invalid || dataLoading" class="btn btn-danger">
-
-    <div  ng-show = "form.username.$invalid && form.username.$dirty" class = "alert alert-danger">
-      Por favor preencha o campo de login
-    </div>
-    <div ng-show = "form.password.$invalid && form.password.$dirty" class = "alert alert-danger">
-      Por favor preencha o campo de senha
-    </div>
   </form>
+</div>
+
+<div  ng-show = "form.username.$invalid && form.username.$dirty" class = "alert alert-danger">
+  Por favor preencha o campo de login
+</div>
+<div ng-show = "form.password.$invalid && form.password.$dirty" class = "alert alert-danger">
+  Por favor preencha o campo de senha
 </div>
