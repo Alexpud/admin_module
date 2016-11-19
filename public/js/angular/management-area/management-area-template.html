@@ -1,27 +1,26 @@
-{{$ctrl.resulting_array}}
 <div id = "management">
   <table class="table table-hover">
     <thead>
-    <tr>
-      <th>#</th>
-      <th>Name</th>
-      <th>Creation</th>
-      <th>Status</th>
-      <th>Actions</th>
-      <th></th>
-    </tr>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Creation</th>
+        <th>Status</th>
+        <th>Actions</th>
+        <th></th>
+      </tr>
     </thead>
-    <tbody ng-repeat="container in $ctrl.resulting_array">
+    <tbody ng-repeat="(index,container) in managementCtrl.resulting_array">
         <tr>
           <th scope="row">1</th>
           <td>{{container.name}}</td>
           <td>{{container.createdAt}}</td>
           <td>{{container.status}}</td>
           <td>START WHATEVER</td>
-          <td><button class = "btn btn-primary" id = "button">WORKSPACES</button></td>
+          <td><button class = "btn btn-primary" id = "{{'button' + $index }}" ng-click="managementCtrl.hideWorkspaces('workspace_row'+$index)">WORKSPACES</button></td>
         </tr>
-        <tr>
-          <td colspan="6" id ="tabela" ng-show ="container.Workspaces.length">
+        <tr ng-show = "container.Workspaces.length" id ="{{'workspace_row'+$index}}">
+          <td colspan="6">
             <table class = "table borderless">
               <thead>
                 <tr>
@@ -34,7 +33,6 @@
                 </tr>
               </thead>
               <tbody ng-repeat="workspace in container.Workspaces">
-
                   <tr>
                     <td>{{workspace.workspaceName}}</td>
                     <td>{{workspace.createdAt}}</td>
@@ -43,7 +41,6 @@
                     <td>something</td>
                     <td>SOmething</td>
                   </tr>
-
               </tbody>
             </table>
           </td>
