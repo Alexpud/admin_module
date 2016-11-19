@@ -8,7 +8,6 @@ $navbar-a-font: 'Open Sans 300', sans-serif;
   background-color: $navbar-bg-color;
   font-size: 22px;
 }
-
 html
 {
   height: 100%;
@@ -17,8 +16,8 @@ html
 }
 body
 {
-  min-height: 500px;
-  min-width: 500px;
+  min-height: 300px;
+  min-width: 360px;
   height: 100%;
   width: 100%;
   margin: 0;
@@ -26,6 +25,8 @@ body
   background-image: url(../images/BG.jpg);
   background-size: 100% 100%;
 }
+
+
 a, a:hover
 {
   font-style: normal;
@@ -95,6 +96,7 @@ a, a:hover
   }
 }
 
+
 #management
 {
   width: 70%;
@@ -105,9 +107,9 @@ a, a:hover
   overflow: auto;
   table
   {
-    border:none;
-    width:90%;
+    width:100%;
     margin: 0 auto;
+    border:none;
     .borderless
     {
       td,tr,th
@@ -118,16 +120,23 @@ a, a:hover
   }
 }
 
+/*
+  Class used by workspaces when hidden on management view table.
+ */
+
 #hidden
 {
   display: none;
   visibility: hidden;
 }
 
+/*
+  Treats the navbars used on the header and footer of the page
+ */
 .navbar
 {
-  background-color: $navbar-bg-color;
   margin: 0;
+  background-color: $navbar-bg-color;
   border: none;
   .container-fluid
   {
@@ -135,17 +144,17 @@ a, a:hover
     background-color: $navbar-bg-color;
     .navbar-header a
     {
-      color: white;
-      font-size:36px;
       padding-left: 10%;
       padding-right: 10%;
+      color: white;
+      font-size:36px;
     }
     .navbar-text
     {
+      float:none;
       color: white;
       font-size:22px;
       text-align: center;
-      float:none;
     }
     .collapse
     {
@@ -165,10 +174,9 @@ a, a:hover
 
 #footer
 {
+  width: 100%;
   position: absolute;
   bottom: 0;
-  width: 100%;
-  border: none;
   margin: 0;
-  /* Set the fixed height of the footer here */
+  border: none;
 }

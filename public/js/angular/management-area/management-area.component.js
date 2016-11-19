@@ -13,9 +13,9 @@ angular
             $http.get('api/containers').then(function (response)
             {
               self.resulting_array = response.data;
+              console.log(response.data);
             });
           };
-
           self.getContainers();
         }
       ]

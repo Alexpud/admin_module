@@ -1,3 +1,4 @@
+{{$ctrl.resulting_array}}
 <div id = "management">
   <table class="table table-hover">
     <thead>
@@ -10,57 +11,43 @@
       <th></th>
     </tr>
     </thead>
-    <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-      <td>asdas</td>
-      <td><button class = "btn btn-primary" id = "button">WORKSPACES</button></td>
-    </tr>
-    <tr>
-      <td colspan="6" id ="tabela">
-        <table class = "table borderless">
-          <thead>
-          <tr>
-            <th>Name</th>
-            <th>Creation</th>
-            <th>Stack</th>
-            <th>Status</th>
-            <th>Actions</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>worksapce A</td>
-            <td>SOme day</td>
-            <td>cpp</td>
-            <td>Running</td>
-            <td>SOmething</td>
-            <td>SOmething</td>
-          </tr>
-          </tbody>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-      <td>asdas</td>
-      <td><button class = "btn btn-primary" id = "button">WORKSPACES</button></td>
-    </tr>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-      <td>asdas</td>
-      <td><button class = "btn btn-primary" id = "button">WORKSPACES</button></td>
-    </tr>
+    <tbody ng-repeat="container in $ctrl.resulting_array">
+        <tr>
+          <th scope="row">1</th>
+          <td>{{container.name}}</td>
+          <td>{{container.createdAt}}</td>
+          <td>{{container.status}}</td>
+          <td>START WHATEVER</td>
+          <td><button class = "btn btn-primary" id = "button">WORKSPACES</button></td>
+        </tr>
+        <tr>
+          <td colspan="6" id ="tabela" ng-show ="container.Workspaces.length">
+            <table class = "table borderless">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Creation</th>
+                  <th>Stack</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody ng-repeat="workspace in container.Workspaces">
+
+                  <tr>
+                    <td>{{workspace.workspaceName}}</td>
+                    <td>{{workspace.createdAt}}</td>
+                    <td>{{workspace.stack}}</td>
+                    <td>{{workspace.status}}</td>
+                    <td>something</td>
+                    <td>SOmething</td>
+                  </tr>
+
+              </tbody>
+            </table>
+          </td>
+        </tr>
     </tbody>
   </table>
 </div>

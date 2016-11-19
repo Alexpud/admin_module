@@ -105,7 +105,7 @@ router.get("/containers/:name/", function (req, res, next)
   var promise;
   db.Container.findOne
   ({
-    name: req.params.name,
+    where:{ name: req.params.name },
     include: [{ model: db.Workspace }]
   }).then( function(container)
   {

@@ -14,7 +14,6 @@ angular.module('containerList').
                 console.log(response.data);
               });
             };
-
             self.getContainers();
           }
         ]
