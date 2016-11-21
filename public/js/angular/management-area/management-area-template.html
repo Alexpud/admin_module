@@ -16,11 +16,15 @@
           <td>{{container.name}}</td>
           <td>{{container.createdAt}}</td>
           <td>{{container.status}}</td>
-          <td>START WHATEVER</td>
+          <td>
+            <button class = "start-btn glyphicon glyphicon-play" ng-click="managementCtrl.executeContainerAction('start',container.name)"></button>
+            <button class = "pause-btn glyphicon glyphicon-pause"> </button>
+            <button class = "remove-btn glyphicon glyphicon-remove"> </button>
+          </td>
           <td><button class = "btn btn-primary" id = "{{'button' + $index }}" ng-click="managementCtrl.hideWorkspaces('workspace_row'+$index)">WORKSPACES</button></td>
         </tr>
-        <tr ng-show = "container.Workspaces.length" id ="{{'workspace_row'+$index}}">
-          <td colspan="6">
+        <tr id ="{{'workspace_row'+$index}}" ng-show = "container.Workspaces.length">
+          <td colspan="6" class = "workspace-row">
             <table class = "table borderless">
               <thead>
                 <tr>
@@ -38,7 +42,11 @@
                     <td>{{workspace.createdAt}}</td>
                     <td>{{workspace.stack}}</td>
                     <td>{{workspace.status}}</td>
-                    <td>something</td>
+                    <td>
+                      <button class = "start-btn glyphicon glyphicon-play" ng-click="managementCtrl.executeContainerAction('start',container.name)"></button>
+                      <button class = "pause-btn glyphicon glyphicon-pause"> </button>
+                      <button class = "remove-btn glyphicon glyphicon-remove"> </button>
+                    </td>
                     <td>SOmething</td>
                   </tr>
               </tbody>

@@ -14,6 +14,7 @@ html
   min-height: 100%;
   position: relative;
 }
+
 body
 {
   min-height: 300px;
@@ -26,18 +27,35 @@ body
   background-size: 100% 100%;
 }
 
-
 a, a:hover
 {
   font-style: normal;
   text-decoration: none;
 }
+
+button
+{
+  background-color: transparent;
+  border: 0;
+}
+
+
 #logo
 {
   padding-left: 5%;
   padding-right: 5%;
   height:8.41%;
   position: relative;
+}
+
+
+#footer
+{
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  margin: 0;
+  border: none;
 }
 
 #login
@@ -117,7 +135,14 @@ a, a:hover
         border-bottom: 0;
       }
     }
+
+
   }
+}
+
+.workspace-row
+{
+  background-color: gray;
 }
 
 /*
@@ -172,11 +197,41 @@ a, a:hover
   }
 }
 
-#footer
-{
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  margin: 0;
-  border: none;
+.glyphicon {
+  font-size: 16px;
+  padding: 5px;
 }
+
+.glyphicon-play
+{
+  color: yellowgreen;
+}
+
+.glyphicon-pause
+{
+  color: #2aabd2;
+}
+
+.glyphicon-remove
+{
+  color: red;
+}
+
+.start-btn:hover
+{
+  background-color: yellowgreen;
+  color: white;
+}
+
+.pause-btn:hover
+{
+  background-color: #2aabd2;
+  color: white;
+}
+
+.remove-btn:hover
+{
+  background-color: red;
+  color:white;
+}
+

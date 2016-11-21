@@ -17,11 +17,22 @@ a, a:hover {
   font-style: normal;
   text-decoration: none; }
 
+button {
+  background-color: transparent;
+  border: 0; }
+
 #logo {
   padding-left: 5%;
   padding-right: 5%;
   height: 8.41%;
   position: relative; }
+
+#footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  margin: 0;
+  border: none; }
 
 #login {
   min-width: 30%;
@@ -82,6 +93,9 @@ a, a:hover {
     #management table .borderless td, #management table .borderless tr, #management table .borderless th {
       border-bottom: 0; }
 
+.workspace-row {
+  background-color: gray; }
+
 /*
   Class used by workspaces when hidden on management view table.
  */
@@ -122,9 +136,27 @@ a, a:hover {
       background-color: white;
       color: #004984; }
 
-#footer {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  margin: 0;
-  border: none; }
+.glyphicon {
+  font-size: 16px;
+  padding: 5px; }
+
+.glyphicon-play {
+  color: yellowgreen; }
+
+.glyphicon-pause {
+  color: #2aabd2; }
+
+.glyphicon-remove {
+  color: red; }
+
+.start-btn:hover {
+  background-color: yellowgreen;
+  color: white; }
+
+.pause-btn:hover {
+  background-color: #2aabd2;
+  color: white; }
+
+.remove-btn:hover {
+  background-color: red;
+  color: white; }

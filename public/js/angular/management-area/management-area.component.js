@@ -33,11 +33,12 @@ angular
           /*
             Executes one of the actions for a given container
            */
-          self.executeContainerAction = function(action)
+          self.executeContainerAction = function(action,name)
           {
             switch(action)
             {
               case "start":
+                console.log("here");
                 break;
 
               case "stop":
