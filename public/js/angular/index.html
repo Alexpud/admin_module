@@ -10,6 +10,7 @@
     <link rel = "stylesheet" href = "/components/bootstrap/dist/css/bootstrap.css">
     <link rel = "stylesheet" href = "/components/bootstrap-sass/assets/stylesheets/_bootstrap.scss">
     <link rel = "stylesheet" href = "/css/output.css">
+    <link rel = "stylesheet" media ="(min-width: 1367px), (min-height: 769px)" href = "/css/output.css">
 
     <script src = "/components/jquery/dist/jquery.js"></script>
     <script src = "/components/angular/angular.js"></script>
@@ -33,30 +34,30 @@
 
   </head>
   <body>
-    <nav class="navbar navbar-default" id = "header">
-      <div class="container-fluid">
-        <div class = "navbar-header" id = "logo">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a href="#">AVID</a>
-        </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class = "nav navbar-nav">
-            <li><a href="" class ="active">Home</a></li>
-            <li><a>Sobre</a> </li>
-          </ul>
-        </div>
+  <nav class="navbar navbar-default" id = "header">
+    <div class="container-fluid">
+      <div class = "navbar-header" id = "logo">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="#">AVID</a>
       </div>
-    </nav>
-    <nav class = "navbar navbar-default" id = "footer">
-      <div class = "container-fluid">
-        <p class="navbar-text">AVID Dcomp UFS 2017</p>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class = "nav navbar-nav">
+          <li><a href="" class ="active">Home</a></li>
+          <li><a>Sobre</a> </li>
+        </ul>
       </div>
-    </nav>
-    <div ng-view></div>
+    </div>
+  </nav>
+  <nav class = "navbar navbar-default" id = "footer">
+    <div class = "container-fluid">
+      <p class="navbar-text">AVID Dcomp UFS 2017</p>
+    </div>
+  </nav>
+  <div ng-view></div>
   </body>
 </html>

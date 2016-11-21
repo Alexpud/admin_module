@@ -1,6 +1,8 @@
 $navbar-bg-color: #004984;
 $navbar-a-font: 'Open Sans 300', sans-serif;
 
+
+
 @mixin collapsible-a
 {
   font-family: $navbar-a-font;
@@ -135,8 +137,6 @@ button
         border-bottom: 0;
       }
     }
-
-
   }
 }
 
@@ -233,5 +233,26 @@ button
 {
   background-color: red;
   color:white;
+}
+
+@media (min-width: 1367px),(min-height: 769px)
+{
+  #login {
+    min-width: 30%;
+    min-height: 30%;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+
+    form {
+      width: 100%;
+      min-height: 100%;
+      position: relative;
+      margin-top: 15%;
+    }
+  }
 }
 
