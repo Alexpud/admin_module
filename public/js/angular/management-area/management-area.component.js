@@ -1,24 +1,27 @@
 angular
   .module('managementArea')
-    .component('managementArea',
+  .factory('test', function()
+    {
+      return {
+        print: function() {
+          return {"nome":"asdasd"};
+        }
+      }
+    }).component('managementArea',
     {
       templateUrl: "/js/angular/management-area/management-area-template.html",
-      controller: ('managementCtrl',
-      ['$http', '$routeParams',
-        function ManagementAreaController($scope)
-        {
+      controller:('managementCtrl', [ 'container','test',
+      function ManagementAreaController($scope,test,container)
+      {
           var self = this;
-
+          console.log(test.print());
+          console.log(container.print());
           /*
             Gets a list of containers from backend
            */
-          self.getContainers = function()
+          self.getContainers = function(containerService)
           {
-            $scope.get('api/containers').then(function (response)
-            {
-              self.resulting_array = response.data;
-              console.log(response.data);
-            });
+            console.log(containerService);
           };
 
           /*
@@ -70,7 +73,6 @@ angular
 
             self.getContainers();
           };
-
           self.getContainers();
         }
       ]),

@@ -237,7 +237,8 @@ button
 
 @media (min-width: 1367px),(min-height: 769px)
 {
-  #login {
+  #login
+  {
     min-width: 30%;
     min-height: 30%;
     margin: 0;
@@ -246,12 +247,18 @@ button
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-
-    form {
+    font-size:22px;
+    form
+    {
       width: 100%;
       min-height: 100%;
       position: relative;
       margin-top: 15%;
+      input
+      {
+        min-height: 50px;
+        font-size:26px;
+      }
     }
   }
 }

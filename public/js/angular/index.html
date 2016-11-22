@@ -22,15 +22,18 @@
     <!-- Service !-->
     <script src = "/js/angular/services/authInterceptor.js"></script>
     <script src = "/js/angular/services/interceptorsPush.js"></script>
-
+    <script src = "/js/angular/services/services.module.js"></script>
+    <script src = "/js/angular/services/container.service.js"></script>
 
     <script src = "/js/angular/container-list/container-list.module.js"></script>
     <script src = "/js/angular/login-form/login-form.module.js"></script>
     <script src = "/js/angular/management-area/management-area.module.js"></script>
+    <script src = "/js/angular/header-area/header-area.module.js"></script>
 
     <script src = "/js/angular/container-list/container-list.component.js"></script>
     <script src = "/js/angular/login-form/login-form.component.js"></script>
     <script src = "/js/angular/management-area/management-area.component.js"></script>
+    <script src = "/js/angular/header-area/header-area.component.js"></script>
 
   </head>
   <body>
@@ -52,12 +55,12 @@
         </ul>
       </div>
     </div>
-  </nav>
-  <nav class = "navbar navbar-default" id = "footer">
-    <div class = "container-fluid">
-      <p class="navbar-text">AVID Dcomp UFS 2017</p>
-    </div>
-  </nav>
-  <div ng-view></div>
+  </nav>d
+    <nav class = "navbar navbar-default" id = "footer">
+      <div class = "container-fluid">
+        <p class="navbar-text">AVID Dcomp UFS 2017</p>
+      </div>
+    </nav>
+    <div ng-view></div>
   </body>
 </html>

@@ -170,9 +170,13 @@ button {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white; }
+    background-color: white;
+    font-size: 22px; }
     #login form {
       width: 100%;
       min-height: 100%;
       position: relative;
-      margin-top: 15%; } }
+      margin-top: 15%; }
+      #login form input {
+        min-height: 50px;
+        font-size: 26px; } }

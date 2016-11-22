@@ -1,0 +1,1 @@
+angular.module('headerArea',['ngRoute']);
