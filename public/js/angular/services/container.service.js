@@ -1,11 +1,10 @@
 angular.
-  module('containerService',[]).
-    factory('container', [function()
+  module('services',[]).
+    service('ContainerService', function()
     {
       console.log("my balls");
-      return {
-        print: function() {
+      this.print = function() {
           return {"nome":"asdasd"};
-        }
+        };
       }
-    }]);
+    );

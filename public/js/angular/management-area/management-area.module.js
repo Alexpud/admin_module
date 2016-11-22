@@ -1,1 +1,1 @@
-angular.module('managementArea',['ngRoute','containerService']);
+angular.module('managementArea',['ngRoute']);
