@@ -41,7 +41,6 @@ router.post("/login", function(req,res)
     {
         if(err)
         {
-            console.log(err);
             res.status(400);
             console.log("Wrong password");
             res.send({error: "Wrong password"});
@@ -67,59 +66,59 @@ router.post("/login", function(req,res)
                 });
 
             });
+            
 
+            db.User.findOne
+            ({
+                where: { login: req_login }
+            }).then(function(user){
 
-            // db.User.findOne
-            // ({
-            //     where: { login: req_login }
-            // }).then(function(user){
-
-            //     if (user != null) //If a user was found, it will update the user token
-            //     {
-            //         if ( db.User.validatePassword(req_password, user.password))
-            //         {
-            //             var tokenUser = jwt.sign({ user: req_login },cfg.jwtSecret, {
-            //                 expiresIn : "24h" // expires in 24 hours
-            //             });
-            //             console.log("asdas");
-            //             user.token = tokenUser;
-            //             user.save().then(function()
-            //             {
-            //                 res.status(200);
-            //                 res.json({token: "JWT " + user.token});
-            //             }).catch(function(error)
-            //             {   res.send(error);
-            //             });
-            //         }
-            //         else
-            //         {
-            //             res.status(400);
-            //             console.log("Wrong password");
-            //             res.send({error: "Wrong password"});
-            //         }
-            //     }
-            //     else
-            //     {
-            //         var tokenUser = jwt.sign({ user: req_login },cfg.jwtSecret, {
-            //             expiresIn : "24h" // expires in 24 hours
-            //         });
-            //         db.User.create
-            //         ({
-            //             login: req_login,
-            //             password: db.User.generatePassword(req_password),
-            //             token: tokenUser,
-            //             admin: 0
-            //         }).then(function(user)
-            //         {
-            //             res.status(200);
-            //             res.send({ token:"JWT " + user.token });
-            //         }).catch(function(error)
-            //         {
-            //             res.status(500);
-            //             res.send({ error: error });
-            //         });
-            //     }
-            // });
+                if (user != null) //If a user was found, it will update the user token
+                {
+                    if ( db.User.validatePassword(req_password, user.password))
+                    {
+                        var tokenUser = jwt.sign({ user: req_login },cfg.jwtSecret, {
+                            expiresIn : "24h" // expires in 24 hours
+                        });
+                        console.log("asdas");
+                        user.token = tokenUser;
+                        user.save().then(function()
+                        {
+                            res.status(200);
+                            res.json({token: "JWT " + user.token});
+                        }).catch(function(error)
+                        {   res.send(error);
+                        });
+                    }
+                    else
+                    {
+                        res.status(400);
+                        console.log("Wrong password");
+                        res.send({error: "Wrong password"});
+                    }
+                }
+                else
+                {
+                    var tokenUser = jwt.sign({ user: req_login },cfg.jwtSecret, {
+                        expiresIn : "24h" // expires in 24 hours
+                    });
+                    db.User.create
+                    ({
+                        login: req_login,
+                        password: db.User.generatePassword(req_password),
+                        token: tokenUser,
+                        admin: 0
+                    }).then(function(user)
+                    {
+                        res.status(200);
+                        res.send({ token:"JWT " + user.token });
+                    }).catch(function(error)
+                    {
+                        res.status(500);
+                        res.send({ error: error });
+                    });
+                }
+            });
         }
     });
 
