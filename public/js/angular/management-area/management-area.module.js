@@ -1,1 +1,6 @@
-angular.module('managementArea',['ngRoute']);
+'use strict';
+angular.module('managementArea',
+  [
+    'ngRoute',
+    'core.management'
+  ]);

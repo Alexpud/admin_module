@@ -1,3 +1,4 @@
+'use strict';
 angular.
   module('adminApp').
     config(['$locationProvider', '$routeProvider',

@@ -1,22 +1,17 @@
+'use strict';
 angular
   .module('managementArea')
-  .factory('test', function()
-  {
-    return {
-      print: function() {
-        return {"nome":"asdasd"};
-      }
-    }
-  }).component('managementArea',
+  .component('managementArea',
   {
     templateUrl: "/js/angular/management-area/management-area-template.html",
-    controller:('managementCtrl', [ 'test','ContainerService',
-      function ManagementAreaController($scope,test,ContainerService)
+    controller:[ 'Management',
+      function ManagementAreaController($scope,Management)
       {
-        var self = this;
+        var injector = angular.injector(['ng', 'managementArea']);
+        var greeter = injector.get('Management');
 
-        console.log(test.print());
-        console.log(ContainerService);
+        greeter.get();
+
         /*
            Gets a list of containers from backend
           */
@@ -75,6 +70,6 @@ angular
         };
         self.getContainers();
       }
-    ]),
+    ],
     controllerAs: 'managementCtrl'
   });

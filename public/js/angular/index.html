@@ -15,46 +15,33 @@
     <script src = "/components/jquery/dist/jquery.js"></script>
     <script src = "/components/angular/angular.js"></script>
     <script src = "/components/angular-route/angular-route.js"></script>
-
+    <script src = "/components/angular-resource/angular-resource.js"></script>
     <script src = "/js/angular/app.module.js"></script>
     <script src = "/js/angular/app.config.js"></script>
 
     <!-- Service !-->
     <script src = "/js/angular/services/authInterceptor.js"></script>
     <script src = "/js/angular/services/interceptorsPush.js"></script>
-    <script src = "/js/angular/services/container.service.js"></script>
+
+    <script src = "/js/angular/core/core.module.js"></script>
+    <script src = "/js/angular/core/management/management.module.js"></script>
+    <script src = "/js/angular/core/management/management.service.js"></script>
 
     <script src = "/js/angular/container-list/container-list.module.js"></script>
-    <script src = "/js/angular/login-form/login-form.module.js"></script>
-    <script src = "/js/angular/management-area/management-area.module.js"></script>
-    <script src = "/js/angular/header-area/header-area.module.js"></script>
-
     <script src = "/js/angular/container-list/container-list.component.js"></script>
+
+    <script src = "/js/angular/login-form/login-form.module.js"></script>
     <script src = "/js/angular/login-form/login-form.component.js"></script>
+
+    <script src = "/js/angular/management-area/management-area.module.js"></script>
     <script src = "/js/angular/management-area/management-area.component.js"></script>
+
+    <script src = "/js/angular/header-area/header-area.module.js"></script>
     <script src = "/js/angular/header-area/header-area.component.js"></script>
 
   </head>
   <body>
-  <nav class="navbar navbar-default" id = "header">
-    <div class="container-fluid">
-      <div class = "navbar-header" id = "logo">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a href="#">AVID</a>
-      </div>
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class = "nav navbar-nav">
-          <li><a href="" class ="active">Home</a></li>
-          <li><a>Sobre</a> </li>
-        </ul>
-      </div>
-    </div>
-  </nav>d
+    <header-area></header-area>
     <nav class = "navbar navbar-default" id = "footer">
       <div class = "container-fluid">
         <p class="navbar-text">AVID Dcomp UFS 2017</p>
