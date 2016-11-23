@@ -7,10 +7,7 @@ angular
       {
         this.list = function()
         {
-          return $http.get('api/containers').success( function(response) {
-            return response;
-          }).error(function(response,status)
-          {
+          return $http.get('api/containers').then( function(response) {
             return response;
           });
         }
