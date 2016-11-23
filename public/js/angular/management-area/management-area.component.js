@@ -4,34 +4,34 @@ angular
   .component('managementArea',
   {
     templateUrl: "/js/angular/management-area/management-area-template.html",
-    controller:[ 'Management',
-      function ManagementAreaController($scope,Management)
+    controllerAs: 'managementCtrl',
+    controller:[ 'Container',
+      function ManagementAreaController($scope,Container)
       {
         var injector = angular.injector(['ng', 'managementArea']);
-        var greeter = injector.get('Management');
 
-        greeter.get();
+        var self = this;
+        var container = injector.get('Container');
 
-        /*
-           Gets a list of containers from backend
-          */
-        self.getContainers = function(containerService)
-        {
-          console.log(containerService);
+        self.getContainers = function() {
+          $http.get('api/containers').then(function (response) {
+            self.resulting_array = response.data;
+            console.log(response.data);
+          });
         };
 
         /*
-           Action that receives the id of the table containing the workspaces, and toggles the class hidden
-          */
+         Action that receives the id of the table containing the workspaces, and toggles the class hidden
+         */
         self.hideWorkspaces = function(id)
         {
           var button = angular.element( document.querySelector( '#'+id ) );
           button.toggleClass("hidden");
         };
 
-          /*
-            Executes one of the actions for a given container
-           */
+        /*
+         Executes one of the actions for a given container
+         */
         self.executeContainerAction = function(action,name)
         {
           switch(action) {
@@ -49,9 +49,9 @@ angular
           self.getContainers();
         };
 
-          /*
-            Executes a action for one of the given workspaces
-           */
+        /*
+         Executes a action for one of the given workspaces
+         */
         self.executeWorkspaceAction = function (action)
         {
           switch(action)
@@ -69,7 +69,8 @@ angular
           self.getContainers();
         };
         self.getContainers();
+        console.log("asda");
+
       }
-    ],
-    controllerAs: 'managementCtrl'
+    ]
   });

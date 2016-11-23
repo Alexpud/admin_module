@@ -1,7 +1,7 @@
 'use strict';
 var adminApp = angular.module('adminApp',
 [
-  'core',
+  'services',
   'ngRoute',
   'ngResource',
   'containerList',
