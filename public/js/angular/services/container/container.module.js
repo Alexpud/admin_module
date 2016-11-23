@@ -1,1 +1,1 @@
-angular.module('service.container',['ngResource','ngRoute']);
+angular.module('service.container',['ngResource']);

@@ -1,12 +1,8 @@
 
 <div id = "management">
   <table class="table table-hover">
-
     <thead>
-    <button ng-click = "managementCtrl.do()">adas</button>
-
-    {{managementCtrl.resulting_arrays}}
-    {{'asdadasda'}}
+    <button>adas</button>
       <tr>
         <th>#</th>
         <th>Name</th>
@@ -16,7 +12,7 @@
         <th></th>
       </tr>
     </thead>
-    <tbody ng-repeat="(index,container) in managementCtrl.resulting_array">
+    <tbody ng-repeat="(index,container) in managementCtrl.containers">
         <tr>
           <th scope="row">1</th>
           <td>{{container.name}}</td>

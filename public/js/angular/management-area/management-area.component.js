@@ -4,24 +4,21 @@ angular
   .component('managementArea',
   {
     controllerAs: 'managementCtrl',
-    controller:['Container','$http', '$q',
-      function ManagementAreaController(Container,$http,$q)
+    controller:['Container','$http', '$q','$scope',
+      function ManagementAreaController(Container,$http,$q,$scope)
       {
         var injector = angular.injector(['ng', 'managementArea','services']);
         var self = this;
-        var container = injector.get('Container');
 
-        var defferded = $q.defer();
-
-
-        self.getContainers = function() {
-          $http.get('api/containers').then(function (response) {
-            self.resulting_array = response.data;
-            console.log("asdsada");
-          });
+        self.getAllContainers = function()
+        {
+          self.containers = Container.query();
         };
 
-        self.getContainers();
+        self.startContainer = function(id)
+        {
+        };
+
         /*
          Action that receives the id of the table containing the workspaces, and toggles the class hidden
          */
@@ -40,6 +37,7 @@ angular
           {
             case "start":
               console.log("here");
+              Container.start({id:name,action:action},{});
               break;
 
             case "stop":
@@ -48,7 +46,7 @@ angular
             case "delete":
               break;
           }
-          self.getContainers();
+          self.getAllContainers();
         };
 
         /*
@@ -70,6 +68,7 @@ angular
           self.getContainers();
         };
         console.log("asda");
+        self.getAllContainers();
       }
     ],
     templateUrl: "/js/angular/management-area/management-area-template.html"

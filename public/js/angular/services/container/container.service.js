@@ -2,14 +2,13 @@
 angular
   .module('service.container')
     .service('Container',
-    ['$http','$q',
-      function($http,$q)
+    ['$resource', function($resource)
+    {
+      return $resource('http://localhost:3000/api/containers/:id/:action',null,
       {
-        this.list = function()
+        'start':
         {
-          return $http.get('api/containers').then( function(response) {
-            return response;
-          });
+          method: 'POST'
         }
-      }
-    ]);
+      });
+    }]);
