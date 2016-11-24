@@ -1,8 +1,17 @@
 var gulp = require('gulp'),
   nodemon = require('gulp-nodemon'),
   plumber = require('gulp-plumber'),
-  livereload = require('gulp-livereload');
+  livereload = require('gulp-livereload'),
+  shell = require('gulp-shell');
 
+gulp.task('docker.sock', shell.task(
+  [
+    'sudo chmod 777 /var/run/docker.sock'
+  ],
+  {
+    verbose: true
+  }
+));
 
 gulp.task('develop', function () {
   livereload.listen();
@@ -22,5 +31,6 @@ gulp.task('develop', function () {
 });
 
 gulp.task('default', [
-  'develop'
+  'develop',
+  'docker.sock'
 ]);

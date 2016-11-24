@@ -62,8 +62,9 @@ router.get('/containers', function(req,res,next)
         for( var j = 0; j < containerList[i].Workspaces.length; j ++)  //For each workspace belonging to the container, get it's status
         {
           promises.push(new Promise(function (resolve, reject) {
-            exec("./app/helpers/che_helper_functions.sh workspace_status " + containerList[i].Workspaces[j].workspace_id,
+            exec("./app/helpers/che_helper_functions.sh workspace_status " + containerList[i].Workspaces[j].workspaceID,
               function (err, stdout, stderr) {
+                console.log(stdout);
                 resolve({workspaceStatus: stdout});
               });
           }));
@@ -241,6 +242,7 @@ router.post('/containers/:name/start', function(req, res, next)
   {
     if ( container != null ) // No container with the description passed on the request exists
     {
+      console.log(container.name);
       var promise = new Promise(function (resolve, reject)
       {
         exec("./app/helpers/che_helper_functions.sh start " + container.name,

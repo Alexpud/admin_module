@@ -190,6 +190,7 @@ router.post('/workspaces/:workspaceName/start', function( req, res, next)
 
 router.delete('/workspaces/:workspaceName/stop', function(req,res,next)
 {
+  console.log(req.body);
   db.Workspace.findOne
   ({
     where: { workspaceName: req.params.workspaceName },
@@ -199,6 +200,7 @@ router.delete('/workspaces/:workspaceName/stop', function(req,res,next)
     }]
   }).then(function(workspace)
   {
+    console.log(workspace);
     var promise = new Promise(function (resolve, reject)
     {
       var containerPort = workspace.Container.port;
@@ -209,8 +211,7 @@ router.delete('/workspaces/:workspaceName/stop', function(req,res,next)
         });
     }).then(function (data)
     {
-      console.log(data);
-      if(data.response.length == 0)
+      if(data.response.length == 0 || data.response.indexOf('STOPPED') != -1)
       {
         res.status(200);
         res.send({ result: "Workspace was successfully stopped" });
@@ -235,15 +236,19 @@ router.delete('/workspaces/:workspaceName/stop', function(req,res,next)
 
 router.delete('/workspaces/:workspaceName/delete',function(req, res, next)
 {
+  console.log(req.params.workspaceName);
+  console.log(req.body.containerName);
   db.Workspace.findOne
   ({
     where: { workspaceName: req.params.workspaceName },
-    include: [{
+    include:
+    [{
       model: db.Container,
       where: { name: req.body.containerName }
     }]
   }).then(function(workspace)
   {
+    console.log(workspace);
     if( workspace != null)
     {
       var promise = new Promise(function (resolve, reject)
@@ -299,7 +304,7 @@ router.delete('/workspaces/:workspaceName/delete',function(req, res, next)
     }else
     {
       res.status(409);
-      res.send({Error:"Workspace not found"});
+      res.send({ error: "Workspace not found on database" });
     }
   }).catch(function (error) {
     res.status(500);

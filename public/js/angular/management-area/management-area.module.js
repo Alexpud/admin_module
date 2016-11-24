@@ -2,5 +2,6 @@
 angular.module('managementArea',
   [
     'ngRoute',
-    'service.container'
+    'service.container',
+    'service.workspace'
   ]);

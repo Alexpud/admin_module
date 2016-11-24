@@ -20,8 +20,8 @@
           <td>{{container.status}}</td>
           <td>
             <button class = "start-btn glyphicon glyphicon-play" ng-click="managementCtrl.executeContainerAction('start',container.name)"></button>
-            <button class = "pause-btn glyphicon glyphicon-pause"> </button>
-            <button class = "remove-btn glyphicon glyphicon-remove"> </button>
+            <button class = "pause-btn glyphicon glyphicon-pause" ng-click="managementCtrl.executeContainerAction('stop',container.name)"> </button>
+            <button class = "remove-btn glyphicon glyphicon-remove" ng-click="managementCtrl.executeContainerAction('delete',container.name)"> </button>
           </td>
           <td><button class = "btn btn-primary" id = "{{'button' + $index }}" ng-click="managementCtrl.hideWorkspaces('workspace_row'+$index)">WORKSPACES</button></td>
         </tr>
@@ -45,11 +45,11 @@
                     <td>{{workspace.stack}}</td>
                     <td>{{workspace.status}}</td>
                     <td>
-                      <button class = "start-btn glyphicon glyphicon-play" ng-click="managementCtrl.executeContainerAction('start',container.name)"></button>
-                      <button class = "pause-btn glyphicon glyphicon-pause"> </button>
-                      <button class = "remove-btn glyphicon glyphicon-remove"> </button>
+                      <button class = "start-btn glyphicon glyphicon-play" ng-click="managementCtrl.executeWorkspaceAction('start',workspace.workspaceName,workspace.containerName)"></button>
+                      <button class = "pause-btn glyphicon glyphicon-pause" ng-click="managementCtrl.executeWorkspaceAction('stop',workspace.workspaceName,workspace.containerName)"> </button>
+                      <button class = "remove-btn glyphicon glyphicon-remove" ng-click="managementCtrl.executeWorkspaceAction('delete',workspace.workspaceName,workspace.containerName)"> </button>
                     </td>
-                    <td>SOmething</td>
+                    <td></td>
                   </tr>
               </tbody>
             </table>

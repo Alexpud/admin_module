@@ -4,19 +4,79 @@ angular
   .component('managementArea',
   {
     controllerAs: 'managementCtrl',
-    controller:['Container','$http', '$q','$scope',
-      function ManagementAreaController(Container,$http,$q,$scope)
+    controller:['Container','Workspace','$http', '$q','$scope',
+      function ManagementAreaController(Container,Workspace,$http,$q,$scope)
       {
         var injector = angular.injector(['ng', 'managementArea','services']);
         var self = this;
 
+        /*
+         Executes one of the actions for a given container
+         */
+        self.executeContainerAction = function(action,containerName)
+        {
+          switch(action)
+          {
+            case "start":
+
+              break;
+
+            case "stop":
+
+              break;
+
+            case "delete":
+
+              break;
+          }
+          self.getAllContainers();
+        };
+
+        /*
+         Executes a action for one of the given workspaces
+         */
+        self.executeWorkspaceAction = function (action,workspaceName,containerName)
+        {
+          switch(action)
+          {
+            case "start":
+              Workspace.start(workspaceName,containerName).then(function(response)
+              {
+                if(response.data.error)
+                {
+                  console.log("erro");
+                }
+              });
+              break;
+
+            case "stop":
+              Workspace.stop(workspaceName,containerName).then(function(response)
+              {
+                if(response.data.error)
+                {
+                  console.log("erro");
+                }
+                console.log(response);
+              });
+              break;
+
+            case "delete":
+              Workspace.stop(workspaceName,containerName).then(function(response)
+              {
+                if(response.data.error)
+                {
+                  console.log("erro");
+                }
+                console.log(response);
+              });
+              break;
+          }qs
+          self.getAllContainers();
+        };
+
         self.getAllContainers = function()
         {
           self.containers = Container.query();
-        };
-
-        self.startContainer = function(id)
-        {
         };
 
         /*
@@ -27,47 +87,6 @@ angular
           var button = angular.element( document.querySelector( '#'+id ) );
           button.toggleClass("hidden");
         };
-
-        /*
-         Executes one of the actions for a given container
-         */
-        self.executeContainerAction = function(action,name)
-        {
-          switch(action)
-          {
-            case "start":
-              console.log("here");
-              Container.start({id:name,action:action},{});
-              break;
-
-            case "stop":
-              break;
-
-            case "delete":
-              break;
-          }
-          self.getAllContainers();
-        };
-
-        /*
-         Executes a action for one of the given workspaces
-         */
-        self.executeWorkspaceAction = function (action)
-        {
-          switch(action)
-          {
-            case "start":
-              break;
-
-            case "stop":
-              break;
-
-            case "delete":
-              break;
-          }
-          self.getContainers();
-        };
-        console.log("asda");
         self.getAllContainers();
       }
     ],
