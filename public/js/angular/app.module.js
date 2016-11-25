@@ -4,8 +4,7 @@ var adminApp = angular.module('adminApp',
   'services',
   'ngRoute',
   'ngResource',
-  'containerList',
-  'headerArea',
-  'loginForm',
-  'managementArea'
+  'app.headerArea',
+  'app.loginForm',
+  'app.managementArea'
 ]);

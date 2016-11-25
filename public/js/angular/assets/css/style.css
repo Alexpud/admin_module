@@ -1,8 +1,203 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
+html {
+  height: 100%;
+  min-height: 100%;
+  position: relative; }
 
-a {
-  color: #00B7FF;
-}
+body {
+  min-height: 300px;
+  min-width: 360px;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  position: relative;
+  background-image: url(../images/BG.jpg);
+  background-size: 100% 100%; }
+
+a, a:hover {
+  font-style: normal;
+  text-decoration: none; }
+
+button {
+  background-color: transparent;
+  border: 0; }
+
+#logo {
+  padding-left: 5%;
+  padding-right: 5%;
+  height: 8.41%;
+  position: relative; }
+
+#footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  margin: 0;
+  border: none; }
+
+#login {
+  min-width: 30%;
+  min-height: 30%;
+  max-height: 50%;
+  max-height: 50%;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white; }
+  #login form {
+    min-width: 50%;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    margin: 0;
+    margin-top: 5%; }
+    #login form input {
+      min-width: 50%;
+      min-height: 40px;
+      width: 70%;
+      height: 100%;
+      right: 50%;
+      border: solid;
+      font-size: 16px;
+      text-align: center;
+      display: block;
+      color: gainsboro;
+      margin: 0 auto;
+      margin-bottom: 20px; }
+    #login form input.ng-valid {
+      border-color: #4cae4c;
+      color: black; }
+    #login form #login_btn {
+      width: 50%;
+      heigth: 50%;
+      left: 25%;
+      right: 25%;
+      border: 0;
+      margin: 0 auto;
+      text-align: center;
+      background-color: #004984;
+      color: white; }
+
+#management {
+  width: 70%;
+  height: 70%;
+  background-color: white;
+  margin: 0 auto;
+  margin-top: 30px;
+  overflow: auto; }
+  #management table {
+    width: 100%;
+    margin: 0 auto;
+    border: none; }
+    #management table .borderless td, #management table .borderless tr, #management table .borderless th {
+      border-bottom: 0; }
+
+.workspace-row {
+  background-color: gray; }
+
+/*
+  Class used by workspaces when hidden on management view table.
+ */
+#hidden {
+  display: none;
+  visibility: hidden; }
+
+/*
+  Treats the navbars used on the header and footer of the page
+ */
+.navbar {
+  margin: 0;
+  background-color: #004984;
+  border: none; }
+  .navbar .container-fluid {
+    font-family: 'Open Sans 300', sans-serif;
+    background-color: #004984; }
+    .navbar .container-fluid .navbar-header a {
+      padding-left: 10%;
+      padding-right: 10%;
+      color: white;
+      font-size: 36px; }
+    .navbar .container-fluid .navbar-text {
+      float: none;
+      color: white;
+      font-size: 22px;
+      text-align: center; }
+    .navbar .container-fluid .collapse a {
+      font-family: "Open Sans 300", sans-serif;
+      color: white;
+      background-color: #004984;
+      font-size: 22px; }
+    .navbar .container-fluid .collapse a:hover {
+      font-family: "Open Sans 300", sans-serif;
+      color: white;
+      background-color: #004984;
+      font-size: 22px;
+      background-color: white;
+      color: #004984; }
+
+.glyphicon {
+  font-size: 16px;
+  padding: 5px; }
+
+.glyphicon-play {
+  color: yellowgreen; }
+
+.glyphicon-pause {
+  color: #2aabd2; }
+
+.glyphicon-remove {
+  color: red; }
+
+.start-btn:hover {
+  background-color: yellowgreen;
+  color: white; }
+
+.pause-btn:hover {
+  background-color: #2aabd2;
+  color: white; }
+
+.remove-btn:hover {
+  background-color: red;
+  color: white; }
+
+@media (min-width: 400px), (max-width: 800px) {
+  #management {
+    width: 100%; } }
+
+@media (min-width: 801px) {
+  #management {
+    width: 90%;
+    height: 90%; } }
+
+@media (min-width: 1367px), (min-height: 769px) {
+  #login {
+    min-width: 30%;
+    min-height: 30%;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    font-size: 22px; }
+    #login form {
+      width: 100%;
+      min-height: 100%;
+      position: relative;
+      margin-top: 10%; }
+      #login form input {
+        min-height: 50px;
+        font-size: 26px; }
+  .navbar {
+    margin: 0;
+    background-color: #004984;
+    border: none; }
+    .navbar .container-fluid {
+      font-family: 'Open Sans 300', sans-serif;
+      background-color: #004984; }
+      .navbar .container-fluid .navbar-header a {
+        font-size: 60px; }
+      .navbar .container-fluid .collapse a {
+        margin-top: 15px;
+        font-size: 46px; } }

@@ -18,6 +18,7 @@
     "glob": "^6.0.4",
     "gulp": "^3.9.1",
     "gulp-cli": "^1.2.2",
+    "gulp-sass": "^2.3.2",
     "gulp-shell": "^0.5.2",
     "jsonwebtoken": "^7.1.9",
     "method-override": "^2.3.0",

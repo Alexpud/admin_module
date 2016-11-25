@@ -58,11 +58,11 @@ router.get('/workspaces', function (req, res, next)
 });
 
 //Creates a workspace
-router.post('/workspaces/:workspaceName', function( req, res, next)
+router.post('/containers/:containerName/workspaces', function( req, res, next)
 {
-  var workspaceName = req.params.workspaceName;
+  var workspaceName = req.body.workspaceName;
   var workspaceStack = req.body.workspaceStack;
-  var containerName = req.body.containerName;
+  var containerName = req.params.containerName;
 
   db.Container.findOne
   ({
@@ -146,13 +146,13 @@ router.post('/workspaces/:workspaceName', function( req, res, next)
   It receives a workspaceName, it will search for it in the database. If it is found, it will attempt
   to x the workspace
  */
-router.post('/workspaces/:workspaceName/start', function( req, res, next)
+router.post('/containers/:containerName/workspaces/:workspaceName/start', function( req, res, next)
 {
   db.Workspace.findOne
   ({
     where: { workspaceName: req.params.workspaceName},
     include: [{ model: db.Container,
-      where: { name: req.body.containerName }
+      where: { name: req.params.containerName }
     }]
   }).then( function (workspace)
   {
@@ -188,7 +188,7 @@ router.post('/workspaces/:workspaceName/start', function( req, res, next)
 });
 
 
-router.delete('/workspaces/:workspaceName/stop', function(req,res,next)
+router.delete('/containers/:containerName/workspaces/:workspaceName/stop', function(req,res,next)
 {
   console.log(req.body);
   db.Workspace.findOne
@@ -196,7 +196,7 @@ router.delete('/workspaces/:workspaceName/stop', function(req,res,next)
     where: { workspaceName: req.params.workspaceName },
     include: [{
       model: db.Container,
-      where: { name: req.body.containerName }
+      where: { name: req.params.containerName }
     }]
   }).then(function(workspace)
   {
@@ -234,21 +234,18 @@ router.delete('/workspaces/:workspaceName/stop', function(req,res,next)
    is on, if it is it will send a request do deleete the workspace. If it isn't, it will do nothing.
  */
 
-router.delete('/workspaces/:workspaceName/delete',function(req, res, next)
+router.delete('/containers/:containerName/workspaces/:workspaceName/delete',function(req, res, next)
 {
-  console.log(req.params.workspaceName);
-  console.log(req.body.containerName);
   db.Workspace.findOne
   ({
     where: { workspaceName: req.params.workspaceName },
     include:
     [{
       model: db.Container,
-      where: { name: req.body.containerName }
+      where: { name: req.params.containerName }
     }]
   }).then(function(workspace)
   {
-    console.log(workspace);
     if( workspace != null)
     {
       var promise = new Promise(function (resolve, reject)
@@ -278,8 +275,8 @@ router.delete('/workspaces/:workspaceName/delete',function(req, res, next)
               //If the response length is zero, it means the DELETE action was successful
               if (data.response.length == 0)
               {
-                res.status(204);
                 workspace.destroy();
+                res.status(204);
                 res.send();
               }
               else

@@ -1,5 +1,5 @@
 'use strict';
-angular.module('managementArea',
+angular.module('app.managementArea',
   [
     'ngRoute',
     'service.container',

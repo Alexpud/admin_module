@@ -1,15 +1,16 @@
 'use strict';
 angular
-  .module('headerArea')
+  .module('app.headerArea')
     .component('headerArea',
     {
-      templateUrl: "/js/angular/header-area/header-area-template.html",
+      templateUrl: "/js/angular/header/header-template.html",
       controller: ('headerCtrl',
       ['$http', '$routeParams',
-        function HeaderAreaController($scope)
+        function HeaderAreaController($scope,$localStorage)
         {
           var self = this;
 
+          self.token = localStorage.getItem('token');
           /*
            Gets a list of containers from backend
            */

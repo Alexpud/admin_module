@@ -2,7 +2,6 @@ $navbar-bg-color: #004984;
 $navbar-a-font: 'Open Sans 300', sans-serif;
 
 
-
 @mixin collapsible-a
 {
   font-family: $navbar-a-font;
@@ -235,6 +234,23 @@ button
   color:white;
 }
 
+@media (min-width: 400px), (max-width:800px)
+{
+  #management
+  {
+    width:100%;
+  }
+}
+
+@media (min-width: 801px)
+{
+  #management
+  {
+    width: 90%;
+    height: 90%;
+  }
+}
+
 @media (min-width: 1367px),(min-height: 769px)
 {
   #login
@@ -253,11 +269,35 @@ button
       width: 100%;
       min-height: 100%;
       position: relative;
-      margin-top: 15%;
+      margin-top: 10%;
       input
       {
         min-height: 50px;
         font-size:26px;
+      }
+    }
+  }
+
+  .navbar
+  {
+    margin: 0;
+    background-color: $navbar-bg-color;
+    border: none;
+    .container-fluid
+    {
+      font-family: 'Open Sans 300', sans-serif;
+      background-color: $navbar-bg-color;
+      .navbar-header a
+      {
+        font-size:60px;
+      }
+      .collapse
+      {
+        a
+        {
+          margin-top: 15px;
+          font-size: 46px;
+        }
       }
     }
   }
