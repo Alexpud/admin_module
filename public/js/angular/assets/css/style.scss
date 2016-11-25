@@ -280,13 +280,8 @@ button
 
   .navbar
   {
-    margin: 0;
-    background-color: $navbar-bg-color;
-    border: none;
     .container-fluid
     {
-      font-family: 'Open Sans 300', sans-serif;
-      background-color: $navbar-bg-color;
       .navbar-header a
       {
         font-size:60px;
