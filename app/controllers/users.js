@@ -89,7 +89,11 @@ router.post('/users/:login/authenticate',function(req,res)
       var tokenUser = jwt.sign({ user:req.body.login }, "Oursecretsecret", {
         // expiresIn : "5m" // expires in 24 hours 
       });
-      createUser(req.body.login,req.body.password,tokenUser,req.body.admin,req,res);     
+      createUser(
+        req.body.login,
+        req.body.password,
+        tokenUser,
+        req.body.admin,req,res);
     }
   }); 
 });

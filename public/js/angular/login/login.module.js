@@ -1,2 +1,2 @@
 'use strict';
-angular.module('app.loginForm',['ngRoute']);
+angular.module('app.loginForm', [ 'ngRoute', 'service.user']);

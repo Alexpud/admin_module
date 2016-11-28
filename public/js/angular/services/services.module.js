@@ -1,3 +1,8 @@
 'use strict';
 
-angular.module('services',['service.container','service.workspace']);
+angular.module('services',
+[
+  'service.container',
+  'service.workspace',
+  'service.user'
+]);

@@ -21,6 +21,10 @@ button {
   background-color: transparent;
   border: 0; }
 
+.direita {
+  text-align: right;
+  float: right; }
+
 #logo {
   padding-left: 5%;
   padding-right: 5%;
@@ -189,15 +193,8 @@ button {
       #login form input {
         min-height: 50px;
         font-size: 26px; }
-  .navbar {
-    margin: 0;
-    background-color: #004984;
-    border: none; }
-    .navbar .container-fluid {
-      font-family: 'Open Sans 300', sans-serif;
-      background-color: #004984; }
-      .navbar .container-fluid .navbar-header a {
-        font-size: 60px; }
-      .navbar .container-fluid .collapse a {
-        margin-top: 15px;
-        font-size: 46px; } }
+  .navbar .container-fluid .navbar-header a {
+    font-size: 60px; }
+  .navbar .container-fluid .collapse a {
+    margin-top: 15px;
+    font-size: 46px; } }

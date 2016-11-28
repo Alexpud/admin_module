@@ -5,15 +5,20 @@ angular
     {
       templateUrl: "/js/angular/header/header-template.html",
       controller: ('headerCtrl',
-      ['$http', '$routeParams',
-        function HeaderAreaController($scope,$localStorage)
+      ['$http', '$routeParams', 'User',
+        function HeaderAreaController($scope,$localStorage,User)
         {
           var self = this;
+          self.currentUser = User.user;
 
-          self.token = localStorage.getItem('token');
-          /*
-           Gets a list of containers from backend
-           */
+
+          self.hide = function()
+          {
+            console.log("lol");
+            var menuArea = angular.element(document.querySelector('#drawer'));
+            menuArea.toggleClass("open");
+          };
+          console.log(User.user);
         }
       ]),
       controllerAs: 'headerCtrl'

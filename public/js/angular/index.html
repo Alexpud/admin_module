@@ -15,6 +15,19 @@
     <script src = "/components/angular/angular.js"></script>
     <script src = "/components/angular-route/angular-route.js"></script>
     <script src = "/components/angular-resource/angular-resource.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  </head>
+  <body>
+    <header-area></header-area>
+    <nav class = "navbar navbar-default" id = "footer">
+      <div class = "container-fluid">
+        <p class="navbar-text">AVID Dcomp UFS 2017</p>
+      </div>
+    </nav>
+    <div ng-view></div>
+
     <script src = "/js/angular/app.module.js"></script>
     <script src = "/js/angular/app.config.js"></script>
 
@@ -26,7 +39,8 @@
     <script src = "/js/angular/services/container/container.service.js"></script>
     <script src = "/js/angular/services/workspace/workspace.module.js"></script>
     <script src = "/js/angular/services/workspace/workspace.service.js"></script>
-
+    <script src = "/js/angular/services/user/user.module.js"></script>
+    <script src = "/js/angular/services/user/user.service.js"></script>
 
     <script src = "/js/angular/container-list/container-list.module.js"></script>
     <script src = "/js/angular/container-list/container-list.component.js"></script>
@@ -39,15 +53,5 @@
 
     <script src = "/js/angular/header/header.module.js"></script>
     <script src = "/js/angular/header/header.component.js"></script>
-
-  </head>
-  <body>
-    <header-area></header-area>
-    <nav class = "navbar navbar-default" id = "footer">
-      <div class = "container-fluid">
-        <p class="navbar-text">AVID Dcomp UFS 2017</p>
-      </div>
-    </nav>
-    <div ng-view></div>
   </body>
 </html>

@@ -1,15 +1,15 @@
 <div id = "login">
-  <form name= " form" ng-submit = "$ctrl.login($ctrl.user)" role = "form">
+  <form name= " form" ng-submit = "loginCtrl.login(loginCtrl.user)" role = "form">
     <i class = "fa fa-key"></i>
-    <input type="text" name = "username" id = "username" class = "form-control" placeholder = "Login SIGAA" size = "35" ng-model="$ctrl.user.username" ng-required="true"/>
+    <input type="text" name = "userName" id = "userName" class = "form-control" placeholder = "Login SIGAA" size = "35" ng-model="loginCtrl.user.userName" ng-required="true"/>
     <i class="fa fa-lock"></i>
-    <input type="password" name="password" id="password" class="form-control" placeholder = "Senha SIGAA" ng-model="$ctrl.user.password"  ng-required="true" />
-    <input type="submit" value = "Enviar" id = "login_btn" ng-disabled="form.$invalid || dataLoading" class="btn btn-danger">
+    <input type = "password" name = "password" id="password" class="form-control" placeholder = "Senha SIGAA" ng-model="loginCtrl.user.password"  ng-required="true" />
+    <input type = "submit" value = "Enviar" id = "login_btn" ng-disabled="form.$invalid || dataLoading" class="btn btn-danger">
   </form>
 </div>
 
-<div  ng-show = "form.username.$invalid && form.username.$dirty" class = "alert alert-danger">
-  Por favor preencha o campo de login
+<div  ng-show = "form.userName.$invalid && form.userName.$dirty" class = "alert alert-danger">
+  Por favor preencha o campo de login'
 </div>
 <div ng-show = "form.password.$invalid && form.password.$dirty" class = "alert alert-danger">
   Por favor preencha o campo de senha
