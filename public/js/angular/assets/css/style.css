@@ -26,9 +26,10 @@ button {
   float: right; }
 
 #logo {
+  margin-top: 5px;
   padding-left: 5%;
   padding-right: 5%;
-  height: 8.41%;
+  height: 100%;
   position: relative; }
 
 #footer {
@@ -121,7 +122,7 @@ button {
       padding-left: 10%;
       padding-right: 10%;
       color: white;
-      font-size: 36px; }
+      font-size: 30px; }
     .navbar .container-fluid .navbar-text {
       float: none;
       color: white;
@@ -192,9 +193,4 @@ button {
       margin-top: 10%; }
       #login form input {
         min-height: 50px;
-        font-size: 26px; }
-  .navbar .container-fluid .navbar-header a {
-    font-size: 60px; }
-  .navbar .container-fluid .collapse a {
-    margin-top: 15px;
-    font-size: 46px; } }
+        font-size: 26px; } }

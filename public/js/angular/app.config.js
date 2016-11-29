@@ -11,8 +11,18 @@ angular.
           template: '<management-area></management-area>'
         }).
         when('/',{
-          template: '<login-form></login-form>'
+          template: function()
+          {
+            // If there is a token on the browser
+            if (localStorage.getItem('token'))
+            {
+              return '<management-area></management-area>';
+            }
+            else
+            {
+              return '<login-form></login-form>';
+            }
+          }
         });
-
-    }
-  ]);
+      }
+    ]);
