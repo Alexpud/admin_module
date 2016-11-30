@@ -5,11 +5,12 @@ angular
   {
     controllerAs: 'managementCtrl',
     controller:
-      ['Container','Workspace','$http', '$q','$scope',
-        function ManagementAreaController(Container,Workspace,$http,$q,$scope)
+      ['$http', '$q','$scope','Container','Workspace','User',
+        function ManagementAreaController($http,$q,$scope,Container,Workspace,User)
         {
           var injector = angular.injector(['ng', 'app.managementArea','services']);
           var self = this;
+          self.containers = [];
 
           /*
            Executes one of the actions for a given container
@@ -59,8 +60,8 @@ angular
                 {});
                 break;
               case "delete":
-                Workspace.delete(
-                {
+                Workspace.delete
+                ({
                   containerName: containerName,
                   workspaceName: workspaceName,
                   action: 'delete'
@@ -73,7 +74,14 @@ angular
 
           self.getAllContainers = function()
           {
-            self.containers = Container.query();
+            console.log(User);
+            if (User.admin)
+              self.containers = Container.query();
+            else
+            {
+              //self.containers = Container.query();
+              self.containers.push(Container.get({containerName: User.user},{}));
+            }
           };
 
           /*

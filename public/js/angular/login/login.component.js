@@ -25,6 +25,8 @@ angular
                     console.log(response.data.token);
                     localStorage.setItem('token',response.data.token);
                     User.user = user.userName;
+                    User.admin = false;
+                    console.log(User);
                 },function(argument) {
                   if(argument.data.erro) //redirect ?
                   {
