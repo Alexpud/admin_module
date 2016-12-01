@@ -52,6 +52,8 @@ router.post('/users/:login/authenticate',function(req,res)
     where: { login: req.body.login }
   }).then(function(user)
   {
+    console.log(user);
+    console.log(req.body);
     // user exist, return your token if password form match password data base
     if(user != null)
     {

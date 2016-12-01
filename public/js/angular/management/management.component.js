@@ -74,13 +74,12 @@ angular
 
           self.getAllContainers = function()
           {
-            console.log(User);
             if (User.admin)
               self.containers = Container.query();
-            else
-            {
-              //self.containers = Container.query();
-              self.containers.push(Container.get({containerName: User.user},{}));
+            else {
+              console.log(localStorage.getItem('user'));
+              self.containers = [];
+              self.containers.push(Container.get({containerName: localStorage.getItem('user')}, {}));
             }
           };
 

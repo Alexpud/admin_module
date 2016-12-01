@@ -1,11 +1,11 @@
 angular
   .module('app.loginForm')
-    .component('loginForm',
+  .component('loginForm',
     {
       templateUrl: "/js/angular/login/login.template.html",
       controller:
-        ['$http', '$routeParams','User',
-          function LoginFormController($http,$localStorage,User)
+        ['$http', '$routeParams','User','$location',
+          function UserFormController($http,$localStorage,User,$location)
           {
             var self = this;
 
@@ -13,26 +13,18 @@ angular
             {
               var data =
               {
-                  login: user.userName,
-                  password: user.password
+                login: user.userName,
+                password: user.password
               };
-
               var config = [{'params': user.userName}];
-
-              $http.post('http://localhost:3000/api/users/:login/authenticate',data,config).
-                then(function(response)
+              User.signIn(data,config).then(function(response)
+              {
+                if(response.status == 'success')
                 {
-                    console.log(response.data.token);
-                    localStorage.setItem('token',response.data.token);
-                    User.user = user.userName;
-                    User.admin = false;
-                    console.log(User);
-                },function(argument) {
-                  if(argument.data.erro) //redirect ?
-                  {
-                    alert("Erro de autenticação");
-                  }
-                });
+                  localStorage.setItem('user',user.userName);
+                  $location.path('/management');
+                }
+              });
             };
           }
         ],
