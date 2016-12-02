@@ -5,8 +5,8 @@ angular
     {
       templateUrl: "/js/angular/header/header-template.html",
       controller: ('headerCtrl',
-      ['$http', '$routeParams', 'User',
-        function HeaderAreaController($scope,$localStorage,User)
+        ['$http', '$routeParams', 'User','$location','$window',
+        function HeaderAreaController($scope,$localStorage,User,$location,$window)
         {
           var self = this;
           self.currentUser = User;
@@ -20,6 +20,7 @@ angular
           self.logOut = function()
           {
             User.signOut();
+            $window.location.reload();
           };
         }
       ]),

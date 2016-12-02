@@ -7,6 +7,7 @@ angular
 
     self.isAuthenticated = function()
     {
+      console.log(localStorage.getItem('token') != "");
       return localStorage.getItem('token') != "";
     };
 
@@ -15,6 +16,7 @@ angular
       return $http.post('http://localhost:3000/api/users/:login/authenticate',user,config)
       .then(function(response)
       {
+        console.log(response);
         localStorage.setItem('token',response.data.token);
         self.user = user.userName;
         self.admin = false;

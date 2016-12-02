@@ -19,6 +19,7 @@ angular
               var config = [{'params': user.userName}];
               User.signIn(data,config).then(function(response)
               {
+                console.log(response);
                 if(response.status == 'success')
                 {
                   localStorage.setItem('user',user.userName);

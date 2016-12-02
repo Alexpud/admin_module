@@ -4,26 +4,24 @@ angular.
     config(['$locationProvider', '$routeProvider',
       function config($locationProvider, $routeProvider)
       {
-        $locationProvider.hashPrefix('!');
 
         $routeProvider.
         when('/management', {
           template: '<management-area></management-area>'
         }).
         when('/', {
-          template: '<login-form></login-form>'
-        /*function()
-         {
-         // If there is a token on the browser
-         if (localStorage.getItem('token'))
-         {
-         return '<management-area></management-area>';
+          template: function()
+          {
+           // If there is a token on the browser
+            if (localStorage.getItem('token'))
+            {
+              return '<management-area></management-area>';
+            }
+            else
+            {
+              return '<login-form></login-form>';
+            }
          }
-         else
-         {
-         return '<login-form></login-form>';
-         }
-         }*/
 
         });
       }
