@@ -29,7 +29,7 @@
             <button class = "btn btn-primary"> Create workspace</button>
           </td>
 
-          <td class = "workspace-row" id = "{{'workspace_collumn'+$index}}" colspan="6" ng-show = "container.Workspaces.length">
+          <td class = "workspace-row" id = "{{'workspace_collumn'+$index}}" colspan="6" ng-class = "{'hidden': managementCtrl.workspacesEmpty($index)}">
             <table class = "table borderless">
               <thead>
                 <tr>
