@@ -16,10 +16,10 @@ angular
         $http.post('http://localhost:3000/api/users/:login/authenticate',user)
         .then(function(response)
           {
-            console.log(response.data.token);
+            console.log(response);
             localStorage.setItem('token',response.data.token);
             User.user = user.userName;
-            User.admin = false;
+            User.admin = response.data.admin;
             console.log(User);
           },function(argument) {
             if(argument.data.erro) //redirect ?

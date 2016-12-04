@@ -1,0 +1,28 @@
+<div id = "management">
+  <table class = "table borderless">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Creation</th>
+        <th>Stack</th>
+        <th>Status</th>
+        <th>Actions</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody ng-repeat="workspace in userManagementCtrl.workspaces">
+      <tr>
+        <td>{{workspace.workspaceName}}</td>
+        <td>{{workspace.createdAt}}</td>
+        <td>{{workspace.stack}}</td>
+        <td>{{workspace.status}}</td>
+        <td>
+          <button class = "start-btn glyphicon glyphicon-play" ng-click="userManagementCtrl.executeWorkspaceAction('start',workspace.workspaceName,workspace.containerName)"></button>
+          <button class = "pause-btn glyphicon glyphicon-pause" ng-click="userManagementCtrl.executeWorkspaceAction('stop',workspace.workspaceName,workspace.containerName)"> </button>
+          <button class = "remove-btn glyphicon glyphicon-remove" ng-click="userManagementCtrl.executeWorkspaceAction('delete',workspace.workspaceName,workspace.containerName)"> </button>
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

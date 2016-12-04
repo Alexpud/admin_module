@@ -283,13 +283,16 @@ router.post('/containers/:name/start', function(req, res, next)
 
 router.delete('/containers/:name/stop', function (req, res, next)
 {
+  console.log("STOP");
   db.Container.findOne
   ({
     where: { name: req.params.name }
   }).then( function(container)
   {
+    console.log(container);
     if (container != null)
     {
+      console.log(container);
       var promise = new Promise(function (resolve, reject)
       {
         exec("./app/helpers/che_helper_functions.sh stop " + container.name,

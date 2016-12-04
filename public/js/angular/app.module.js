@@ -6,5 +6,6 @@ var adminApp = angular.module('adminApp',
     'ngResource',
     'app.headerArea',
     'app.loginForm',
-    'app.managementArea'
+    'app.adminManagementArea',
+    'app.userManagementArea'
   ]);

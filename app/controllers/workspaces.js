@@ -10,14 +10,11 @@ module.exports = function (app) {
 };
 
 //Returns an array of jsons containing the tuples of workspace table
-router.get('/workspaces', function (req, res, next)
+router.get('/containers/workspaces', function (req, res, next)
 {
   var newWorkspaceList = [];
   var promises = [];
-  db.Workspace.all
-  ({
-    include: [{ model: db.Container }]
-  }).then( function(workspaceList)
+  db.Workspace.findAll().then( function(workspaceList)
   {
     for (var i = 0; i < workspaceList.length; i++)
     {
@@ -29,14 +26,45 @@ router.get('/workspaces', function (req, res, next)
             resolve({ status: stdout });
           });
       }));
+    }
+    Promise.all(promises).then(function (allData)
+    {
+      for(var i = 0; i < workspaceList.length; i++)
+      {
+        var workspace_status = allData[i].status.replace('\n', "");
+        workspaceList[i].setDataValue("status",workspace_status);
+      }
+      return workspaceList;
+    }).then(function(workspaceList)
+    {
+      console.log(workspaceList);
+      res.status(200);
+      res.send(workspaceList);
+    });
+  });
+});
 
+router.get('/containers/:containerName/workspaces', function(req,res,next)
+{
+  var newWorkspaceList = [];
+  var promises = [];
+  db.Workspace.all
+  ({
+    where:
+    {
+      containerName: req.params.containerName
+    }
+  }).then( function(workspaceList)
+  {
+    for (var i = 0; i < workspaceList.length; i++)
+    {
       promises.push(new Promise(function (resolve, reject)
       {
-        exec("./app/helpers/che_helper_functions.sh container_status " + workspaceList[i].Container.name,
-          function(err, stdout, stderr)
-          {
-            resolve({ container_status: stdout });
-          });
+        exec("./app/helpers/che_helper_functions.sh workspace_status " + workspaceList[i].workspaceID,
+        function(err, stdout, stderr)
+        {
+          resolve({ status: stdout });
+        });
       }));
     }
     Promise.all(promises).then(function (allData)
@@ -44,13 +72,12 @@ router.get('/workspaces', function (req, res, next)
       for(var i = 0; i < workspaceList.length; i++)
       {
         var workspace_status = allData[i].status.replace('\n', "");
-        var container_status = allData[i+1].container_status.replace('\n', "");
         workspaceList[i].setDataValue("status",workspace_status);
-        workspaceList[i].Container.setDataValue("status",container_status);
       }
       return workspaceList;
     }).then(function(workspaceList)
     {
+      console.log(workspaceList);
       res.status(200);
       res.send(workspaceList);
     });

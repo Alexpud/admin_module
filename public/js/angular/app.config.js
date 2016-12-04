@@ -12,7 +12,12 @@ angular.
              // If there is a token on the browser
               if (localStorage.getItem('token'))
               {
-                return '<management-area></management-area>';
+                var user = JSON.parse(localStorage.getItem('user'));
+                console.log("asddasd"+user);
+                if(user.admin)
+                  return '<admin-management-area></admin-management-area>';
+                else
+                  return '<user-management-area></user-management-area>'
               }
               else
               {
@@ -20,8 +25,18 @@ angular.
               }
            }
           })
-          .when('/management', {
-            template: '<management-area></management-area>'
+          .when('/management',
+          {
+            template: function() {
+              if (localStorage.getItem('token')) {
+                var user = JSON.parse(localStorage.getItem('user'));
+                console.log("asddasd" + user.admin);
+                if (user.admin)
+                  return '<admin-management-area></admin-management-area>';
+                else
+                  return '<user-management-area></user-management-area>'
+              }
+            }
           });
       }
     ]);
