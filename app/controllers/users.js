@@ -52,24 +52,23 @@ router.post('/users/:login/authenticate',function(req,res)
     where: { login: req.body.login }
   }).then(function(user)
   {
-    console.log(user);
-    console.log(req.body);
     // user exist, return your token if password form match password data base
     if(user != null)
     {
       if(validatePassword(req.body.password,user.password))
       {
         res.status(200);
-        console.log(user.login);
         res.send
         ({
+          name: user.login,
           token: user.token,
           admin: user.admin
         });
-      }else
+      }
+      else
       {
-          res.status(401);
-         // res.send("Senha incorreta");
+        // Incorrect password
+        res.status(401);
       }
     }
     else //create new user and return your token

@@ -2,12 +2,10 @@ angular
   .module('service.user')
   .factory('User',['$http', function($http)
   {
-    var self =this;
-    self.user = "";
+    var self = this;
 
     self.isAuthenticated = function()
     {
-      console.log(localStorage.getItem('token') != "");
       return localStorage.getItem('token') != "";
     };
 
@@ -17,17 +15,20 @@ angular
       .then(function(response)
       {
         console.log(response);
+        var currentUser = {};
+        currentUser.name = response.data.name;
+        currentUser.admin = response.data.admin;
         localStorage.setItem('token',response.data.token);
-        self.user = user.userName;
-        self.admin = false;
+        localStorage.setItem('user',JSON.stringify(currentUser));
         return {status:'success'};
-      },function(argument) {
-        if(argument.data.erro) //redirect ?
+      },function(argument)
         {
-          alert("Erro de autenticação");
-          return {status: 'error', content: argument};
-        }
-      });
+          if(argument.data.erro) //redirect ?
+          {
+            alert("Erro de autenticação");
+            return { status: 'error', content: argument};
+          }
+        });
     };
 
     self.signOut = function()

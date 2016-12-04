@@ -5,24 +5,23 @@ angular.
       function config($locationProvider, $routeProvider)
       {
 
-        $routeProvider.
-        when('/management', {
-          template: '<management-area></management-area>'
-        }).
-        when('/', {
-          template: function()
-          {
-           // If there is a token on the browser
-            if (localStorage.getItem('token'))
+        $routeProvider
+          .when('/', {
+            template: function()
             {
-              return '<management-area></management-area>';
-            }
-            else
-            {
-              return '<login-form></login-form>';
-            }
-         }
-
-        });
+             // If there is a token on the browser
+              if (localStorage.getItem('token'))
+              {
+                return '<management-area></management-area>';
+              }
+              else
+              {
+                return '<login-form></login-form>';
+              }
+           }
+          })
+          .when('/management', {
+            template: '<management-area></management-area>'
+          });
       }
     ]);

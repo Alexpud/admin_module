@@ -133,14 +133,25 @@ button
   {
     width:100%;
     margin: 0 auto;
-    border:none;
+    border: none;
     .borderless
     {
       td,tr,th
       {
+        border: none;
         border-bottom: 0;
       }
     }
+  }
+  #creation_btn
+  {
+    background: url(../images/circle.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-size: 100% 100%;
+    text-align: center;
   }
 }
 
@@ -153,7 +164,7 @@ button
   Class used by workspaces when hidden on management view table.
  */
 
-#hidden
+.hidden
 {
   display: none;
   visibility: hidden;

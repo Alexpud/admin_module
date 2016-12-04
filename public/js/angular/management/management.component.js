@@ -3,12 +3,14 @@ angular
   .module('app.managementArea')
   .component('managementArea',
   {
+    templateUrl: "/js/angular/management/management-template.html",
     controllerAs: 'managementCtrl',
     controller:
-      ['$http', '$q','$scope','Container','Workspace','User',
-        function ManagementAreaController($http,$q,$scope,Container,Workspace,User)
+      ['$http', 'Container','Workspace',
+        function ManagementAreaController($http,Container,Workspace)
         {
-          var injector = angular.injector(['ng', 'app.managementArea','services']);
+          console.log("asdad");
+
           var self = this;
           self.containers = [];
 
@@ -74,12 +76,13 @@ angular
 
           self.getAllContainers = function()
           {
-            if (User.admin)
+            console.log("asdassssssssss");
+            var currentUser = JSON.parse(localStorage.getItem('user'));
+            if (currentUser.admin)
               self.containers = Container.query();
             else {
-              console.log(localStorage.getItem('user'));
               self.containers = [];
-              self.containers.push(Container.get({containerName: localStorage.getItem('user')}, {}));
+              self.containers.push(Container.get({containerName: currentUser.name}, {}));
             }
           };
 
@@ -91,8 +94,20 @@ angular
             var button = angular.element( document.querySelector( '#'+id ) );
             button.toggleClass("hidden");
           };
+
+          self.workspacesEmpty = function(id)
+          {
+            /*
+              Workaround for the moment. This method was being executed several times, without the loading
+              of data. So....
+            */
+            if(self.containers[id].Workspaces == undefined)
+              return true;
+
+            return self.containers[id].Workspaces.length == 0;
+          };
+
           self.getAllContainers();
         }
-      ],
-      templateUrl: "/js/angular/management/management-template.html"
+      ]
     });

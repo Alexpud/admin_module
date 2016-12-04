@@ -23,8 +23,13 @@
           </td>
           <td><button class = "btn btn-primary" id = "{{'button' + $index }}" ng-click="managementCtrl.hideWorkspaces('workspace_row'+$index)">WORKSPACES</button></td>
         </tr>
-        <tr id ="{{'workspace_row'+$index}}" ng-show = "container.Workspaces.length">
-          <td colspan="6" class = "workspace-row">
+        <tr id = "{{'workspace_row'+$index}}">
+
+          <td id = "{{'creationCollumn'+$index}}" colspan="6" align="center" ng-class="{ 'hidden': !managementCtrl.workspacesEmpty($index)}">
+            <button class = "btn btn-primary"> Create workspace</button>
+          </td>
+
+          <td class = "workspace-row" id = "{{'workspace_collumn'+$index}}" colspan="6" ng-show = "container.Workspaces.length">
             <table class = "table borderless">
               <thead>
                 <tr>

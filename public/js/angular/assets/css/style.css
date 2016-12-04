@@ -96,7 +96,16 @@ button {
     margin: 0 auto;
     border: none; }
     #management table .borderless td, #management table .borderless tr, #management table .borderless th {
+      border: none;
       border-bottom: 0; }
+  #management #creation_btn {
+    background: url(../images/circle.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-size: 100% 100%;
+    text-align: center; }
 
 .workspace-row {
   background-color: gray; }
