@@ -14,22 +14,22 @@ gulp.task('docker.sock', shell.task(
   }
 ));
 
-gulp.task('watch', function()
-{
-  gulp.watch('public/js/angular/*.html',['build'])
-});
 
-gulp.task('build',function()
+gulp.task('watch',function()
 {
-  bs.reload();
-  console.log("assdasd");
+  watch('./public/js/angular/assets/css/*.scss',function(files)
+  {
+    console.log(files);
+    gulp.start('styles');
+  });
 });
 
 gulp.task('styles',function()
 {
   gulp.src('./public/js/angular/assets/css/style.scss')
     .pipe(sass().on('error',sass.logError))
-    .pipe(gulp.dest('./public/js/angular/assets/css'));
+    .pipe(gulp.dest('./public/js/angular/assets/css'))
+    .pipe(livereload());
 });
 
 
@@ -45,7 +45,7 @@ gulp.task('browser-sync',function() {
     proxy: 'localhost:3000/#/'
   });
 
-  gulp.watch('public/js/angular/*.html').on('change',bs.reload);
+  gulp.watch('public/js/angular/**/*.html').on('change',bs.reload);
 });
 
 

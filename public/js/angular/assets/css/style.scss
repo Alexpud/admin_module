@@ -69,7 +69,6 @@ button
   min-width: 30%;
   min-height: 30%;
   max-height: 50%;
-  max-height: 50%;
   margin: 0;
   position: absolute;
   top: 50%;
@@ -105,21 +104,8 @@ button
       border-color: #4cae4c;
       color: black;
     }
-    #login_btn
-    {
-      width: 50%;
-      heigth: 50%;
-      left: 25%;
-      right: 25%;
-      border: 0;
-      margin: 0 auto;
-      text-align: center;
-      background-color: $navbar-bg-color;
-      color: white;
-    }
   }
 }
-
 
 #management
 {
@@ -153,6 +139,47 @@ button
     background-size: 100% 100%;
     text-align: center;
   }
+}
+
+#workspace_creation
+{
+  width: 50%;
+  top: 40%;
+  left: 20%;
+  position: absolute;
+  background-color:white;
+  form
+  {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    input
+    {
+      text-align: center;
+      margin: 0 auto;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    input.ng-valid
+    {
+      border-color: #4cae4c;
+      color: black;
+    }
+  }
+}
+
+#submit_btn
+{
+  width: 100%;
+  heigth: 50%;
+  left: 25%;
+  right: 25%;
+  border: 0;
+  margin: 0 auto;
+  text-align: center;
+  background-color: $navbar-bg-color;
+  color: white;
 }
 
 .workspace-row

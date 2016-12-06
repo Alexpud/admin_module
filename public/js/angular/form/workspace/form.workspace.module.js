@@ -1,5 +1,6 @@
 angular.module('app.workspaceForm',
   [
     'ngRoute',
-    'ngResource'
+    'ngResource',
+    'service.workspace'
   ]);

@@ -1,14 +1,16 @@
 <div id = "workspace_creation">
-  <form name= " form" role = "form">
-    <input type="text" name = "userName" id = "userName" class = "form-control" placeholder = "Login SIGAA" size = "35"  ng-required="true"/>
-    <input type = "password" name = "password" id="password" class="form-control" placeholder = "Senha SIGAA"  ng-required="true" />
-    <input type = "submit" value = "Enviar" id = "login_btn" ng-disabled="form.$invalid || dataLoading" class="btn btn-danger">
+  <form name= "form" role = "form" ng-submit = "workspaceFormCtrl.createWorkspace(workspaceFormCtrl.workspace)">
+    <input type = "text" name = "workspaceName" id = "workspaceName" class = "form-control" placeholder = "Nome da workspace" size = "35" ng-model="workspaceFormCtrl.workspace.name"  ng-required="true"/>
+    <label for="stacks">Lista de stacks</label>
+    <select name = "stacks" class="form-control" ng-model="workspaceFormCtrl.workspace.stack">
+      <option selected disabled>Selecione sua stack</option>
+      <option>C++</option>
+      <option>JAVA</option>
+    </select>
+    <input type = "submit" value = "Enviar" id = "submit_btn" ng-disabled="form.$invalid || dataLoading" class="btn btn-primary">
   </form>
 </div>
 
-<div  ng-show = "form.userName.$invalid && form.userName.$dirty" class = "alert alert-danger">
-  Por favor preencha o campo de login'
-</div>
-<div ng-show = "form.password.$invalid && form.password.$dirty" class = "alert alert-danger">
-  Por favor preencha o campo de senha
+<div  ng-show = "form.workspaceName.$invalid && form.workspaceName.$dirty" class = "alert alert-danger">
+  Por favor, de um nome a workspace
 </div>
