@@ -1,11 +1,12 @@
-'use strict';
+
 var adminApp = angular.module('adminApp',
   [
     'services',
     'ngRoute',
     'ngResource',
+    'service.user',
     'app.headerArea',
     'app.loginForm',
-    'app.adminManagementArea',
-    'app.userManagementArea'
+    'app.forms',
+    'app.management'
   ]);

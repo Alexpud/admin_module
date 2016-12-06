@@ -1,7 +1,6 @@
-'use strict';
-angular.
-  module('adminApp').
-    config(['$locationProvider', '$routeProvider',
+angular
+  .module('adminApp')
+    .config(['$locationProvider', '$routeProvider',
       function config($locationProvider, $routeProvider)
       {
 
@@ -13,7 +12,6 @@ angular.
               if (localStorage.getItem('token'))
               {
                 var user = JSON.parse(localStorage.getItem('user'));
-                console.log("asddasd"+user);
                 if(user.admin)
                   return '<admin-management-area></admin-management-area>';
                 else
@@ -37,6 +35,22 @@ angular.
                   return '<user-management-area></user-management-area>'
               }
             }
-          });
+          })
+          .when('/management/creation',
+            {
+              template: function()
+              {
+                if(localStorage.getItem('token'))
+                {
+                  console.log("asdasd");
+                  return '<workspace-form></workspace-form>';
+                }
+                else
+                {
+                  alert("Please sign in");
+                  return '<login-form></login-form>';
+                }
+              }
+            });
       }
     ]);

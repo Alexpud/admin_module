@@ -1,21 +1,21 @@
 'use strict';
 angular
-  .module('app.managementArea')
-  .component('managementArea',
+  .module('app.adminManagementArea')
+  .component('adminManagementArea',
   {
-    templateUrl: "/js/angular/management/management-template.html",
-    controllerAs: 'managementCtrl',
+    templateUrl: "/js/angular/management/admin/admin.management-template.html",
+    controllerAs: 'adminManagementCtrl',
     controller:
       ['$http', 'Container','Workspace',
-        function ManagementAreaController($http,Container,Workspace)
+        function adminManagementAreaController($http,Container,Workspace)
         {
           console.log("asdad");
 
           var self = this;
-          var injector = angular.injector(['ng', 'app.managementArea','services']);
+          var injector = angular.injector(['ng','services']);
 
           self.containers = Container.getAllContainers();
-
+          console.log(self.containers);
           /*
            Executes one of the actions for a given container
            */

@@ -113,7 +113,7 @@ button {
 /*
   Class used by workspaces when hidden on management view table.
  */
-#hidden {
+.hidden {
   display: none;
   visibility: hidden; }
 

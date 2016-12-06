@@ -1,0 +1,14 @@
+<div id = "workspace_creation">
+  <form name= " form" role = "form">
+    <input type="text" name = "userName" id = "userName" class = "form-control" placeholder = "Login SIGAA" size = "35"  ng-required="true"/>
+    <input type = "password" name = "password" id="password" class="form-control" placeholder = "Senha SIGAA"  ng-required="true" />
+    <input type = "submit" value = "Enviar" id = "login_btn" ng-disabled="form.$invalid || dataLoading" class="btn btn-danger">
+  </form>
+</div>
+
+<div  ng-show = "form.userName.$invalid && form.userName.$dirty" class = "alert alert-danger">
+  Por favor preencha o campo de login'
+</div>
+<div ng-show = "form.password.$invalid && form.password.$dirty" class = "alert alert-danger">
+  Por favor preencha o campo de senha
+</div>

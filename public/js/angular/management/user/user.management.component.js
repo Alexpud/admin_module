@@ -3,14 +3,12 @@ angular
   .module('app.userManagementArea')
   .component('userManagementArea',
   {
-    templateUrl: "/js/angular/management/user/management-template.html",
+    templateUrl: "/js/angular/management/user/user.management-template.html",
     controllerAs: 'userManagementCtrl',
     controller:
       ['$http','Workspace',
         function userManagementAreaController($http,Workspace)
         {
-          console.log("asdad");
-
           var self = this;
           //var injector = angular.injector(['ng', 'app.managementArea','services']);
 
