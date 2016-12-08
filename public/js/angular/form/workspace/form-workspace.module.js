@@ -2,5 +2,6 @@ angular.module('app.workspaceForm',
   [
     'ngRoute',
     'ngResource',
-    'service.workspace'
+    'service.workspace',
+    'ui.bootstrap'
   ]);

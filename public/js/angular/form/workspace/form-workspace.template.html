@@ -14,3 +14,7 @@
 <div  ng-show = "form.workspaceName.$invalid && form.workspaceName.$dirty" class = "alert alert-danger">
   Por favor, de um nome a workspace
 </div>
+
+<div ng-class="{'hidden': !workspaceFormCtrl.createError, 'alert alert-danger': workspaceFormCtrl.createError}" class = "hidden" id ="errorArea">
+  {{workspaceFormCtrl.createErrorMessage}}
+</div>

@@ -1,1 +1,5 @@
-angular.module('service.workspace',['ngResource']);
+angular.module('service.workspace',
+  [
+    'ngResource',
+    'service.interceptor'
+  ]);

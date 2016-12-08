@@ -2,7 +2,7 @@ angular
   .module('app.loginForm')
   .component('loginForm',
     {
-      templateUrl: "/js/angular/login/login.template.html",
+      templateUrl: "/js/angular/form/login/form-login.template.html",
       controller:
         ['$http', '$routeParams','User','$location',
           function UserFormController($http,$localStorage,User,$location)

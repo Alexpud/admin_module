@@ -148,7 +148,7 @@ router.post('/containers/:containerName/workspaces', function( req, res, next)
               }).catch(function (error)
               {
                 res.status(409);
-                res.send({ error: error });
+                res.send({ error: "Workspace already exists" });
               });
             }
           });
@@ -217,7 +217,6 @@ router.post('/containers/:containerName/workspaces/:workspaceName/start', functi
 
 router.delete('/containers/:containerName/workspaces/:workspaceName/stop', function(req,res,next)
 {
-  console.log(req.body);
   db.Workspace.findOne
   ({
     where: { workspaceName: req.params.workspaceName },
@@ -227,7 +226,6 @@ router.delete('/containers/:containerName/workspaces/:workspaceName/stop', funct
     }]
   }).then(function(workspace)
   {
-    console.log(workspace);
     var promise = new Promise(function (resolve, reject)
     {
       var containerPort = workspace.Container.port;

@@ -2,22 +2,20 @@
 angular
   .module('service.container')
   .service('Container',
-    ['$resource', function($resource)
+    ['$resource','responseInterceptor', function($resource,responseInterceptor)
     {
       var self = this;
 
       self.Container = $resource('http://localhost:3000/api/containers/:containerName/:action',null,
       {
-        'getContainer': { method: 'GET' },
-        'start': { method: 'POST' },
-        'stop': { method: 'DELETE' },
-        'delete': { method: 'DELETE' }
+        'getContainer': { method: 'GET', interceptor: responseInterceptor },
+        'start': { method: 'POST', interceptor: responseInterceptor },
+        'stop': { method: 'DELETE', interceptor: responseInterceptor },
+        'delete': { method: 'DELETE', interceptor: responseInterceptor }
       });
 
       self.executeContainerAction = function(action,containerName)
       {
-        console.log("asdasda");
-        console.log(action);
         switch(action)
         {
           case "start":
@@ -25,7 +23,6 @@ angular
             break;
 
           case "stop":
-            console.log("asdasdasdadsad");
             self.Container.stop({ containerName: containerName, action: 'stop' },{});
             break;
 

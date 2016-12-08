@@ -3,7 +3,7 @@ angular
   .module('app.adminManagementArea')
   .component('adminManagementArea',
   {
-    templateUrl: "/js/angular/management/admin/admin.management-template.html",
+    templateUrl: "/js/angular/management/admin/management-admin.template.html",
     controllerAs: 'adminManagementCtrl',
     controller:
       ['$http', 'Container','Workspace',

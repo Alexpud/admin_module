@@ -26,3 +26,7 @@
     </tbody>
   </table>
 </div>
+
+<div ng-class="{'alert alert-danger': !userManagementCtrl.operationResult.status, 'alert alert-success': userManagementCtrl.operationResult.status}" class ="hidden" id ="resStatusArea">
+  {{userManagementCtrl.operationResult.MSG}}
+</div>

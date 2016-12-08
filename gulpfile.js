@@ -67,5 +67,6 @@ gulp.task('develop', function () {
 });
 
 gulp.task('default', [
-  'develop'
+  'develop',
+  'watch'
 ]);
