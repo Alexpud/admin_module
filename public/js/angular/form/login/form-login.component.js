@@ -4,8 +4,8 @@ angular
     {
       templateUrl: "/js/angular/form/login/form-login.template.html",
       controller:
-        ['$http', '$routeParams','User','$location',
-          function UserFormController($http,$localStorage,User,$location)
+        ['$http','$q','$routeParams','User','Container','$location',
+          function UserFormController($http,$q,$localStorage,User,Container,$location)
           {
             var self = this;
 
@@ -22,7 +22,20 @@ angular
               {
                 if(response.status == 'success')
                 {
-                  $location.path('/management');
+                  $q.resolve(Container.executeContainerAction("start",user.userName)).then(function(response)
+                  {
+                    console.log(response);
+                    if(response.status != 204)
+                    {
+                      console.log("error");
+                    }
+                    else{
+                      var user = JSON.parse(localStorage.getItem('user'));
+                      $location.path('/management');
+                    }
+                    console.log(response);
+                  });
+                  
                 }
               });
             };

@@ -4,11 +4,11 @@ angular
     {
       templateUrl: "/js/angular/header/header-template.html",
       controller: ('headerCtrl',
-        ['$http', '$routeParams', 'User','$location','$window',
-        function HeaderAreaController($scope,$localStorage,User,$location,$window)
+        ['$q', 'User','Container','$location','$window',
+        function HeaderAreaController($q,User,Container,$location,$window)
         {
           var self = this;
-          self.currentUser = User;
+          self.user = User;
 
           self.hide = function()
           {
@@ -18,8 +18,18 @@ angular
 
           self.logOut = function()
           {
+            var currentUser = JSON.parse(localStorage.getItem('user'));
             User.signOut();
-            $window.location.reload();
+            $q.resolve(Container.executeContainerAction("stop",currentUser.name)).then(function(response)
+            {
+              if(response.status != 204)
+              {
+                alert("error");
+              }
+              else{
+                $window.location.reload();
+              }
+            });
           };
         }
       ]),

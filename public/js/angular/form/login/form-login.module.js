@@ -2,5 +2,6 @@
 angular.module('app.loginForm',
   [
     'ngRoute',
-    'service.user'
+    'service.user',
+    'service.container'
   ]);

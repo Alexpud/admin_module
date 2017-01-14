@@ -18,8 +18,8 @@
 
 
       <ul class="nav navbar-nav navbar-right">
-        <li ng-show = "!headerCtrl.currentUser.isAuthenticated()"><a href="#">Login</a></li>
-        <li ng-show = "headerCtrl.currentUser.isAuthenticated()" ng-click="headerCtrl.logOut()"><a href = "#">Sign out</a></li>
+        <li ng-show = "!headerCtrl.user.isAuthenticated()"><a href="#">Login</a></li>
+        <li ng-show = "headerCtrl.user.isAuthenticated()" ng-click="headerCtrl.logOut()"><a href = "#">Sign out</a></li>
       </ul>
 
     </div>
