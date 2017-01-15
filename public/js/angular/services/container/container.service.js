@@ -49,6 +49,14 @@ angular
               return response;
             });
             break;
+          case 'get':
+            var result = self.Container.delete({
+              containerName: containerName
+            },{}).$promise.then(function(response){
+              defer.resolve(result);
+              return response;
+            });
+            break;
         }
       };
 

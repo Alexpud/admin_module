@@ -17,7 +17,7 @@
         </td>
       </tr>
     </tbody>
-    <tbody  ng-repeat="workspace in userManagementCtrl.workspaces">
+    <tbody  ng-repeat="workspace in userManagementCtrl.container[0].Workspaces">
       <tr>
         <td>{{workspace.workspaceName}}</td>
         <td>{{workspace.createdAt}}</td>

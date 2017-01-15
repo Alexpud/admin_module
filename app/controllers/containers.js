@@ -127,7 +127,7 @@ router.get("/containers/:name/", function (req, res, next)
         {
           promises.push(new Promise(function (resolve, reject)
           {
-            exec("./app/helpers/che_helper_functions.sh workspace_status " + container.Workspaces[i].workspace_id,
+            exec("./app/helpers/che_helper_functions.sh workspace_status " + container.Workspaces[i].workspaceID,
               function (err, stdout, stderr) {
                 resolve({workspaceStatus: stdout});
               });
@@ -136,6 +136,7 @@ router.get("/containers/:name/", function (req, res, next)
 
         Promise.all(promises).then(function(allData)
         {
+          console.log(allData);
           for(var i = 0; i < container.Workspaces.length; i++)
           {
             var workspaceStatus = allData[i].workspaceStatus.replace('\n', "");

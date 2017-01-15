@@ -5,7 +5,7 @@ angular
       controllerAs: 'workspaceFormCtrl',
       templateUrl: '/js/angular/form/workspace/form-workspace.template.html',
       controller:
-        ['$resource','$q','Workspace','Container','$uibModal', function workspaceFormController($resource,$q,Workspace,Container,$uibModal)
+        ['$resource','$q','Workspace','$uibModal', function workspaceFormController($resource,$q,Workspace,$uibModal)
         {
           var self = this,
             user = JSON.parse(localStorage.getItem('user'));
