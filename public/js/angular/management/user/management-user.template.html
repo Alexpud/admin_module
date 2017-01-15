@@ -10,7 +10,14 @@
         <th></th>
       </tr>
     </thead>
-    <tbody ng-repeat="workspace in userManagementCtrl.workspaces">
+    <tbody ng-class = "{'hidden': userManagementCtrl.workspaces.length != 0 }">
+      <tr>
+        <td colspan="6">
+          <button class = "btn btn-primary" ng-click = "userManagementCtrl.goCreate()"> Create workspace</button>
+        </td>
+      </tr>
+    </tbody>
+    <tbody  ng-repeat="workspace in userManagementCtrl.workspaces">
       <tr>
         <td>{{workspace.workspaceName}}</td>
         <td>{{workspace.createdAt}}</td>
@@ -21,7 +28,9 @@
           <button class = "pause-btn glyphicon glyphicon-pause" ng-click="userManagementCtrl.executeWorkspaceAction('stop',workspace.workspaceName,workspace.containerName)"> </button>
           <button class = "remove-btn glyphicon glyphicon-remove" ng-click="userManagementCtrl.executeWorkspaceAction('delete',workspace.workspaceName,workspace.containerName)"> </button>
         </td>
-        <td></td>
+        <td>
+          <button ng-class = "{'btn btn-primary': workspace.status == 'running', 'hidden':workspace.status != 'running'}">Go to IDE</button>
+        </td>
       </tr>
     </tbody>
   </table>

@@ -90,14 +90,21 @@ router.post('/containers/:containerName/workspaces', function( req, res, next)
   var workspaceName = req.body.workspaceName;
   var workspaceStack = req.body.workspaceStack;
   var containerName = req.params.containerName;
-
+  
   db.Container.findOne
   ({
-    where: { name: containerName }
+    where: { name: containerName },
+    include: [{ model: db.Workspace }]
   }).then(function (container)
   {
+    //If the container which will have the workspace exists
     if ( container != null )
     {
+      //Checks if the user already have a workspace. If he has, he can't create another workspace.
+      if(container.Workspaces.length != 0){
+        res.send({error: "Can't have more than one workspace per user"});
+      }
+
       //Makes a get request to the API to check if the container is running
       var promise = new Promise(function(resolve,reject)
       {
@@ -171,7 +178,7 @@ router.post('/containers/:containerName/workspaces', function( req, res, next)
 
 /*
   It receives a workspaceName, it will search for it in the database. If it is found, it will attempt
-  to x the workspace
+  to start the workspace
  */
 router.post('/containers/:containerName/workspaces/:workspaceName/start', function( req, res, next)
 {

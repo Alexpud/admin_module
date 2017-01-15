@@ -39,6 +39,10 @@ angular
               }
             });
           };
+
+          self.goCreate = function(){
+            window.location.replace('/#/management/creation');
+          }
         }
       ]
     });

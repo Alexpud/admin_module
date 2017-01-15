@@ -12,18 +12,14 @@ module.exports = function (app) {
 
 router.get('/test', function(req,res)
 {
-  var token = jwt.sign({user:"ada"}, "ilovescotchyscotch", {
-    expiresIn : "5m" // expires in 24 hours
+  db.Container.all({
+    where:{
+      name: "201110005302"
+    },
+    include: [{model: db.Workspace}]
+  }).then(function(containerList){
+    res.send(containerList);
   });
-
-  // return the information including token as JSON
-  res.json
-  ({
-    success: true,
-    message: 'Enjoy your token!',
-    token: token
-  });
-  res.send();
 });
 
 
