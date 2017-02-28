@@ -17,7 +17,7 @@
         </td>
       </tr>
     </tbody>
-    <tbody  ng-repeat="workspace in userManagementCtrl.container[0].Workspaces">
+    <tbody  ng-repeat="workspace in userManagementCtrl.workspaces">
       <tr>
         <td>{{workspace.workspaceName}}</td>
         <td>{{workspace.createdAt}}</td>
@@ -29,7 +29,7 @@
           <button class = "remove-btn glyphicon glyphicon-remove" ng-click="userManagementCtrl.executeWorkspaceAction('delete',workspace.workspaceName,workspace.containerName)"> </button>
         </td>
         <td>
-          <button ng-class = "{'btn btn-primary': workspace.status == 'running', 'hidden':workspace.status != 'running'}">Go to IDE</button>
+          <button ng-class = "{'btn btn-primary': workspace.status == 'Running', 'hidden':workspace.status != 'Running'}">Go to IDE</button>
         </td>
       </tr>
     </tbody>

@@ -1,33 +1,48 @@
 {
-  "defaultEnv":"default",
-  "environments":
-  [{
-    "machineConfigs":
-    [{
-      "source":
+   "defaultEnv":"default",
+   "environments":{
+      "default":{
+         "machines":{
+            "dev-machine":{
+               "agents":[
+                  "org.eclipse.che.terminal",
+                  "org.eclipse.che.ws-agent",
+                  "org.eclipse.che.ssh"
+               ],
+               "servers":{
+
+               },
+               "attributes":{
+                  "memoryLimitBytes":1073741824
+               },
+               "source":{
+                  "type":"dockerfile",
+                  "content":"FROM eclipse/cpp_gcc"
+               }
+            }
+         },
+         "recipe":{
+            "location":"eclipse/cpp_gcc",
+            "type":"dockerimage"
+         }
+      }
+   },
+   "commands":[
       {
-        "type":"dockerfile",
-        "content":"FROM codenvy/cpp_gcc"
-      },
-      "servers":[],
-      "envVariables":{},
-      "limits":{"ram":800},
-      "dev":true,
-      "name":"default",
-      "type":"docker",
-      "links":[]
-    }],
-    "name":"default"
-  }],
-  "commands":
-  [{
-    "commandLine":"cd ${current.project.path} && make && ./a.out",
-    "name":"run",
-    "type":"custom",
-    "attributes":{}
-  }],
-  "projects":[],
-  "name":"default",
-  "links":[],
-  "description":null
+         "commandLine":"cd ${current.project.path} && make && ./a.out",
+         "name":"run",
+         "type":"custom",
+         "attributes":{
+
+         }
+      }
+   ],
+   "projects":[
+
+   ],
+   "name":"wksp-tena",
+   "links":[
+
+   ],
+   "description":null
 }

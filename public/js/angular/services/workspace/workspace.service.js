@@ -2,10 +2,11 @@
 angular
   .module('service.workspace')
   .service('Workspace',
-  ['$resource','$log', '$q','responseInterceptor',function($resource,$log,$q,responseInterceptor)
-  {
-    var self = this;
-    var defer = $q.defer();
+  ['$resource','$log', '$q','responseInterceptor',function($resource,$log,$q,responseInterceptor){
+
+    var self = this,
+      defer = $q.defer();
+
     self.Workspace = $resource('http://localhost:3000/api/containers/:containerName/workspaces/:workspaceName/:action',null,
     {
       'start': { method: 'POST', interceptor: responseInterceptor },
@@ -18,18 +19,15 @@ angular
     /*
      Executes a action for one of the given workspaces
      */
-    self.executeWorkspaceAction = function (action,workspaceName,containerName)
-    {
-      switch(action)
-      {
+    self.executeWorkspaceAction = (action,workspaceName,containerName) => {
+      switch(action) {
         case "start":
-          var result = self.Workspace.start(
-          {
+          var result = self.Workspace.start({
             containerName: containerName,
             workspaceName: workspaceName,
             action: 'start'
-          }, {}).$promise.then(function(response)
-          {
+          }, {})
+          .$promise.then((response) => {
             defer.resolve(result);
             return response;
           });
@@ -42,21 +40,21 @@ angular
             {
               workspaceName: workspaceName,
               workspaceStack: 'cpp-default'
-            }).$promise.then(function(response)
-            {
+            })
+            .$promise.then((response) => {
               defer.resolve(result);
               return response;
             });
           return defer.promise;
           break;
+
         case "stop":
-          var result = self.Workspace.stop
-          ({
+          var result = self.Workspace.stop({
             containerName: containerName,
             workspaceName: workspaceName,
             action: 'stop'
-          }, {}).$promise.then(function(response)
-          {
+          }, {})
+          .$promise.then((response) => {
             defer.resolve(result);
             return response;
           });
@@ -64,13 +62,12 @@ angular
           break;
 
         case "delete":
-          var result = self.Workspace.delete
-          ({
+          var result = self.Workspace.delete({
             containerName: containerName,
             workspaceName: workspaceName,
             action: 'delete'
-          }, {}).$promise.then(function(response)
-          {
+          }, {})
+          .$promise.then((response) =>{
             console.log(response);
             defer.resolve(result);
             return response;
@@ -80,13 +77,11 @@ angular
       }
     };
 
-    self.getWorkspace = function(containerName, workspaceName)
-    {
+    self.getWorkspace = (containerName) => {
       return self.Workspace.workspaces({ containerName: containerName },{});
     };
 
-    self.workspacesEmpty = function(id)
-    {
+    self.workspacesEmpty = (id) => {
       /*
        Workaround for the moment. This method was being executed several times, without the loading
        of data. So....

@@ -20,10 +20,9 @@ angular
           {
             var currentUser = JSON.parse(localStorage.getItem('user'));
             User.signOut();
-            $q.resolve(Container.executeContainerAction("stop",currentUser.name)).then(function(response)
-            {
-              if(response.status != 204)
-              {
+            $q.resolve(Container.executeContainerAction("stop",currentUser.name))
+            .then((response) => {
+              if(response.status != 204) {
                 alert("error");
               }
               else{

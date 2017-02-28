@@ -55,13 +55,11 @@ function check_workspace_status
 }
 #--------------------------------------------------------------------------------------------------------------#
 #----------------------------------Creates the user che container----------------------------------------------#
-function create
-{
+function create {
 	STATUS=$( check_docker_container $1 )
 	if [ "$STATUS" == "Non existent" ]; then
-
 	  MACHINE_IP=$( getIP )
-	  CREATION_RESULT=$( docker run --net=host --name $1 -v /var/run/docker.sock:/var/run/docker.sock -v /home/user/$1:/home/user/che/workspaces -d spudin/che-ufs -r:$MACHINE_IP -p:$2 run 2>&1)
+	  CREATION_RESULT=$( docker run --net=host --name $1 -v /var/run/docker.sock:/var/run/docker.sock -e CHE_PORT=$2 -d spudin/che-ufs:0.2 run 2>&1)
     RESULT_CHECK=$( echo $CREATION_RESULT | grep -c ERROR )
     if [ $RESULT_CHECK -eq 0 ]; then #If there was an error, RESULT_CHECK should not be equal to 0
       stop $1
@@ -76,8 +74,7 @@ function create
 }
 #--------------------------------------------------------------------------------------------------------------#
 #---------------------------------Starts the user che container -----------------------------------------------#
-function start
-{
+function start {
   START_RESULT=$( docker start  $1 2>&1)
   RESULT_CHECK=$( echo $START_RESULT | grep -c Error )
   if [ $RESULT_CHECK -eq 0 ]; then
@@ -90,8 +87,7 @@ function start
 
 #-------------------------------------------------------------------------------------------------------------#
 #----------------------------------Deletes an user che container----------------------------------------------#
-function delete
-{
+function delete {
   DELETE_RESULT=$(docker rm -f $1 2>&1)
   RESULT_CHECK=$(echo $DELETE_RESULT | echo -c "ERROR")
   if [[ $RESULT_CHECK -eq 0 ]]; then
@@ -103,11 +99,10 @@ function delete
 }
 #--------------------------------------------------------------------------------------------------------------#
 #----------------------------------Stops the user che container------------------------------------------------#
-function stop
-{
+function stop { 
   STATUS=$( check_docker_container $1 )
   if [ "$STATUS" == "Running" ]; then
-    STOP_RESULT=$( docker exec $1 /bin/bash ./home/user/che/bin/che.sh stop --skip:uid 2>&1)
+    STOP_RESULT=$( docker exec $1 /bin/bash ./home/user/che/bin/che.sh stop 2>&1)
     RESULT_CHECK=$( echo $STOP_RESULT | grep -c Stopping )
     if [ $RESULT_CHECK -eq 1 ]; then
       echo "Success"

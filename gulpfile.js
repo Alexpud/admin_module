@@ -8,24 +8,20 @@ var gulp = require('gulp'),
   shell = require('gulp-shell');
 
 gulp.task('docker.sock', shell.task(
-  ['sudo chmod 777 /var/run/docker.sock'],
-  {
+  ['sudo chmod 777 /var/run/docker.sock'],{
     verbose: true
   }
 ));
 
 
-gulp.task('watch',function()
-{
-  watch('./public/js/angular/assets/css/*.scss',function(files)
-  {
+gulp.task('watch',function(){
+  watch('./public/js/angular/assets/css/*.scss',function(files){
     console.log(files);
     gulp.start('styles');
   });
 });
 
-gulp.task('styles',function()
-{
+gulp.task('styles',function(){
   gulp.src('./public/js/angular/assets/css/style.scss')
     .pipe(sass().on('error',sass.logError))
     .pipe(gulp.dest('./public/js/angular/assets/css'))
@@ -33,11 +29,9 @@ gulp.task('styles',function()
 });
 
 
-gulp.task('database', shell.task(
-  [
+gulp.task('database', shell.task([
     'docker start mysql_nginx'
-  ]
-));
+]));
 
 gulp.task('browser-sync',function() {
   bs.init({

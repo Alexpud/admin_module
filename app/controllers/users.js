@@ -1,34 +1,38 @@
-var http = require('http');
-var express = require('express'),
-  router = express.Router(),
-  jwt = require('jsonwebtoken'),
+"use strict";
+
+var bcrypt = require('bcrypt-nodejs'),
   db = require('../models'),
+  express = require('express'),
+  helpers = require('../helpers'),
+  jwt = require('jsonwebtoken'),
+  http = require('http'),
+  requestHelper = helpers.requestHelper,
+  router = express.Router(),
   passport = require('passport');
+  
 
-var bcrypt = require('bcrypt-nodejs');
-
-generatePassword= function(password){
+const generatePassword = (password) =>{
   return bcrypt.hashSync(password, bcrypt.genSaltSync(9));
 }
 
-validatePassword = function(passwordForm,passwordDB){
+const validatePassword = (passwordForm,passwordDB) =>{
   return bcrypt.compareSync(passwordForm,passwordDB);
 }
 
-createUser = function(loginUser,passwordUser,tokenUser,isAdmin,req,res){
-}
 
 //autorize access a route.
 var authorization = function ensureAuthorized(req, res, next) {
-    var bearerToken;
-    var bearerHeader = req.headers["authorization"];
+    let bearerHeader = req.headers["authorization"],
+      bearerToken;
+    
     if (typeof bearerHeader !== 'undefined') {
-        var bearer = bearerHeader.split(" ");
+        let bearer = bearerHeader.split(" ");
         bearerToken = bearer[1];
         req.token = bearerToken;
         next();
-    } else {
-        res.send(403);
+    } 
+    else {
+      requestHelper.sendAnswer(res,{},403);
     }
 }
 
@@ -36,61 +40,44 @@ module.exports = function (app) {
   app.use('/api', router);
 };
 
-
-
-router.post("/users/:name",authorization,function(req,res)
-{
+router.post("/users/:name",authorization, (req,res) =>{
   console.log("oi token seu valor é: "+req.token);
-  res.status(200);
-  res.send();
+  requestHelper.sendAnswer(res, {}, 200);
 });
 
-router.post('/users/:login/authenticate',function(req,res)
-{
-  db.User.findOne
-  ({
+router.post('/users/:login/authenticate',(req,res) => {
+  db.User.findOne ({
     where: { login: req.body.login }
-  }).then(function(user)
-  {
+  })
+  .then((user) =>{
     // user exist, return your token if password form match password data base
-    if(user != null)
-    {
-      if(validatePassword(req.body.password,user.password))
-      {
-        res.status(200);
-        res.send
-        ({
+    if(user != null){
+      if(validatePassword(req.body.password,user.password)){
+        let responseBody = ({
           name: user.login,
           token: user.token,
           admin: user.admin
         });
+        requestHelper.sendAnswer(res,responseBody, 200);
       }
-      else
-      {
-        // Incorrect password
-        res.status(401);
+      else {
+        requestHelper.sendAnswer(res,{}, 401);
       }
     }
-    else //create new user and return your token
-    {
+    else{ //create new user and return your toke
       var tokenUser = jwt.sign({ user:req.body.login }, "Oursecretsecret", {
         // expiresIn : "5m" // expires in 24 hours 
       });
 
-      db.User.create
-      ({
+      db.User.create({
         login: req.body.login,
         password: generatePassword(req.body.password),
         token: tokenUser,
         admin: 0
-      }).then(function(user)
-      {
-        res.status(200);
-        res.send
-        ({
-          token:user.token,
-          admin: user.admin
-        });
+      })
+      .then((user) =>{
+        let auth = {token: user.token, admin: user.admin};
+        requestHelper.sendAnswer(res,auth, 200);
       });
     }
   }); 

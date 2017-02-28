@@ -2,9 +2,7 @@
  * Created by boss on 28/09/16.
  */
 
-var workspace = function (stack)
-{
-  console.log("Workspace helper");
+var workspace = function (stack){
   this.model = require("./jsons/"+stack+"_workspace_creation.json");
   this.setWorkspaceName = function(name)
   {
