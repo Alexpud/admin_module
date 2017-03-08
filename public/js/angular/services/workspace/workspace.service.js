@@ -35,12 +35,10 @@ angular
           break;
 
         case "create":
-          var result = self.Workspace.create
-            ({ containerName: containerName },
-            {
-              workspaceName: workspaceName,
-              workspaceStack: 'cpp-default'
-            })
+          var result = self.Workspace.create({ 
+            containerName: containerName,
+            workspaceName: workspaceName
+          }, {})
             .$promise.then((response) => {
               defer.resolve(result);
               return response;

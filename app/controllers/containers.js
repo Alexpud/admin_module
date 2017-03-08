@@ -289,7 +289,9 @@ router.delete('/containers/:name/delete', (req,res,next) => {
             });
         })
           .then((data) => {
+
             let response = data.response.replace('\n', "");
+            console.log(response);
             if(response == "Success") {
               requestHelper.sendAnswer(res, {}, 204);
             }

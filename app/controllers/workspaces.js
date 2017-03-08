@@ -77,11 +77,12 @@ router.get('/containers/:containerName/workspaces', function(req,res,next){
 });
 
 //Creates a workspace
-router.post('/containers/:containerName/workspaces',(req, res, next) =>{
-  var workspaceName = req.body.workspaceName,
+router.post('/containers/:containerName/workspaces/:workspaceName',(req, res, next) =>{
+  var workspaceName = req.params.workspaceName,
     workspaceStack = req.body.workspaceStack,
     containerName = req.params.containerName;
   
+  console.log(workspaceName);
   db.Container.findOne({
     where: { name: containerName },
     include: [{ model: db.Workspace }]
@@ -112,17 +113,20 @@ router.post('/containers/:containerName/workspaces',(req, res, next) =>{
 
                 var workspaceHelpers = new workspaceHelper(workspaceStack);
                 workspaceHelpers.setWorkspaceName(workspaceName);
-                
+                console.log(workspaceHelpers.model);
+
                 request({
-                  url: 'http://localhost:'+container.port+'/api/workspace?attribute=stackId:'+workspaceStack+'&password=password',
+                  url: 'http://localhost:'+container.port+'/api/workspace?attribute=stackId:'+workspaceStack+'&Password=password',
                   method: 'POST',
                   headers: {'Content-Type': 'application/json'},
                   json: workspaceHelpers.model
                 },function(error,response,body){
+                  console.log(response.body);
                   resolve({data:response.body.id});
                 });
               })
                 .then((response) =>{
+                  console.log(response);
                   let workspaceID = response.data;
                   
                   if(workspaceID == ""){

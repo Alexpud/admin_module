@@ -2,7 +2,7 @@
 angular
   .module('service.container')
   .service('Container',
-    ['$resource','$q','responseInterceptor', function ($resource,$q,responseInterceptor) {
+    ['$resource', '$http','$q','responseInterceptor', function ($resource,$http,$q,responseInterceptor) {
       var self = this;
       var defer = $q.defer();
 
@@ -18,6 +18,24 @@ angular
       */
       self.executeContainerAction = (action,containerName) => {
         switch(action){
+          case 'create':
+            return $http({
+              method: 'POST',
+              url: 'http://localhost:3000/api/containers/'+containerName
+            }).then((response) =>{
+              return {response: response};
+            });
+            break;
+
+          case 'start':
+            return $http({
+              method: 'POST',
+              url: 'http://localhost:3000/api/containers/'+containerName+'/start'
+            }).then((response) =>{
+              return {response: response};
+            });
+            break;
+          /*  
           case 'create':
             var result = self.Container.create({
               containerName: containerName,
@@ -39,7 +57,7 @@ angular
             });
             return defer.promise;
             break;
-
+          */
           case "stop":
             var result = self.Container.stop({ 
               containerName: containerName, 
@@ -61,6 +79,18 @@ angular
               defer.resolve(result);
               return response;
             });
+            break;
+
+          case "getContainer":
+            var result = self.Container.getContainer({
+              containerName: containerName
+            },{})
+              .$promise.then((response) =>{
+                defer.resolve(result);
+                return response;
+              });
+            
+            return defer.promise;
             break;
         }
       };

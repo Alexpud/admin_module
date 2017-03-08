@@ -8,6 +8,11 @@
   </form>
 </div>
 
+{{loginCtrl.creatingContainer}}
+<div ng-show = "loginCtrl.creatingContainer" class="alert">
+	Creating your container
+</div>
+
 <div  ng-show = "form.userName.$invalid && form.userName.$dirty" class = "alert alert-danger">
   Por favor preencha o campo de login'
 </div>

@@ -59,7 +59,7 @@ function create {
 	STATUS=$( check_docker_container $1 )
 	if [ "$STATUS" == "Non existent" ]; then
 	  MACHINE_IP=$( getIP )
-	  CREATION_RESULT=$( docker run --net=host --name $1 -v /var/run/docker.sock:/var/run/docker.sock -e CHE_PORT=$2 -d spudin/che-ufs:0.2 run 2>&1)
+    CREATION_RESULT=$(docker run  --name $1 -p $2:8080 -v /var/run/docker.sock:/var/run/docker.sock -v /home/user/che/lib:/home/user/che/lib-copy  -d spudin/che-ufs:0.4 run -r:$MACHINE_IP -p:8080 2>&1)
     RESULT_CHECK=$( echo $CREATION_RESULT | grep -c ERROR )
     if [ $RESULT_CHECK -eq 0 ]; then #If there was an error, RESULT_CHECK should not be equal to 0
       stop $1
@@ -89,7 +89,7 @@ function start {
 #----------------------------------Deletes an user che container----------------------------------------------#
 function delete {
   DELETE_RESULT=$(docker rm -f $1 2>&1)
-  RESULT_CHECK=$(echo $DELETE_RESULT | echo -c "ERROR")
+  RESULT_CHECK=$(echo $DELETE_RESULT | echo "ERROR")
   if [[ $RESULT_CHECK -eq 0 ]]; then
     echo "Success"
   else
