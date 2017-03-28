@@ -10,10 +10,11 @@ angular
     self.signIn = (user,config) => {
       return $http.post('http://localhost:3000/api/users/:login/authenticate',user,config)
         .then((response) => {
-        
+
           var currentUser = {};
           currentUser.name = response.data.name;
           currentUser.admin = response.data.admin;
+          console.log(currentUser);
           localStorage.setItem('token',response.data.token);
           localStorage.setItem('user',JSON.stringify(currentUser));
           return {status:'success'};

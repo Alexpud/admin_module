@@ -1,11 +1,11 @@
 <div id = "workspace_creation">
-  <form name= "form" role = "form" ng-submit = "workspaceFormCtrl.createWorkspace(workspaceFormCtrl.workspace)">
-    <input type = "text" name = "workspaceName" id = "workspaceName" class = "form-control" placeholder = "Nome da workspace" size = "35" ng-model="workspaceFormCtrl.workspace.name"  ng-required="true"/>
+  <form name= "form" role = "form" ng-submit = "workspaceFormCtrl.createWorkspace(workspaceFormCtrl.workspaceName,workspaceFormCtrl.workspaceStack)">
+    <input type = "text" name = "workspaceName" id = "workspaceName" class = "form-control" placeholder = "Nome da workspace" size = "35" ng-model="workspaceFormCtrl.workspaceName"  ng-required="true"/>
     <label for="stacks">Lista de stacks</label>
-    <select name = "stacks" class="form-control" ng-model="workspaceFormCtrl.workspace.stack">
+    <select name = "stacks" class="form-control" ng-model="workspaceFormCtrl.workspaceStack">
       <option selected disabled>Selecione sua stack</option>
-      <option>C++</option>
-      <option>JAVA</option>
+      <option value = 'cpp-default'>C++</option>
+      <option value = 'java-default'>JAVA</option>
     </select>
     <input type = "submit" value = "Enviar" id = "submit_btn" ng-disabled="form.$invalid || dataLoading" class="btn btn-primary">
   </form>

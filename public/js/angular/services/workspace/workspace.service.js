@@ -19,7 +19,7 @@ angular
     /*
      Executes a action for one of the given workspaces
      */
-    self.executeWorkspaceAction = (action,workspaceName,containerName) => {
+    self.executeWorkspaceAction = (action,workspaceName,containerName, workspaceStack) => {
       switch(action) {
         case "start":
           var result = self.Workspace.start({
@@ -35,10 +35,12 @@ angular
           break;
 
         case "create":
-          var result = self.Workspace.create({ 
+          var result = self.Workspace.create({
             containerName: containerName,
             workspaceName: workspaceName
-          }, {})
+          }, {
+            workspaceStack: workspaceStack
+          })
             .$promise.then((response) => {
               defer.resolve(result);
               return response;

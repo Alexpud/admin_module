@@ -1,5 +1,5 @@
 "use strict";
-
+var workspaceHelper = require('../helpers/workspaceHelper');
 var db = require('../models'),
   exec = require('child_process').exec,
   express = require('express'),
@@ -8,8 +8,8 @@ var db = require('../models'),
   messages = helpers.messages,
   request = require('request'),
   requestHelper = helpers.requestHelper,
-  router = express.Router(),
-  workspaceHelper = helpers.workspaceHelper;
+  workspaceHelper = helpers.workspaceHelper,
+  router = express.Router();
 
 module.exports = function (app) {
   app.use('/api', router);
@@ -81,8 +81,9 @@ router.post('/containers/:containerName/workspaces/:workspaceName',(req, res, ne
   var workspaceName = req.params.workspaceName,
     workspaceStack = req.body.workspaceStack,
     containerName = req.params.containerName;
-  
+  console.log("backend");
   console.log(workspaceName);
+  console.log(workspaceStack);
   db.Container.findOne({
     where: { name: containerName },
     include: [{ model: db.Workspace }]
@@ -91,7 +92,7 @@ router.post('/containers/:containerName/workspaces/:workspaceName',(req, res, ne
 
       //If the container which will have the workspace exists
       if ( container != null ){
-        
+
         //Checks if the user already have a workspace. If he has, he can't create another workspace.
         if(container.Workspaces.length != 0){
           res.send({error: "Can't have more than one workspace per user"});
@@ -107,13 +108,12 @@ router.post('/containers/:containerName/workspaces/:workspaceName',(req, res, ne
           .then((data) =>{
             //It returns a container JSON with it's workspaces.
             var response = (JSON.parse(data.response));
-
+            console.log(response.status == "Running");
             if (response.status == "Running"){
               var promise = new Promise((resolve, reject) => {
 
                 var workspaceHelpers = new workspaceHelper(workspaceStack);
                 workspaceHelpers.setWorkspaceName(workspaceName);
-                console.log(workspaceHelpers.model);
 
                 request({
                   url: 'http://localhost:'+container.port+'/api/workspace?attribute=stackId:'+workspaceStack+'&Password=password',
@@ -128,7 +128,7 @@ router.post('/containers/:containerName/workspaces/:workspaceName',(req, res, ne
                 .then((response) =>{
                   console.log(response);
                   let workspaceID = response.data;
-                  
+
                   if(workspaceID == ""){
                     requestHelper.sendAnswer(res, message.WORKSPACE_CREATION_FAILED,500);
                   }
@@ -261,7 +261,7 @@ router.delete('/containers/:containerName/workspaces/:workspaceName/delete', (re
             });
         })
           .then((data) => {
-            
+
             //The message retrieved from the bash script comes with \n in the the message, the operation bellow removes it
             var status = data.status.replace('\n', "");
             if (status == "Running"){
@@ -307,4 +307,3 @@ router.delete('/containers/:containerName/workspaces/:workspaceName/delete', (re
       requestHelper.sendAnswer(res, {error: error}, 500);
     });
 });
-

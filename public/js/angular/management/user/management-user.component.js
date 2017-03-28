@@ -4,19 +4,19 @@ angular
   .component('userManagementArea', {
     templateUrl: "/js/angular/management/user/management-user.template.html",
     controllerAs: 'userManagementCtrl',
-    controller: ['Workspace','Container','$q','$interval', 
+    controller: ['Workspace','Container','$q','$interval',
       function userManagementAreaController(Workspace,Container,$q,$interval) {
         var self = this,
           user = JSON.parse(localStorage.getItem('user'));
 
         self.defer = $q.defer(),
-          self.operationResult = {status:"",MSG:""},  
+          self.operationResult = {status:"",MSG:""},
           self.workspaces = Workspace.getWorkspace(user.name);
 
-        
+
         var teste = $interval(() =>{
           self.workspaces = Workspace.getWorkspace(user.name);
-        }, 10000); 
+        }, 50000); 
         /*
           Executes a action for one of the given workspaces
         */
