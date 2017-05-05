@@ -1,21 +1,17 @@
-<div id = "login">
-  <form name= " form" ng-submit = "loginCtrl.login(loginCtrl.user)" role = "form">
-    <i class = "fa fa-key"></i>
-    <input type="text" name = "userName" id = "userName" class = "form-control" placeholder = "Login SIGAA" size = "35" ng-model="loginCtrl.user.userName" ng-required="true"/>
-    <i class="fa fa-lock"></i>
-    <input type = "password" name = "password" id="password" class="form-control" placeholder = "Senha SIGAA" ng-model="loginCtrl.user.password"  ng-required="true" />
-    <input type = "submit" value = "Enviar" id = "submit_btn" ng-disabled="form.$invalid || dataLoading" class="btn btn-danger">
-  </form>
+<div id="login">
+    <form name="form" ng-submit="loginCtrl.login(loginCtrl.user)" role="form">
+        <i class="fa fa-key"></i>
+        <input type="text" name="userName" id="userName" class="form-control" placeholder="Login SIGAA" size="35" ng-model="loginCtrl.user.userName" ng-required="true" />
+        <p ng-show="form.userName.$invalid && form.userName.$dirty" class="aler alert-danger">Login value is required</p>
+        <i class="fa fa-lock"></i>
+        <input type="password" name="password" id="password" class="form-control" placeholder="Senha SIGAA" ng-model="loginCtrl.user.password" ng-required="true" />
+        <input type="submit" value="Enviar" id="submit_btn" ng-disabled="form.$invalid || dataLoading" class="btn btn-danger">
+    </form>
+    <div ng-class="{'hidden': !loginCtrl.loginFailed, 'alert alert-danger': loginCtrl.loginFailed}" } "">
+        Login ou senha incorretos
+    </div>
 </div>
 
-{{loginCtrl.creatingContainer}}
-<div ng-show = "loginCtrl.creatingContainer" class="alert">
-	Creating your container
-</div>
-
-<div  ng-show = "form.userName.$invalid && form.userName.$dirty" class = "alert alert-danger">
-  Por favor preencha o campo de login'
-</div>
-<div ng-show = "form.password.$invalid && form.password.$dirty" class = "alert alert-danger">
-  Por favor preencha o campo de senha
+<div ng-show="loginCtrl.creatingContainer" class="alert">
+    Creating your container
 </div>

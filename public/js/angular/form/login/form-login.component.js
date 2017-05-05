@@ -1,80 +1,76 @@
 angular
-  .module('app.loginForm')
-  .component('loginForm',
-    {
-      templateUrl: "/js/angular/form/login/form-login.template.html",
-      controller:
-        ['$http','$q','$routeParams','User','Container','$location',
-          function UserFormController($http,$q,$localStorage,User,Container,$location) {
-            var self = this;
+    .module('app.loginForm')
+    .component('loginForm', {
+        templateUrl: "/js/angular/form/login/form-login.template.html",
+        controller: ['$http', '$q', '$routeParams', 'User', 'Container', '$location',
+            function UserFormController($http, $q, $localStorage, User, Container, $location) {
+                var self = this;
 
-            self.creatingContainer = false;
+                self.creatingContainer = false;
+                self.loginFailed = false;
 
-            self.login = function(user) {
-              var data = {
-                login: user.userName,
-                password: user.password
-              };
+                self.login = function(user) {
+                    var data = {
+                        login: user.userName,
+                        password: user.password
+                    };
+                    console.log(data);
+                    var config = [{ 'params': user.userName }];
+                    var promises = [];
+                    User.signIn(data, config)
+                        .then((signInResponse) => {
+                            var containerExists = false,
+                                createSuccess = false;
+                            console.log(signInResponse);
+                            if (signInResponse.status == 'success') {
 
-              var config = [{'params': user.userName}];
-              var promises = [];
-              User.signIn(data, config)
-                .then((signInResponse) =>{
-                  var containerExists = false,
-                    createSuccess = false;
+                                Container.executeContainerAction("getContainer", user.userName)
+                                    .then((getResponse) => {
 
-                  if(signInResponse.status == 'success'){
+                                        //Container exists, so it can be started
+                                        if (getResponse.status == 200) {
+                                            containerExists = true;
 
-                    Container.executeContainerAction("getContainer", user.userName)
-                      .then((getResponse) => {
+                                            Container.executeContainerAction("start", user.userName)
+                                                .then((startResponse) => {
+                                                    if (startResponse.response.status != 204) {
+                                                        containerStart = 'Failed'
+                                                    } else {
+                                                        var user = JSON.parse(localStorage.getItem('user'));
+                                                        console.log(user);
+                                                        $location.path('/management');
+                                                    }
+                                                });
+                                        } else {
+                                            self.creatingContainer = true;
+                                            Container.executeContainerAction("create", user.userName)
+                                                .then((createResponse) => {
 
-                        //Container exists, so it can be started
-                        if(getResponse.status == 200){
-                          containerExists = true;
+                                                    if (createResponse.response.status == 201) {
+                                                        self.creatingContainer = false;
 
-                          Container.executeContainerAction("start",user.userName)
-                            .then((startResponse) => {
-                              if(startResponse.response.status != 204){
-                                containerStart = 'Failed'
-                              }
-                              else{
-                                var user = JSON.parse(localStorage.getItem('user'));
-                                console.log(user);
-                                $location.path('/management');
-                              }
-                            });
-                        }
-
-                        else{
-                          self.creatingContainer = true;
-                          Container.executeContainerAction("create", user.userName)
-                            .then((createResponse) => {
-
-                              if(createResponse.response.status == 201){
-                                self.creatingContainer = false;
-
-                                Container.executeContainerAction("start",user.userName)
-                                  .then((startResponse) => {
-                                    if(startResponse.response.status != 204){
-                                      containerStart = 'Failed'
-                                    }
-                                    else{
-                                      var user = JSON.parse(localStorage.getItem('user'));
-                                      $location.path('/management');
-                                    }
-                                  });
-                              }
-                              else{
-                                self.creatingContainer = false;
-                                console.log("Error when creating container");
-                              }
-                            });
-                        }
-                      });
-                  }
-                });
-                  // Checks if the user container exists
-                 /*   promises.push(new Promise((resolve,reject) => {
+                                                        Container.executeContainerAction("start", user.userName)
+                                                            .then((startResponse) => {
+                                                                if (startResponse.response.status != 204) {
+                                                                    containerStart = 'Failed'
+                                                                } else {
+                                                                    var user = JSON.parse(localStorage.getItem('user'));
+                                                                    $location.path('/management');
+                                                                }
+                                                            });
+                                                    } else {
+                                                        self.creatingContainer = false;
+                                                        console.log("Error when creating container");
+                                                    }
+                                                });
+                                        }
+                                    });
+                            } else {
+                                self.loginFailed = true;
+                            }
+                        });
+                    // Checks if the user container exists
+                    /*   promises.push(new Promise((resolve,reject) => {
                       Container.executeContainerAction("getContainer", user.userName)
                         .then((getResponse) => {
                           if(getResponse.data.error){
@@ -118,63 +114,63 @@ angular
                     console.log(data);
                   });
                 });*/
-              /*
-              User.signIn(data, config)
-                .then((signInResponse) =>{
-                  var container = "";
-                  if(signInResponse.status == 'success'){
-                    $q.resolve(Container.executeContainerAction("getContainer", user.userName))
-                      .then((getResponse) =>{
-                        console.log(getResponse);
-                        if(getResponse.data.error){
-                          $q.resolve(Container.executeContainerAction("create", user.userName))
-                            .then((createResponse) =>{
-                              console.log(createResponse);
-                              console.log("teste");
+                    /*
+                    User.signIn(data, config)
+                      .then((signInResponse) =>{
+                        var container = "";
+                        if(signInResponse.status == 'success'){
+                          $q.resolve(Container.executeContainerAction("getContainer", user.userName))
+                            .then((getResponse) =>{
+                              console.log(getResponse);
+                              if(getResponse.data.error){
+                                $q.resolve(Container.executeContainerAction("create", user.userName))
+                                  .then((createResponse) =>{
+                                    console.log(createResponse);
+                                    console.log("teste");
+                                  });
+                              }
+                              $q.resolve(Container.executeContainerAction("start",user.userName))
+                                .then((startResponse) => {
+                                  console.log(startResponse);
+                                  if(startResponse.status != 204){
+
+                                  }
+                                  else{
+                                    console.log("lol");
+                                    var user = JSON.parse(localStorage.getItem('user'));
+                                    $location.path('/management');
+                                  }
+                                });
                             });
                         }
-                        $q.resolve(Container.executeContainerAction("start",user.userName))
-                          .then((startResponse) => {
-                            console.log(startResponse);
-                            if(startResponse.status != 204){
-
-                            }
-                            else{
-                              console.log("lol");
-                              var user = JSON.parse(localStorage.getItem('user'));
-                              $location.path('/management');
-                            }
-                          });
                       });
-                  }
-                });
-              /*
-              $q.resolve(Container.executeContainerAction("getContainer", user.userName))
-                .then((responseS) =>{
-                  console.log(responseS);
+                    /*
+                    $q.resolve(Container.executeContainerAction("getContainer", user.userName))
+                      .then((responseS) =>{
+                        console.log(responseS);
 
-                var config = [{'params': user.userName}];
-                User.signIn(data,config)
-                  .then((response) => {
-                    console.log(user);
-                    if(response.status == 'success') {
-                      $q.resolve(Container.executeContainerAction("start",user.userName))
-                      .then((response) => {
+                      var config = [{'params': user.userName}];
+                      User.signIn(data,config)
+                        .then((response) => {
+                          console.log(user);
+                          if(response.status == 'success') {
+                            $q.resolve(Container.executeContainerAction("start",user.userName))
+                            .then((response) => {
 
-                        if(response.status != 204){
+                              if(response.status != 204){
 
-                        }
-                        else{
-                          var user = JSON.parse(localStorage.getItem('user'));
-                          $location.path('/management');
-                        }
-                        console.log(response);
+                              }
+                              else{
+                                var user = JSON.parse(localStorage.getItem('user'));
+                                $location.path('/management');
+                              }
+                              console.log(response);
+                            });
+                          }
                       });
-                    }
-                });
-              });*/
-          }
-        }
+                    });*/
+                }
+            }
         ],
         controllerAs: 'loginCtrl'
     });
